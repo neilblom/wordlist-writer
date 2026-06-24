@@ -149,7 +149,8 @@ This document records all major technical and architectural decisions made durin
 - Provides a permanent memory  
 - Matches industry standards
 
-# ⭐ **7.Future Consideration: Mobile Support
+# ⭐ **7.Future Considerations: 
+Mobile Support:
 
 Decision: Mobile support is identified as a future expansion area but is not part of Phase 1–5.
 Reasoning:
@@ -175,6 +176,10 @@ Optional PWA wrapper
 Status:  
 Deferred until after Phase 5.
 Will be revisited once the desktop version is stable and multilingual support is complete.
+
+Other future options:
+
+🌟 Cloud sync across devices<br>🌟 Export to Kindle‑ready text<br>🌟 Image integration for illustrated stories<br>🌟 Simple animation script export<br>🌟 Collaboration mode (share project)<br>🌟 Advanced stats (reading level, sentence length, repetition heatmap)
 
 ---
 
