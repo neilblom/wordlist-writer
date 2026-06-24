@@ -147,7 +147,34 @@ This document records all major technical and architectural decisions made durin
 **Reasoning:**  
 - Keeps repo organized  
 - Provides a permanent memory  
-- Matches industry standards  
+- Matches industry standards
+
+# ⭐ **7.Future Consideration: Mobile Support
+
+Decision: Mobile support is identified as a future expansion area but is not part of Phase 1–5.
+Reasoning:
+
+The current UI is optimized for desktop writing, with three fixed panels and a large writing window.
+
+Mobile introduces constraints (screen size, touch input, limited simultaneous visibility) that require a dedicated design pass.
+
+The core engine (tokenization, lemma lookup, highlighting, frequency logic) will already work on mobile once the UI is adapted.
+
+A mobile‑friendly version may require:
+
+Responsive layout
+
+Collapsible panels
+
+Touch‑optimized interactions
+
+Local caching for offline use
+
+Optional PWA wrapper
+
+Status:  
+Deferred until after Phase 5.
+Will be revisited once the desktop version is stable and multilingual support is complete.
 
 ---
 
