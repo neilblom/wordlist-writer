@@ -1,0 +1,148 @@
+Great, Neil — let’s create the **Roadmap.md** file *and* name it correctly inside your `/docs` folder. I’ll walk you through the exact clicks so you don’t have to guess.
+
+---
+
+# ⭐ How to create `docs/Roadmap.md` in your repo
+
+## 🟦 Step 1 — Go to your repository  
+Open your new repo:
+
+**`https://github.com/neilblom/wordlist-writer` [(github.com in Bing)](https://www.bing.com/search?q="https%3A%2F%2Fgithub.com%2Fneilblom%2Fwordlist-writer")**
+
+(If that’s the one you recreated — perfect.)
+
+---
+
+## 🟦 Step 2 — Click **Add file → Create new file**
+
+You’ll see a blank editor with a filename box at the top.
+
+---
+
+## 🟦 Step 3 — In the filename box, type this EXACTLY:
+```
+docs/Roadmap.md
+```
+
+This tells GitHub:
+
+- Create a folder named **docs** (if it doesn’t exist yet)
+- Create a file named **Roadmap.md** inside it
+
+---
+
+## 🟦 Step 4 — Paste the Roadmap content  
+Here is the full file, ready to paste:
+
+---
+
+# 📄 **Roadmap.md — WordList Writer (Node.js + Express + Supabase)**
+
+## Overview  
+This roadmap outlines the development phases for the WordList Writer rebuild. Each phase is designed to be small, achievable, and token‑friendly, ensuring steady progress without overwhelming complexity.
+
+---
+
+## **Phase 1 — Core Rebuild (English Only)**  
+**Goal:** Recreate the essential functionality using Node.js + Express with English as the only active language.
+
+- Set up Node.js + Express project structure  
+- Serve static frontend (HTML/CSS/JS)  
+- Load English frequency list (NGSL)  
+- Load English lemma map  
+- Implement tokenizer  
+- Implement lemma lookup  
+- Implement highlighting logic (red/black only)  
+- Build writing window  
+- Build frequency list window  
+
+**Deliverable:** A working English‑only prototype with correct highlighting.
+
+---
+
+## **Phase 2 — Cognate Window**  
+**Goal:** Add cognate awareness and the green highlighting layer.
+
+- Add English ↔ Spanish cognate list  
+- Add English ↔ Latin cognate list  
+- Add English ↔ Greek cognate list  
+- Build cognate window (Column B)  
+- Add green highlighting (highest priority)  
+- Add click‑to‑highlight behavior  
+
+**Deliverable:** Cognate window fully functional with correct priority rules.
+
+---
+
+## **Phase 3 — Multilingual Support**  
+**Goal:** Expand the system to support Spanish, Koine Greek, and Latin.
+
+- Add frequency lists for Spanish, Greek, Latin  
+- Add lemma maps for each language  
+- Add cognate lists for each language pair  
+- Add language selector UI  
+- Load correct modules based on selected language  
+- Update tokenizer for Greek/Latin Unicode rules  
+
+**Deliverable:** All four languages fully supported.
+
+---
+
+## **Phase 4 — Supabase Integration**  
+**Goal:** Add persistent storage for projects and vocabulary tracking.
+
+### Projects  
+- Create `projects` table  
+- Create `project_wordlists` table  
+- Save/load project text  
+- Save/load project word list  
+
+### Master Lists  
+- Create `master_wordlists` table  
+- Track first‑seen words  
+- Update master list automatically  
+
+### Cross‑Language Master List  
+- Create `cross_language_master` table  
+- Store cognate relationships  
+- Store frequency ranks  
+- Store lemma mappings  
+
+**Deliverable:** User data persists across sessions and devices.
+
+---
+
+## **Phase 5 — Deployment**  
+**Goal:** Deploy the app publicly.
+
+- Deploy Node.js backend to Render  
+- Connect Render to Supabase  
+- Configure environment variables  
+- Test all endpoints  
+- Test multilingual behavior  
+- Test Supabase syncing  
+- Final UI polish  
+
+**Deliverable:** Publicly accessible, stable version of WordList Writer.
+
+---
+
+## **Phase 6 — Optional Enhancements**  
+These are not required for the MVP but are planned future improvements.
+
+- Export project word lists  
+- Import custom lists  
+- Add dark mode  
+- Add mobile layout  
+- Add spaced‑repetition review mode  
+- Add “word difficulty heatmap”  
+- Add user accounts (Supabase Auth)  
+
+
+
+
+
+
+- **Next_Steps.md**  
+
+Tell me which one you want next, Neil.
