@@ -196,7 +196,3 @@ This stack ensures:
 - Low hosting cost  
 - Long‑term stability  
 - No framework lock‑in
-
-- **Next_Steps.md**  
-
-Tell me which one you want next, Neil.
