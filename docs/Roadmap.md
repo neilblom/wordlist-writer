@@ -1,7 +1,3 @@
-Great, Neil — let’s create the **Roadmap.md** file *and* name it correctly inside your `/docs` folder. I’ll walk you through the exact clicks so you don’t have to guess.
-
----
-
 # ⭐ How to create `docs/Roadmap.md` in your repo
 
 ## 🟦 Step 1 — Go to your repository  
