@@ -134,12 +134,7 @@ Tables:
 
 ---
 
-## 7. Roadmap
-
-### Phase 1 — Core Rebuild (English only)  
-### Phase 2 — Cognate Window  
-### Phase 3 — Multilingual Support  
-### Phase 4 — Supabase Integration  
+## 7. Roadmap  
 ### Phase 5 — Deployment (Render)
 
 
