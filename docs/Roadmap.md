@@ -1,37 +1,3 @@
-# ⭐ How to create `docs/Roadmap.md` in your repo
-
-## 🟦 Step 1 — Go to your repository  
-Open your new repo:
-
-**`https://github.com/neilblom/wordlist-writer` [(github.com in Bing)](https://www.bing.com/search?q="https%3A%2F%2Fgithub.com%2Fneilblom%2Fwordlist-writer")**
-
-(If that’s the one you recreated — perfect.)
-
----
-
-## 🟦 Step 2 — Click **Add file → Create new file**
-
-You’ll see a blank editor with a filename box at the top.
-
----
-
-## 🟦 Step 3 — In the filename box, type this EXACTLY:
-```
-docs/Roadmap.md
-```
-
-This tells GitHub:
-
-- Create a folder named **docs** (if it doesn’t exist yet)
-- Create a file named **Roadmap.md** inside it
-
----
-
-## 🟦 Step 4 — Paste the Roadmap content  
-Here is the full file, ready to paste:
-
----
-
 # 📄 **Roadmap.md — WordList Writer (Node.js + Express + Supabase)**
 
 ## Overview  
@@ -132,13 +98,4 @@ These are not required for the MVP but are planned future improvements.
 - Add mobile layout  
 - Add spaced‑repetition review mode  
 - Add “word difficulty heatmap”  
-- Add user accounts (Supabase Auth)  
-
-
-
-
-
-
-- **Next_Steps.md**  
-
-Tell me which one you want next, Neil.
+- Add user accounts (Supabase Auth)
