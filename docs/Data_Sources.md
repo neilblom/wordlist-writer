@@ -196,5 +196,3 @@ This document ensures that all linguistic data used in WordList Writer is:
 - Clearly organized  
 
 As new lists are added or refined, this file should be updated to reflect the current sources.
-
-Tell me which one you want next, Neil.
