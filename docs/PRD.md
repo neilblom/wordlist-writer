@@ -41,6 +41,51 @@ The goal is to help learners write texts using **high‑frequency, high‑value 
 - User‑editable  
 - Stored in Supabase  
 
+Master List (Column D)
+The Master List is a stable, curated vocabulary sequence used across all languages supported by the app. It defines the beginner‑level lemmas (initially ~400) and their equivalents in English, Spanish, Latin, and Greek.
+
+Master List Fields
+master_rank (1–400)
+
+english_lemma
+
+spanish_lemma
+
+latin_root
+
+greek_root
+
+cognate_flags
+
+frequency_ranks (per language)
+
+Behavior
+The Master List is displayed in Column D.
+
+Highlighting in the writing window uses Master List membership and rank.
+
+Red = not in Master List or used too early.
+
+Black = allowed (in Master List or Project List).
+
+Green = cognate (overrides other colors).
+
+Hovering shows Master List rank or “Not in Master List.”
+
+Editing
+The user may modify the Master List directly inside Column D:
+
+add new lemmas
+
+insert lemmas at specific ranks
+
+reorder lemmas
+
+add cross‑language equivalents
+
+update cognate flags
+
+Changes update highlighting immediately.
 ---
 
 ## 3. Multilingual Capability
@@ -136,6 +181,3 @@ Tables:
 
 ## 7. Roadmap  
 ### Phase 5 — Deployment (Render)
-
-
-Tell me which one you want next, Neil.
