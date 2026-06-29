@@ -91,6 +91,12 @@ Integrate Master List with highlighting logic.
 
 **Deliverable:** User data persists across sessions and devices.
 
+### Phase 4 — Master List Enhancements
+- Add language visibility toggles
+- Allow user to show/hide individual language columns
+- Support future languages without changing the renderer
+- Maintain fixed rank-based ordering regardless of visibility
+
 ---
 
 ## **Phase 5 — Deployment**  
