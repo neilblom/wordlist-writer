@@ -47,6 +47,20 @@ This roadmap outlines the development phases for the WordList Writer rebuild. Ea
 - Update tokenizer for Greek/Latin Unicode rules  
 
 **Deliverable:** All four languages fully supported.
+Phase 3: Master List UI
+Add Column D to the top panel.
+
+Display Master List with rank and multilingual equivalents.
+
+Add “Add to Master List” and “Insert at Rank” controls.
+
+Add “Move Up/Down” controls.
+
+Add cognate flag editing.
+
+Add frequency metadata display.
+
+Integrate Master List with highlighting logic.
 
 ---
 
@@ -65,10 +79,15 @@ This roadmap outlines the development phases for the WordList Writer rebuild. Ea
 - Update master list automatically  
 
 ### Cross‑Language Master List  
-- Create `cross_language_master` table  
+- Create master_list table.
 - Store cognate relationships  
 - Store frequency ranks  
-- Store lemma mappings  
+- Store lemma mappings
+- Sync Master List edits to Supabase.
+- Load Master List on startup.
+- Ensure highlighting uses Supabase‑backed Master List.
+- Add cross‑language frequency lists.
+- Add multilingual cognate mapping.
 
 **Deliverable:** User data persists across sessions and devices.
 
