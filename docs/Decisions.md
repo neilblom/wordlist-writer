@@ -277,6 +277,15 @@ Status:
 Deferred until after Phase 5.
 Will be revisited once the desktop version is stable and multilingual support is complete.
 
+## Language Visibility Toggles (Future)
+
+We will add UI controls that allow the user to toggle visibility of individual
+language columns in the Master List (English, Spanish, Latin, Koine Greek, Modern
+Greek, French, German, etc.). This prevents UI clutter and supports focused
+multilingual workflows.
+
+Status: Deferred until core CRUD features are stable.
+
 Other future options:
 
 🌟 Cloud sync across devices<br>🌟 Export to Kindle‑ready text<br>🌟 Image integration for illustrated stories<br>🌟 Simple animation script export<br>🌟 Collaboration mode (share project)<br>🌟 Advanced stats (reading level, sentence length, repetition heatmap)
