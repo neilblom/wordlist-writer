@@ -88,6 +88,21 @@ update cognate flags
 Changes update highlighting immediately.
 ---
 
+### Master List — Language Visibility Controls (Future)
+
+The Master List will include UI controls allowing users to toggle visibility of
+language columns. This supports multilingual vocabulary development while keeping
+the interface clean.
+
+Requirements:
+- Preserve rank-based ordering
+- Dynamically hide/show columns without reload
+- Support arbitrary languages in JSON
+
+Non-Goals:
+- No sorting changes
+- No automatic language detection
+
 ## 3. Multilingual Capability
 
 ### Supported Languages  
