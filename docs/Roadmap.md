@@ -97,6 +97,39 @@ Integrate Master List with highlighting logic.
 
 ---
 
+Phase 3.1 — Spanish Frequency + Lemma Map
+Status: In Progress
+Description: Introduces full Spanish support into the lexical pipeline. This includes loading a Spanish frequency list, loading a Spanish lemma map, and extending highlight logic to support Spanish tokens. Spanish becomes the first non‑English language with full frequency + lemma + cognate integration.
+
+Deliverables:
+
+/frequency/spanish.json (ranked list of Spanish lemmas)
+
+/lemmas/spanish.json (inflected → lemma mapping)
+
+Spanish-aware tokenizer adjustments (if needed)
+
+Spanish highlight logic (black = known, red = unknown, green = cognate)
+
+Spanish frequency integration into Master List
+
+Spanish lemma integration into Project List
+
+Spanish cognate integration into Column B
+
+Notes:  
+Spanish is the template language for Phase 3.2 (Latin + Greek). All architectural decisions here must support future languages without refactoring.
+
+Phase 3.2 — Latin + Greek Frequency + Lemma Maps
+Status: Planned
+Description: Adds classical languages to the pipeline using the same architecture established in Phase 3.1. Latin and Greek frequency lists will be smaller and more curated, but follow the same JSON structure.
+
+Phase 3.3 — Dynamic Language Switcher
+Status: Planned
+Description: Adds UI controls allowing the user to select the active language. Highlight logic, frequency lists, lemma maps, and cognate detection adapt instantly.
+
+---
+
 ## **Phase 4 — Supabase Integration**  
 **Goal:** Add persistent storage for projects and vocabulary tracking.
 
