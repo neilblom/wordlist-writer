@@ -197,6 +197,38 @@ Column D will eventually support editing controls (see next decision).
 Supabase will store the Master List in Phase 4.
 
 ---
+Decision: Cognate Click Behavior
+Chosen Approach:  
+Clicking a cognate in Column B performs two actions:
+
+Highlights all matching tokens in the writing window (green overlay).
+
+Inserts the cognate into the Master List with correct language assignment.
+
+Rationale:  
+This creates a smooth workflow from discovery → selection → curation. It also reinforces the pedagogical goal of building a cross‑language vocabulary list.
+
+Alternatives Considered:
+
+Tooltip‑only behavior (rejected: too passive)
+
+Separate “Add” button (rejected: slower workflow)
+
+Decision: Project List Cognate Priority
+Chosen Approach:  
+Cognates appear at the top of Column C, marked with a green ✓ badge.
+
+Rationale:  
+Matches highlight priority rules (cognate > known > unknown).
+Supports Phase 3 multilingual expansion.
+
+Decision: Auto‑Scroll for Master List
+Status: Deferred
+Reason:  
+Auto‑scroll depends on stable multilingual Master List behavior. Implementing now risks rework once Spanish/Latin/Greek frequency lists are added.
+
+Action:  
+Add to Roadmap Phase 2.5 (UI Polish). Implement after Phase 3 Step 2.
 
 # ⭐ **4. Multilingual Decisions**
 
