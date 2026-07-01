@@ -229,6 +229,60 @@ Auto‑scroll depends on stable multilingual Master List behavior. Implementing 
 
 Action:  
 Add to Roadmap Phase 2.5 (UI Polish). Implement after Phase 3 Step 2.
+---
+Decision: Spanish as First Multilingual Target
+Chosen Approach:  
+Spanish is implemented first because it has clean frequency data, reliable lemma resources, and strong cognate overlap with English. It also provides a modern language test case before adding classical languages.
+
+Rationale:  
+Spanish validates the multilingual architecture with minimal friction. Once Spanish works, Latin and Greek can be added with the same pipeline.
+
+Decision: Frequency List Format
+Chosen Approach:  
+All frequency lists (English, Spanish, Latin, Greek) use the same structure:
+
+json
+{
+  "rank": 1,
+  "lemma": "example"
+}
+Rationale:  
+Uniform structure simplifies loading, sorting, and highlight logic. It also ensures Master List frequency fields remain consistent across languages.
+
+Decision: Lemma Map Format
+Chosen Approach:  
+All lemma maps follow the English Phase 1 structure:
+
+json
+{
+  "hablo": "hablar",
+  "hablas": "hablar",
+  "habló": "hablar"
+}
+Rationale:  
+Flat inflected → lemma mapping is fast, predictable, and works across all languages. No POS tags, no metadata, no nested objects.
+
+Decision: Highlight Logic Extension
+Chosen Approach:  
+Highlight logic becomes language‑aware but preserves Phase 1/2 priority:
+
+Cognate → green
+
+Known (frequency list or project list) → black
+
+Unknown → red
+
+Rationale:  
+This keeps the cognitive model consistent across languages.
+
+Decision: Auto‑Scroll for Master List
+Status: Deferred
+Reason:  
+Auto‑scroll depends on stable multilingual Master List behavior. Implementing now risks rework once Spanish/Latin/Greek frequency lists are added.
+
+Action:  
+Added to Roadmap Phase 2.5 (UI Polish). Implement after Phase 3.2.
+---
 
 # ⭐ **4. Multilingual Decisions**
 
