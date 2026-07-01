@@ -34,6 +34,39 @@ This roadmap outlines the development phases for the WordList Writer rebuild. Ea
 
 **Deliverable:** Cognate window fully functional with correct priority rules.
 
+Phase 2.4 — Cognate Interaction Enhancements
+Status: Complete
+Description: Adds interactive behavior to Column B (Cognate Window). Clicking a cognate now highlights all matching tokens in the writing window and inserts the cognate into the Master List (Column D). This creates a direct link between discovery (Column B) and curation (Column D).
+
+Deliverables:
+
+Click‑to‑highlight cognate in writing window
+
+Click‑to‑insert cognate into Master List
+
+Automatic rank assignment
+
+Duplicate prevention
+
+Tooltip integration with cognateMap
+
+Project List (Column C) cognate priority sorting
+
+Phase 2.5 — UI Polish (Deferred)
+Status: Deferred to post‑Phase 3
+Description: Minor UI enhancements planned for later, after multilingual support is added.
+
+Planned Enhancements:
+
+Auto‑scroll Column D to newly added Master List items
+
+Visual animation when a cognate is added
+
+Optional “Add All Cognates” batch button in Column B
+
+Reason for Deferral:  
+These enhancements depend on stable multilingual behavior introduced in Phase 3. Deferring avoids rework and ensures UI polish is applied once the full cross‑language pipeline is active.
+
 ---
 
 ## **Phase 3 — Multilingual Support**  
