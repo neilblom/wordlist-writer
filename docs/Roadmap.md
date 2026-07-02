@@ -37,6 +37,33 @@ This roadmap outlines the development phases for the WordList Writer rebuild. Ea
 Phase 2.4 — Cognate Interaction Enhancements
 Status: Complete
 Description: Adds interactive behavior to Column B (Cognate Window). Clicking a cognate now highlights all matching tokens in the writing window and inserts the cognate into the Master List (Column D). This creates a direct link between discovery (Column B) and curation (Column D).
+✔ Phase 2 Completed
+Cognate Window implemented
+
+Automatic ✓ cognate marker
+
+Click‑to‑add cognate → Master List
+
+Correct insertion logic (after last Master List lemma in story)
+
+Warning system implemented
+
+Master List re-renders with correct ranks
+
+Project List remains usage‑based only
+
+🔜 Phase 3 (Next)
+Manual reordering UI improvements
+
+Export/import Master List
+
+“Unused cognates” view
+
+“Next expected word” sidebar
+
+Multi‑story project support
+
+Save per‑story Project Lists
 
 Deliverables:
 
