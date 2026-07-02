@@ -120,6 +120,29 @@ Master List becomes the authoritative vocabulary sequence across languages.
 
 ---
 
+Decision: Master List is a Curriculum
+The Master List is not alphabetical and not usage‑ordered.
+It is a pedagogical sequence defined by the developer.
+
+Decision: Cognate Insertion Rule
+Cognates are inserted after the last Master List lemma that appears in the story, using lemma matching.
+
+Decision: Typed Word Insertion Rule
+New English lemmas typed in the story follow the same insertion rule as cognates.
+
+Decision: Project List Behavior
+The Project List tracks usage only.
+It does not reorder or modify the Master List.
+
+Decision: Warning System
+The app warns when the story violates curriculum order.
+
+Decision: Automatic Cognate Highlighting
+Cognates are highlighted automatically with ✓.
+No click‑to‑highlight feature.
+
+---
+
 # ⭐ **3. UI/UX Decisions**
 
 ### **Three‑Column Top Panel**
