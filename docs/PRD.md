@@ -72,6 +72,39 @@ Green = cognate (overrides other colors).
 
 Hovering shows Master List rank or “Not in Master List.”
 
+Master List Ordering (Curriculum Mode)
+The Master List represents a global curriculum of English lemmas.
+It is not ordered alphabetically and not ordered by story usage.
+It is ordered according to a pedagogical sequence defined by the developer.
+
+The Master List is loaded from JSON in the exact order defined by the curriculum.
+
+New words (typed or clicked) are inserted after the last Master List word that appears in the story, using lemma matching.
+
+Cognates added from the Cognate Window follow the same insertion rule.
+
+Manual reordering is allowed via the Edit UI.
+
+The Project List does not affect Master List order.
+
+This ensures the curriculum grows naturally while preserving the intended learning sequence.
+
+📌 PRD.md — Add this under Warning System
+Order Warning System
+When writing a story, the system checks whether the text follows the curriculum order.
+
+The app identifies the next expected Master List word that has not yet appeared.
+
+If the story uses a word whose Master List rank is greater than the next expected word, a warning is shown.
+
+The warning appears in the floating tooltip and identifies:
+
+the out‑of‑order lemma
+
+the expected lemma
+
+the suggested correction (adjust curriculum or revise text)
+
 Editing
 The user may modify the Master List directly inside Column D:
 
