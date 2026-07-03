@@ -22,7 +22,15 @@ The goal is to help learners write texts using **high‑frequency, high‑value 
 - Highlighting rules (strict priority):  
   - **Green** = cognate  
   - **Black/normal** = in project list or frequency list  
-  - **Red** = off‑list  
+  - **Red** = off‑list
+ 
+Section: Save + Backup System
+- Controlled save button in UI
+- POST /api/save-master-list
+- Writes to public/master/master_list.json
+- Auto‑creates public/master/backups/
+- Timestamped backup naming: master_list_YYYY-MM-DDTHH-MM-SS.json
+- Save button shows status messages (“Saving…”, “Saved”, “Failed”)
 
 ### 2.2 Top Panel (Three Columns)
 
@@ -89,7 +97,6 @@ The Project List does not affect Master List order.
 
 This ensures the curriculum grows naturally while preserving the intended learning sequence.
 
-📌 PRD.md — Add this under Warning System
 Order Warning System
 When writing a story, the system checks whether the text follows the curriculum order.
 
