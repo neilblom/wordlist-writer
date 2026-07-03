@@ -54,6 +54,14 @@ This document records all major technical and architectural decisions made durin
 
 ---
 
+Decision: API Routes Before Static Middleware  
+Reason: Prevent static fallback from swallowing API requests.
+Impact: Ensures /api/save-master-list is reachable.
+
+Decision: Controlled Save Instead of Autosave  
+Reason: Prevent accidental overwrites of curriculum.
+Impact: User must explicitly confirm saves.
+
 ### **Supabase for Project + Master Lists**
 **Decision:** Only user‑specific data goes into Supabase.  
 **Reasoning:**  
