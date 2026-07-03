@@ -10,6 +10,9 @@ This glossary defines all key terms used throughout the WordList Writer project.
 ### **Accent Stripping**  
 The process of removing diacritical marks from characters (e.g., Greek or Latin) to normalize text for comparison and lemma lookup.
 
+API Route Shadowing  
+When static middleware intercepts requests before API routes, causing 404 and HTML fallback.
+
 ---
 
 # ⭐ **C**
@@ -69,6 +72,9 @@ Example:
 ---
 
 # ⭐ **H**
+
+Hard Refresh  
+Browser reload that bypasses cache (Ctrl+Shift+R), required when JS changes aren’t loading.
 
 ### **Highlighting Logic**  
 The rules that determine how each word in the writing window is colored:
