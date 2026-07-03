@@ -75,6 +75,14 @@ cognates/
 
 ---
 
+Express Server Structure
+- server.js lives in project root
+- Static middleware: app.use(express.static(path.join(__dirname, "public")))
+- API routes MUST be registered before static middleware
+- JSON body parsing: app.use(express.json())
+- File writes via Node fs module
+- Relative paths based on __dirname (root)
+
 ## **3. Database Stack**
 
 ### **Supabase (PostgreSQL)**  
