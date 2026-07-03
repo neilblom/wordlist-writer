@@ -185,7 +185,13 @@ cognates/english_greek.json
 
 ---
 
-# ⭐ **7. Summary**
+# ⭐ **7. Master List Storage
+- Primary file: public/master/master_list.json
+- Backup directory: public/master/backups/
+- Backup files created on every save
+- Backup files contain full master list snapshot
+
+# ⭐ **8. Summary**
 
 This document ensures that all linguistic data used in WordList Writer is:
 
