@@ -123,6 +123,14 @@ Used to build long‑term vocabulary profiles.
 
 ---
 
+### Master List Item (English-only)
+- `word`: the lemma
+- `language`: always "english"
+- `rank`: numeric position
+- `cognate`: optional boolean
+- `cognates`: optional object mapping language → lemma
+
+
 # ⭐ **P**
 
 ### **Project**  
