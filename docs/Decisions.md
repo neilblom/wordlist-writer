@@ -151,6 +151,29 @@ No click‑to‑highlight feature.
 
 ---
 
+## Master List Architecture Decision (July 2026)
+
+**Current State:** English-only master list.
+
+**Reasoning:**
+- The highlight pipeline, tokenizer, lemmaMap, and order-checker are stable with English-only items.
+- Multilingual fields (english/spanish/latin/greek) previously caused inconsistent item shapes and crashes.
+- English-only structure is simple, predictable, and easy to maintain.
+
+**Future Flexibility:**
+- Multilingual support (Spanish, Latin, Greek) may be added later.
+- Additional languages will be stored inside `cognates` object:
+  {
+    word: "and",
+    language: "english",
+    cognates: { spanish: "y", latin: "et", greek: "και" }
+  }
+
+**Commitment:**
+- The master list will remain English-only until Phase 2 (Supabase integration) is complete.
+- Revisit multilingual expansion after Phase 2.
+
+
 # ⭐ **3. UI/UX Decisions**
 
 ### **Three‑Column Top Panel**
