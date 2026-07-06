@@ -173,6 +173,73 @@ No click‑to‑highlight feature.
 - The master list will remain English-only until Phase 2 (Supabase integration) is complete.
 - Revisit multilingual expansion after Phase 2.
 
+Decision: Supabase Integration Before Multilingual Expansion
+Date: 2026‑07‑06
+Status: Approved
+Priority: Critical (Foundation for Phase 3)
+
+Summary  
+The project will continue using the English‑only master list architecture while integrating Supabase. Multilingual support (Spanish, Latin, Greek) will be added after Supabase is fully implemented and stable.
+
+This reverses the earlier assumption that multilingual support should precede database integration. The new direction reflects the actual dependency chain discovered during development.
+
+Reasoning
+
+The English‑only pipeline (tokenizer, lemmaMap, highlight logic, order‑checker) is stable and predictable.
+
+Multilingual support requires persistent storage for:
+
+master list ranks
+
+cross‑language equivalents
+
+cognate flags
+
+frequency metadata
+
+project word lists
+
+These structures must live in Supabase to avoid duplication, corruption, and inconsistent state.
+
+Implementing multilingual support before Supabase would require rewriting:
+
+the master list
+
+the cognate window
+
+the highlight pipeline
+
+the project list
+
+the order‑checker
+
+the backend
+
+the UI
+
+Supabase provides the stable foundation needed for Phase 3.
+
+Implications
+
+Phase 1 (English‑only pipeline) is considered complete.
+
+Supabase integration becomes the next active development phase.
+
+Multilingual support will be implemented after Supabase tables and API endpoints are stable.
+
+The master list remains English‑only until Supabase is fully integrated.
+
+All future sessions must follow this updated dependency order.
+
+Updated Dependency Chain
+
+English‑only pipeline (complete)
+
+Supabase integration (current)
+
+Multilingual support (next)
+
+UI polish + deployment
 
 # ⭐ **3. UI/UX Decisions**
 
