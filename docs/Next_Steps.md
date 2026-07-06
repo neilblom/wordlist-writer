@@ -132,10 +132,13 @@ This becomes the foundation for all future phases.
 
 # ⭐ **9. 
 
-- Verify browser loads updated app.js (disable cache if needed)
-- Confirm POST request shows /api/save-master-list in Network tab
-- Validate backup file creation
-- Add master-list curriculum JSON once save system is stable
+### Multilingual Expansion (Future)
+- Add Spanish cognates
+- Add Latin cognates
+- Add Greek cognates
+- Extend tokenizer and lemmaMap to support additional languages
+- Revisit master list structure after Supabase integration
+
 
 # ⭐ Summary  
 These steps move the project from documentation → implementation.  
