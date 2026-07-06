@@ -32,6 +32,9 @@ Section: Save + Backup System
 - Timestamped backup naming: master_list_YYYY-MM-DDTHH-MM-SS.json
 - Save button shows status messages (“Saving…”, “Saved”, “Failed”)
 
+### Requirement: Master List Simplicity
+The master list must remain English-only until the core pipeline is fully stable and Supabase integration is complete.
+
 ### 2.2 Top Panel (Three Columns)
 
 #### Column A — Frequency List  
