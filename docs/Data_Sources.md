@@ -21,6 +21,11 @@ This document lists all linguistic data sources used in WordList Writer, includi
   ```
 
 ---
+### English Master List Source
+- Based on NGSL/NAWL/BNC/COCA principles
+- Stored as JSON in /data/master_list.json
+- English-only for now; multilingual expansion planned
+
 
 ## **1.2 English Lemma Map**  
 **Source:**  
