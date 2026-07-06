@@ -138,7 +138,9 @@ This becomes the foundation for all future phases.
 - Add Greek cognates
 - Extend tokenizer and lemmaMap to support additional languages
 - Revisit master list structure after Supabase integration
-
+Update: Supabase Required Before Multilingual Support
+Multilingual support (Spanish, Latin, Greek) will begin after Supabase integration is complete.
+Supabase provides the persistent storage required for cross‑language master list fields, cognate flags, frequency metadata, and project word lists.
 
 # ⭐ Summary  
 These steps move the project from documentation → implementation.  
