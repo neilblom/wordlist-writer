@@ -22,6 +22,17 @@ This roadmap outlines the development phases for the WordList Writer rebuild. Ea
 
 ---
 
+### Phase 1 (Current)
+- English-only master list
+- Stable highlight pipeline
+- Stable tokenizer
+- Stable order-checker
+
+### Phase 2 (Future)
+- Supabase integration
+- Revisit multilingual support
+
+
 ## **Phase 2 — Cognate Window**  
 **Goal:** Add cognate awareness and the green highlighting layer.
 
