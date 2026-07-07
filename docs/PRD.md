@@ -83,6 +83,36 @@ Green = cognate (overrides other colors).
 
 Hovering shows Master List rank or “Not in Master List.”
 
+---
+Tier‑Aware Highlighting (Current Version)
+The editor highlights English words based on cognate tier metadata.
+
+Highlight colors:
+
+Latin → gold
+
+Greek → blue
+
+Biblical → purple
+
+General → green
+
+Highlight rules:
+
+If a word’s normalized lemma exists in COGNATE_MAP, highlight it using its tier color.
+
+If the lemma exists in the Master List, render normally.
+
+If the lemma is unknown and not a function word, append a red asterisk.
+
+Normalization:
+
+All cognate lookups use NFD normalization and accent‑stripping.
+
+Tooltip:
+
+  Shows cognate target (Spanish) and tier metadata.
+
 Master List Ordering (Curriculum Mode)
 The Master List represents a global curriculum of English lemmas.
 It is not ordered alphabetically and not ordered by story usage.
