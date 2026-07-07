@@ -35,6 +35,31 @@ Used for all client‑side logic:
 
 No frameworks (React/Vue/etc.) are used to keep the app lightweight and easy to deploy.
 
+Tier‑Aware Cognate Architecture
+Global Structures:
+
+TIER_COLORS — maps tier → highlight color
+
+TIER_MAP — maps English lemma → tier
+
+COGNATE_MAP — unified lookup map populated at startup
+
+Population:  
+After loading cognate JSON files, the system builds COGNATE_MAP using:
+  COGNATE_MAP[key] = { es, tier: TIER_MAP[key] || "general" };
+Consumers:
+
+renderHighlights()
+
+renderProjectList()
+
+showMasterTooltip()
+
+Normalization:  
+All lookups use:
+  lemma.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+
+
 ---
 
 ## **2. Backend Stack**
