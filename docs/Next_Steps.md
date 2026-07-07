@@ -145,3 +145,23 @@ Supabase provides the persistent storage required for cross‑language master li
 # ⭐ Summary  
 These steps move the project from documentation → implementation.  
 Once Phase 1 is complete, the app will already be usable in English and ready for cognates, multilingual support, and Supabase integration.
+
+Completed
+Tier‑aware highlighting
+
+Tier‑aware tooltip
+
+Tier‑aware project list
+
+Unified cognate lookup map
+
+Global tier metadata
+
+Upcoming
+Tokenizer normalization upgrade
+
+Tier filtering UI
+
+Frequency tier integration
+
+Multi‑word cognate support (paused intentionally)
