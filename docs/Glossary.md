@@ -26,6 +26,10 @@ Examples:
 
 Cognates receive **green highlighting** (highest priority).
 
+COGNATE_MAP
+Unified lookup map containing { es, tier } for each English lemma.
+Built at startup from cognate JSON files + tier table.
+
 ---
 
 ### **Cognate Window**  
@@ -130,6 +134,10 @@ Used to build long‑term vocabulary profiles.
 - `cognate`: optional boolean
 - `cognates`: optional object mapping language → lemma
 
+# ⭐ **N**
+
+Normalization
+Process of converting text to NFD form and removing diacritics for consistent lookup.
 
 # ⭐ **P**
 
@@ -154,6 +162,10 @@ Words in this list are highlighted **black**.
 ---
 
 # ⭐ **T**
+
+Tier
+A linguistic category assigned to a cognate: Latin, Greek, Biblical, or General.
+Used for color‑coded highlighting and metadata display.
 
 ### **Tokenizer**  
 The component that splits text into individual tokens (words).  
