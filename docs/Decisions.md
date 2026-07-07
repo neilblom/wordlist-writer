@@ -149,6 +149,31 @@ Decision: Automatic Cognate Highlighting
 Cognates are highlighted automatically with ✓.
 No click‑to‑highlight feature.
 
+Decision: Unified Tier‑Aware Cognate Highlighting
+Reasoning:
+
+Previous architecture used three separate cognate maps (Spanish, Latin, Greek).
+
+Tier metadata was not consistently available across UI components.
+
+Highlighting needed to reflect linguistic tier (Latin, Greek, Biblical, General).
+
+Decision:
+
+Create a unified COGNATE_MAP with tier metadata.
+
+Make tier colors global (TIER_COLORS).
+
+Make tier assignments global (TIER_MAP).
+
+Populate COGNATE_MAP inside DOMContentLoaded after cognate files load.
+
+Outcome:
+
+Highlighting, tooltips, and project list now share the same tier metadata.
+
+Architecture is ready for multi‑word cognates and tier filtering UI.
+
 ---
 
 ## Master List Architecture Decision (July 2026)
