@@ -255,6 +255,28 @@ Non-Goals:
 - No sorting changes
 - No automatic language detection
 
+---
+
+Curriculum Violations Panel (Updated)
+The Curriculum Violations Panel replaces the floating order‑warning popup, consolidating all curriculum‑alignment issues into a single, non‑intrusive teacher‑facing dashboard.
+
+The Curriculum Violations Panel provides teachers with real‑time diagnostic feedback about how a draft text aligns with the active master vocabulary list. It identifies places where the text breaks the intended curriculum sequence and highlights vocabulary that may require adjustment, replacement, or addition to the curriculum.
+
+The panel detects three types of violations:
+
+Out‑of‑order vocabulary  
+Words that appear before their position in the master list sequence. This helps ensure that texts follow the pedagogical order defined by the teacher.
+
+Unknown words  
+Words that do not appear in the master list at all. These may need to be added to the curriculum, replaced with simpler synonyms, or postponed to later units.
+
+Curriculum gaps  
+Words that appear in the text but have not yet been assigned to any curriculum tier or unit. This helps teachers refine and expand their curriculum as needed.
+
+The panel does not detect cognate tier violations, frequency tier violations, or missing prerequisite vocabulary. Cognate tiers are used for organizational purposes and scaffolding, not for curriculum sequencing. Frequency tiers are used for teacher awareness but do not generate warnings. Prerequisite vocabulary logic may be added in a future phase if needed.
+
+The Curriculum Violations Panel is a teacher‑facing tool designed to support controlled text creation and curriculum development. It does not appear in the final text delivered to students.
+
 ## 3. Multilingual Capability
 
 ### Supported Languages  
