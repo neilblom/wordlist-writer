@@ -277,6 +277,21 @@ The panel does not detect cognate tier violations, frequency tier violations, or
 
 The Curriculum Violations Panel is a teacher‑facing tool designed to support controlled text creation and curriculum development. It does not appear in the final text delivered to students.
 
+---
+
+Curriculum Violations Panel
+A non‑intrusive, scrollable diagnostic panel appears below the Top Panel and updates live as the user types.
+It reports three violation types:
+- Out‑of‑order vocabulary
+- Unknown words
+- Curriculum gaps
+
+The panel:
+- updates automatically during text entry
+- never interrupts writing
+- never covers the editor
+- replaces the old popup warning system
+
 ## 3. Multilingual Capability
 
 ### Supported Languages  
@@ -370,3 +385,12 @@ Tables:
 
 ## 7. Roadmap  
 ### Phase 5 — Deployment (Render)
+
+Future enhancements of the violations panel
+Violation grouping (by type or severity)
+Sorting violations
+Collapsible sections
+Severity color coding
+Toggle button
+Jump‑to‑word links
+Tier‑aware out‑of‑order detection
