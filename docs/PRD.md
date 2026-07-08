@@ -1,15 +1,20 @@
 # 📄 **PRD.md — WordList Writer (Node.js + Express + Supabase)**
 
-## 1. Purpose  
-WordList Writer is a multilingual writing tool that helps learners produce texts using **beginner‑level vocabulary** across English, Spanish, Koine Greek, and Latin. It provides:
+## 1. Purpose & Scope
 
-- Real‑time vocabulary checking  
-- Cognate awareness  
-- Frequency‑based highlighting  
-- Custom project word lists  
-- Master vocabulary tracking across languages  
+WordList Writer is a teacher‑facing authoring tool designed to help instructors create controlled texts for beginner learners. Students never interact with the app directly. Instead, teachers use WordList Writer to craft texts that follow a curriculum, respect frequency constraints, and leverage cognate scaffolding across multiple languages.
 
-The goal is to help learners write texts using **high‑frequency, high‑value vocabulary**, while recognizing **cross‑language cognates** and building a personalized vocabulary profile.
+The tool currently serves two core instructional functions:
+
+Building a unified beginner‑level master vocabulary list  
+WordList Writer helps determine whether a single, cross‑linguistic beginner curriculum can be constructed across English, Spanish, Koine Greek, and Latin. The system highlights vocabulary usage, checks frequency alignment, identifies cognates, and surfaces curriculum‑order violations to support the creation of a coherent, multi‑language foundational lexicon.
+
+Supporting multiple master vocabulary lists when needed  
+If a unified list is not feasible, WordList Writer allows teachers to create and maintain multiple master vocabulary lists tailored to different learner profiles — such as age group, subject matter, or target language. Each list benefits from the same analysis pipeline: frequency checking, cognate detection, lemma normalization, curriculum‑order validation, and project‑level vocabulary tracking.
+
+WordList Writer’s scope is intentionally focused on teacher workflow, not student interaction. All highlighting, cognate metadata, frequency analysis, and curriculum diagnostics exist to support the teacher’s authoring process. The final output delivered to students is a clean, pedagogically controlled text without any of the analytical overlays.
+
+This PRD defines the functional requirements, constraints, and roadmap for WordList Writer as a professional tool for curriculum‑aligned text development. Future expansions may include enhanced curriculum diagnostics, multi‑list comparison tools, and deeper cross‑language vocabulary modeling, but the core mission remains: to help teachers write texts that are linguistically appropriate, pedagogically sequenced, and cross‑linguistically informed.
 
 ---
 
