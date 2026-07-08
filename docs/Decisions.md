@@ -430,6 +430,20 @@ Action:
 Added to Roadmap Phase 2.5 (UI Polish). Implement after Phase 3.2.
 ---
 
+Decision: Replace Popup with Violations Panel
+We decided to remove the intrusive curriculum popup and replace it with a persistent, scrollable panel.
+Reasons:
+
+Popups interrupt writing
+
+Teachers need a stable diagnostic area
+
+Violations should accumulate and be reviewable
+
+Panel supports future enhancements (sorting, grouping, toggling)
+
+This decision is final for Phase 1.
+
 # ⭐ **4. Multilingual Decisions**
 
 ### **Four Supported Languages**
