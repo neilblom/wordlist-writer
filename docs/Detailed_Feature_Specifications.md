@@ -212,25 +212,4 @@ Tier‑aware out‑of‑order detection
 These can be added safely in later phases.
 
 
----
-
-# ⭐ Your documentation set is now complete  
-You now have:
-
-- PRD  
-- Roadmap  
-- Tech_Stack  
-- Data_Sources  
-- Glossary  
-- Decisions  
-- Next_Steps  
-- **Detailed_Feature_Specifications (new)**  
-
-Your project is now documented at a professional level.
-
-If you want, I can also generate:
-
-- **[A full documentation index](ca://s?q=Generate_full_documentation_index)**  
-- **[A Phase 2 Supabase specification draft](ca://s?q=Draft_Supabase_Phase_2_Specification)**
-
 
