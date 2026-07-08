@@ -142,6 +142,17 @@ Update: Supabase Required Before Multilingual Support
 Multilingual support (Spanish, Latin, Greek) will begin after Supabase integration is complete.
 Supabase provides the persistent storage required for cross‑language master list fields, cognate flags, frequency metadata, and project word lists.
 
+---
+
+Next Steps After Panel Implementation
+Validate violation detection accuracy
+
+Add optional enhancements (see PRD Future Enhancements)
+
+Begin Phase 2 (Supabase integration)
+
+Update documentation after each new feature
+
 # ⭐ Summary  
 These steps move the project from documentation → implementation.  
 Once Phase 1 is complete, the app will already be usable in English and ready for cognates, multilingual support, and Supabase integration.
