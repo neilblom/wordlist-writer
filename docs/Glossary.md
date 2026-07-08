@@ -30,6 +30,16 @@ COGNATE_MAP
 Unified lookup map containing { es, tier } for each English lemma.
 Built at startup from cognate JSON files + tier table.
 
+Collector
+The logic inside renderHighlights() that pushes violation objects into curriculumViolations.
+
+Curriculum Violation
+A detected mismatch between the text and the curriculum rules.
+Types include:
+- Out‑of‑order vocabulary
+- Unknown word
+- Curriculum gap
+
 ---
 
 ### **Cognate Window**  
@@ -160,6 +170,10 @@ Displayed in Column C of the top panel.
 Words in this list are highlighted **black**.
 
 ---
+# ⭐ **R**
+
+Renderer
+The function renderViolationsPanel() that converts violations into a table.
 
 # ⭐ **T**
 
@@ -182,6 +196,10 @@ Example:
 “running,” → token = “running”
 
 ---
+# ⭐ **V**
+
+Violations Panel
+A scrollable diagnostic UI element that displays curriculum violations in real time.
 
 # ⭐ **W**
 
