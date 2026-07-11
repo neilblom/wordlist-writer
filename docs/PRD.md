@@ -361,6 +361,28 @@ Stores:
 
 ---
 
+UI Container Requirements (Critical for Stability)
+Required HTML elements:
+
+#master-list-container — Column D content
+
+#violations-panel — Curriculum diagnostics
+
+#top-panel — must define 4 columns in CSS grid
+
+Each column must be wrapped in .column
+
+Required CSS grid:
+  #top-panel {
+  display: grid;
+  grid-template-columns: 180px 180px 180px 1fr;
+  }
+Required placement:
+  = #violations-panel must be outside #top-panel
+  = Column D must be the fourth child of the grid
+  This prevents future “Column D disappeared” bugs.
+
+
 ## 6. Architecture Overview
 
 ### Frontend  
