@@ -100,6 +100,51 @@ The previous curriculum popup warning system has been removed.
 The panel replaces all popup‑based curriculum feedback.
 
 3. Master List System
+Master List Rendering Requirements
+Each master list item must contain:
+
+rank
+
+word
+
+language
+
+optional cognate
+
+optional cognates object
+
+Renderer must write into:
+  #master-list-container
+
+Renderer must output 7 grid columns:
+
+rank
+
+word
+
+language
+
+cognate flag
+
+cognates object
+
+edit button
+
+delete button
+
+Violations Panel Requirements
+Renderer writes into #violations-panel
+
+Panel must exist in HTML
+
+Panel must be placed below the top panel
+
+Panel updates after every input event
+
+Panel clears when violations disappear
+
+This prevents future “Why is Column D blank?” or “Why is the panel not updating?” confusion
+
 3.1 Structure
 Each master list entry includes:
 
@@ -127,6 +172,8 @@ Save
 Load
 
 Hover tooltip
+
+
 
 4. Project List System
 4.1 Purpose
