@@ -196,6 +196,8 @@ textarea#input-area (raw text input)
 
 div#display-layer (highlighted output)
 
+
+
 5.2 Behavior
 User types into the textarea.
 
@@ -206,6 +208,7 @@ Display layer is visually overlaid but not editable.
 5.3 Update Trigger
 All updates occur inside:
   inputArea.addEventListener("input", ...)
+
 6. Cognate System
 6.1 Data Source
 COGNATE_MAP contains:
@@ -227,17 +230,21 @@ frequencyList contains normalized lemmas from NGSL/COCA‑based lists.
 Frequency list words are treated as “known” and rendered without asterisks.
 
 8. Supabase Integration (Phase 2)
-Supabase integration is planned for Phase 2 and will include:
+  Supabase integration is planned for Phase 2 and will include:
+  Cloud project storage
+  Cloud master list storage
+  User authentication
+  Multi‑device sync
+  Specifications will be added once Phase 2 begins.
 
-Cloud project storage
+Add/update the section for:
+  Save Project
+  Load Project
+  Save Wordlist (needs refinement)
+  Load Wordlist
+  new controller behavior:
+    .insert([row]).select()
 
-Cloud master list storage
-
-User authentication
-
-Multi‑device sync
-
-Specifications will be added once Phase 2 begins.
 
 9. Future Enhancements (Optional)
 These enhancements are not required for current functionality:
