@@ -403,6 +403,11 @@ Tables:
 - `master_wordlists`  
 - `cross_language_master`  
 
+Persistence Requirements”:
+  Projects must return full inserted rows
+  UUIDs generated client-side
+  .select() required for all inserts
+  Save Project pipeline confirmed working
 ---
 
 ## 7. Roadmap  
