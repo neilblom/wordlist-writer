@@ -244,7 +244,137 @@ Add/update the section for:
   Load Wordlist
   new controller behavior:
     .insert([row]).select()
+---
+- describe the corruption symptoms (duplicates, missing ranks, scrambled ordering)
+- describe the deduplication logic (keep lowest rank)
+- describe the new validation step:
+-   check for duplicates
+-   check for missing ranks
+-   check for rank continuity (1–1000)
+-   check for lemma normalization collisions
+- describe the rebuild process from official NGSL source
+- describe how ingestion handles malformed lists (fail fast, log error)
 
+This ensures future debugging is easier and prevents regressions.
+Frequency List Ingestion Specification (Updated July 2026)
+Overview
+The frequency list ingestion pipeline imports external vocabulary lists (NGSL‑1K, NGSL‑Full, NAWL, BSL, TSL, etc.) into the Supabase frequency_lists table. Each list must meet strict structural and lexical requirements to ensure consistency across all downstream features (highlighting, curriculum violations, cognate lookup, tooltip metadata, and frequency‑based sorting).
+
+Recent debugging revealed that corrupted NGSL‑1K data can silently break ingestion, even when the database is empty and the service role is correct. This section documents the updated ingestion requirements and validation steps.
+
+🔍 Ingestion Requirements
+1. Structural Requirements
+Each frequency list must contain unique lemmas after normalization.
+
+NGSL‑1K must contain exactly 1000 unique lemmas.
+
+Ranks must be continuous (1 → N) with no gaps.
+
+Each entry must contain:
+
+rank (integer)
+
+lemma (string)
+
+Lemmas must be normalized using the system’s normalization pipeline (lowercasing, Unicode normalization, punctuation stripping).
+
+🛡️ 2. Pre‑Ingestion Validation (New)
+Before inserting any rows into Supabase, the ingestion script must perform:
+
+A. Duplicate Lemma Detection
+Detect duplicates after normalization.
+
+If duplicates exist:
+
+Keep the lowest rank (highest frequency).
+
+Discard all higher‑rank duplicates.
+
+Log all duplicates for developer review.
+
+B. Rank Continuity Check
+Verify that ranks form a continuous sequence:
+
+NGSL‑1K: 1 → 1000
+
+NGSL‑Full: 1 → 2800
+
+If ranks are missing or out of order:
+
+Fail ingestion immediately.
+
+Log the issue.
+
+C. Normalization Collision Detection
+Detect cases where different lemmas normalize to the same string:
+
+e.g., "Call" and "call"
+
+e.g., "co-operate" and "cooperate"
+
+Treat collisions as duplicates.
+
+D. File Integrity Check
+Verify that the source file ends cleanly (no truncated JSON).
+
+Verify that the number of entries matches expected list size.
+
+Verify that the file contains no malformed objects.
+
+🧪 3. Ingestion Behavior
+A. Batch Insert
+Rows are inserted in batches using the Supabase service role.
+
+Unique constraint enforced:
+
+UNIQUE(language_id, lemma, source)
+
+B. Fail‑Fast Strategy
+If any validation step fails:
+
+Do not insert partial data.
+
+Log the error.
+
+Abort ingestion.
+
+C. Logging
+Log:
+
+number of duplicates removed
+
+number of normalization collisions
+
+number of missing ranks
+
+number of malformed entries
+
+final number of rows inserted
+
+🧭 4. Rationale for the Update
+During ingestion debugging (July 2026), NGSL‑1K ingestion repeatedly failed with duplicate key violations despite the database being empty. Investigation revealed:
+
+NGSL‑1K JSON contained dozens of duplicate lemmas
+
+NGSL‑1K JSON was missing ~80 ranks
+
+NGSL‑1K JSON ended at rank 918 instead of 1000
+
+NGSL‑1K JSON had scrambled ordering
+
+NGSL‑1K JSON had been corrupted prior to ingestion
+
+This update ensures the ingestion pipeline is robust against corrupted frequency lists and guarantees that downstream features (highlighting, curriculum violations, cognate lookup, tooltip metadata) operate on clean, validated data.
+
+🧱 5. Developer Notes
+Always rebuild NGSL‑1K from the official NGSL source.
+
+Never ingest lists that have not passed validation.
+
+Validation scripts should be runnable independently of ingestion.
+
+Validation should be added to CI in Phase 2 (Supabase integration).
+---
 
 9. Future Enhancements (Optional)
 These enhancements are not required for current functionality:
