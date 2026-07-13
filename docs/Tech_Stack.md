@@ -134,6 +134,8 @@ Supabase acts as the **source of truth** for:
 - Master vocabulary tracking  
 - Cross‑language relationships  
 
+Supabase v2 defaults to returning: minimal
+.select() required to retrieve inserted rows
 ---
 
 ## **4. Static Data Files**
