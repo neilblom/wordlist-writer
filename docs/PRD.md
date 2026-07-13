@@ -413,6 +413,76 @@ Persistence Requirements”:
   Save Project pipeline confirmed working
 ---
 
+📘 Frequency List Requirements (Updated July 2026)
+Purpose
+Frequency lists (NGSL‑1K, NGSL‑Full, NAWL, BSL, TSL, etc.) are foundational data sources for the system’s vocabulary highlighting, curriculum violation detection, cognate lookup, tooltip metadata, and frequency‑based sorting. To ensure consistent behavior across all features, frequency lists must meet strict structural and lexical requirements before ingestion.
+
+🔍 Product Requirements
+1. Official Source Integrity
+NGSL‑1K must be sourced directly from the official NGSL distribution.
+
+The system must not rely on user‑provided or third‑party NGSL variants unless validated.
+
+Corrupted or incomplete lists must be rejected automatically.
+
+2. Unique Lemma Requirement
+Each frequency list must contain unique lemmas after normalization.
+
+Duplicate lemmas (e.g., “call” appearing twice with different ranks) must be treated as invalid input.
+
+The ingestion pipeline must enforce uniqueness on (language_id, lemma, source).
+
+3. Rank Continuity Requirement
+NGSL‑1K must contain exactly 1000 lemmas, ranked 1 → 1000 with no gaps.
+
+NGSL‑Full must contain exactly 2800 lemmas, ranked 1 → 2800.
+
+Any list missing ranks or containing discontinuities must be rejected.
+
+4. Normalization Consistency
+Lemmas must be normalized using the system’s standard normalization pipeline (lowercasing, Unicode normalization, punctuation stripping).
+
+If normalization causes collisions (e.g., “Call” and “call”), the list must be rejected or corrected.
+
+5. Pre‑Ingestion Validation (New Requirement)
+The system must validate frequency lists before ingestion. Validation must detect:
+
+duplicate lemmas
+
+missing ranks
+
+rank discontinuities
+
+malformed entries
+
+normalization collisions
+
+truncated or incomplete files
+
+If validation fails, ingestion must not proceed.
+
+6. Fail‑Fast Ingestion
+The ingestion process must abort immediately upon detecting invalid data.
+
+No partial ingestion is allowed.
+
+Errors must be logged clearly for developer review.
+
+🧭 Rationale for Update
+During ingestion debugging (July 2026), NGSL‑1K ingestion repeatedly failed despite an empty database and correct service role behavior. Investigation revealed that the NGSL‑1K file was corrupted, containing:
+
+dozens of duplicate lemmas
+
+missing ~80 ranks
+
+scrambled ordering
+
+truncated file ending
+
+rank discontinuities (e.g., jumping from 838 → 918 → end)
+
+This update ensures the product explicitly requires validated, official, structurally correct frequency lists, preventing ingestion failures and guaranteeing consistent downstream behavior.
+
 ## 7. Roadmap  
 ### Phase 5 — Deployment (Render)
 
