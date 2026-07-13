@@ -70,7 +70,7 @@ Impact: User must explicitly confirm saves.
 - Allows cross‑device syncing  
 - Enables long‑term vocabulary tracking  
 
-Decision: Master List Editing Occurs Inside the App UI (Option A)
+Decision: Master List Editing Occurs Inside the App UI
 Date: 2026‑06‑29
 Status: Approved
 Priority: High (Phase 3–4)
@@ -173,6 +173,10 @@ Outcome:
 Highlighting, tooltips, and project list now share the same tier metadata.
 
 Architecture is ready for multi‑word cognates and tier filtering UI.
+
+---
+“We use .select() after all Supabase inserts to ensure the frontend receives the inserted row.”
+  This prevents future regressions.
 
 ---
 
