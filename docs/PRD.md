@@ -330,10 +330,13 @@ The app uses the **public‑domain NGSL** from GitHub:
 `https://github.com/neilblom/wordlist-writer/tree/main/ngsl`
 
 Stored as:
-
-```
 frequency/english_ngsl.json
 ```
+NGSL‑1K must contain exactly 1000 unique lemmas
+ingestion must reject corrupted or incomplete lists
+ingestion must enforce uniqueness on (language_id, lemma, source)
+ingestion must include a duplicate‑detection step before Supabase insert
+corrupted lists must be rebuilt from official sources
 
 ### 5.2 Lemma Maps  
 Maps inflected forms → lemma.
