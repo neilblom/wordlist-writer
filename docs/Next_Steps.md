@@ -153,7 +153,6 @@ Begin Phase 2 (Supabase integration)
 
 Update documentation after each new feature
 
-# ⭐ Summary  
 These steps move the project from documentation → implementation.  
 Once Phase 1 is complete, the app will already be usable in English and ready for cognates, multilingual support, and Supabase integration.
 
@@ -176,3 +175,33 @@ Tier filtering UI
 Frequency tier integration
 
 Multi‑word cognate support (paused intentionally)
+
+## 2026-07-14 — Backend Save Pipeline Issues
+
+### Error Messages
+- `null value in column "id" violates not-null constraint`
+- `Missing projectId`
+
+### Root Causes
+- `currentProjectId` is null when saving.
+- Backend expects non-null ID.
+- Wordlist save runs before project save.
+- Backend does not return ID in a usable way.
+- Frontend does not propagate ID to wordlist save.
+
+### Required Fixes
+1. Ensure `new-project-btn` sets `currentProjectId = crypto.randomUUID()`.
+2. Ensure `load-project-btn` sets `currentProjectId = projectId`.
+3. Update `/api/projects/save` to accept or generate an ID and return it.
+4. Update `saveEverything()` to:
+   - Save project first
+   - Capture returned ID
+   - Pass ID to wordlist save
+5. Ensure `/api/projects/wordlist/save` receives `{ projectId, wordlist }`.
+
+### Tomorrow’s Plan
+- Start by verifying how `currentProjectId` is set.
+- Inspect `/api/projects/save`.
+- Inspect `/api/projects/wordlist/save`.
+- Fix ID propagation in `saveEverything()`.
+- Test full save → reload → load project → verify restoration.
