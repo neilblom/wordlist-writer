@@ -9,6 +9,35 @@ Phase 1 — Core Rebuild (English Only)
 - Implement teacher‑facing UI
 - Output: A stable English‑only authoring tool
 
+## 2026-07-15 — Restart Plan
+
+### Goal
+Fix backend save pipeline so projects and wordlists save and load correctly.
+
+### Starting Prompt for Copilot
+“Restarting Phase 2. We need to fix the backend save pipeline: projectId null, project save order, and wordlist save. Begin by checking how currentProjectId is set and how the save endpoints expect it.”
+
+### Checklist
+1. Confirm `currentProjectId` is set on new project + load project.
+2. Inspect `/api/projects/save`:
+   - Does it require an ID?
+   - Does it generate an ID?
+   - Does it return an ID?
+3. Inspect `/api/projects/wordlist/save`:
+   - Does it require `projectId`?
+   - Does it validate it?
+4. Inspect `saveEverything()`:
+   - Does it call project save first?
+   - Does it capture returned ID?
+   - Does it pass ID to wordlist save?
+5. Test full save pipeline:
+   - Create project
+   - Save project
+   - Reload page
+   - Load project
+   - Verify content + master list + wordlist restore correctly.
+
+
 Phase 2 — Multi‑Language Foundations (Spanish, Latin, Greek)
 - Add Spanish lemma + frequency + cognate support
 - Add Latin lemma + cognate support
