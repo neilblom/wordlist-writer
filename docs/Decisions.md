@@ -551,6 +551,33 @@ Other future options:
 
 ---
 
-# ⭐ Summary  
-This file captures all major decisions made during the rebuild.  
-It should be updated whenever new architectural or design choices are finalized.
+## 2026-07-14 — Frontend Debugging Summary
+
+### Root Causes
+- Missing closing brace in `renderViolationsPanel()`.
+- Broken template string in `renderFrequencyStats()` (missing backtick, missing `</div>`, undefined `sources`).
+- Duplicate nested `renderFrequencyStats()` inside `renderViolationsPanel()`.
+- Parser stopped reading the file early → highlight pipeline, violations panel, project list all failed.
+
+### Fixes Applied
+- Added missing brace after `if (curriculumViolations.length === 0)`.
+- Repaired `.map()` template string.
+- Removed nested duplicate `renderFrequencyStats()`.
+- Verified renderer functions are global.
+
+### Current Status
+- Highlighting works.
+- Cognate tier colors work.
+- Project list works.
+- Violations panel works.
+- Frequency stats panel works.
+- No syntax errors.
+- No frontend console errors.
+
+### Remaining Work (Backend)
+- `currentProjectId` is null during save.
+- `/api/projects/save` rejects null ID.
+- `/api/projects/wordlist/save` receives no projectId.
+- Unified save pipeline needs ordering + ID propagation.
+
+
