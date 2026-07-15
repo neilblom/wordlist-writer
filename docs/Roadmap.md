@@ -45,6 +45,18 @@ Phase 2 — Multi‑Language Foundations (Spanish, Latin, Greek)
 - Normalize cross‑language pipelines
 - Output: Multi‑language text analysis for teacher use
 
+Phase 2 — Master List Stability Completed
+   Completed
+      Save pipeline fixed (correct URL + correct mapping).
+      Load pipeline fixed (correct mapping back to UI).
+      Supabase table now stores correct rows.
+      UI now renders loaded Master List.
+   Upcoming Milestones
+      Implement Global Master List.
+      Improve comparison logic.
+      Add cognate tagging to Master List.
+      Begin multilingual expansion.
+
 Phase 3 — Curriculum Modeling
 - Build unified master vocabulary list prototype
 - Add curriculum‑order warnings
