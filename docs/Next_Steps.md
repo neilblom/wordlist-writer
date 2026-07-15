@@ -429,3 +429,10 @@ Multi‑word cognate support (paused intentionally)
 - Inspect `/api/projects/wordlist/save`.
 - Fix ID propagation in `saveEverything()`.
 - Test full save → reload → load project → verify restoration.
+
+2026‑07‑15 — Remaining Work After Pipeline Fix
+    Verify project switching (load by projectId).
+    Add multilingual support for lemma mapping.
+    Add validation to prevent empty or malformed Master List rows.
+    Add UI indicators for successful save/load operations.
+    Add error handling for missing projectId.
