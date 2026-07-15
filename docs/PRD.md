@@ -492,5 +492,14 @@ Sorting violations
 Collapsible sections
 Severity color coding
 Toggle button
-Jump‑to‑word links
-Tier‑aware out‑of‑order detection
+
+---
+Requirement: Master List Persistence
+  The system must:
+    Save Master List items to Supabase using canonical lemma.
+    Load Master List items and render them in the UI.
+    Maintain project isolation via project_id.
+    Support future multilingual expansion.
+    Prevent crashes caused by null or malformed lemmas.
+    Jump‑to‑word links
+    Tier‑aware out‑of‑order detection
