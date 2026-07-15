@@ -104,7 +104,9 @@ This priority order is strict.
 # ⭐ **L**
 
 ### **Lemma**  
-The base dictionary form of a word.
+Canonical dictionary form of a word.
+Stored in Supabase as lemma.
+Mapped from frontend word or english.
 
 Examples:  
 - running → run  
@@ -132,8 +134,9 @@ Each language has its own lemma map.
 
 ### **Master List**  
 A per‑language list stored in Supabase that tracks every lemma the user has ever used across all projects.
-
 Used to build long‑term vocabulary profiles.
+Frontend array of word objects used for UI rendering.
+Must be converted to/from Supabase rows.
 
 ---
 
@@ -162,6 +165,10 @@ A saved writing session that includes:
 Stored in Supabase.
 
 ---
+
+project_id
+UUID linking Master List rows to a specific project.
+Required for all save/load operations.
 
 ### **Project Word List**  
 A custom list of words the user wants to allow for a specific project.  
