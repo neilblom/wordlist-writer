@@ -173,6 +173,17 @@ Load
 
 Hover tooltip
 
+## Master List Data Model (Frontend vs Backend)
+
+### Frontend Shape
+```js
+{
+  word: string,
+  english: string,
+  rank: number,
+  language: "english",
+  length: number
+}
 
 
 4. Project List System
@@ -375,6 +386,29 @@ Validation scripts should be runnable independently of ingestion.
 
 Validation should be added to CI in Phase 2 (Supabase integration).
 ---
+
+Supabase shape:
+{
+  lemma: string,
+  rank: number,
+  language: string,
+  is_cognate: boolean,
+  project_id: string
+}
+
+Save-> Supabase
+  lemma: row.word || row.english
+
+Load → Frontend
+  word: row.lemma
+  english: row.lemma
+  length: row.lemma.length
+
+Behavior Requirements
+  Save must delete old rows for the project before inserting new ones.
+  Load must convert Supabase rows back into frontend shape.
+  UI rendering depends on word, not lemma.
+
 
 9. Future Enhancements (Optional)
 These enhancements are not required for current functionality:
