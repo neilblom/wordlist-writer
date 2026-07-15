@@ -213,6 +213,35 @@ Optional but recommended for managing Node versions.
 
 ---
 
+Backend → Supabase Integration
+Supabase Integration — Master List
+Save Route
+POST /api/master/save/:projectId
+
+Deletes existing rows for the project.
+
+Inserts new rows using mapping:
+
+word → lemma
+
+rank → rank
+
+language → language
+
+projectId → project_id
+
+Load Route
+GET /api/master/load/:projectId
+
+Returns all rows where project_id = :id.
+
+Frontend must convert lemma → word before rendering.
+
+Notes
+Supabase rejects rows where lemma is undefined.
+
+Frontend must always send valid word or english.
+
 ## **7. Summary**
 
 The WordList Writer tech stack is intentionally simple, modern, and maintainable:
