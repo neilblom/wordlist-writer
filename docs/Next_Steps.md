@@ -8,24 +8,248 @@ This document outlines the immediate next steps required to begin development on
 # ⭐ **1. Set Up the Project Structure**
 
 ### Create the base folder layout:
-```
-/src
-    server.js
-    /routes
-    /controllers
-    /utils
-
-/public
-    index.html
-    styles.css
-    app.js
-
-/frequency
-/lemmas
-/cognates
-
-/docs
-```
+C:.
+├───docs
+├───node_modules
+│   ├───.bin
+│   ├───@supabase
+│   │   ├───auth-js
+│   │   │   ├───dist
+│   │   │   │   ├───main
+│   │   │   │   │   └───lib
+│   │   │   │   │       └───web3
+│   │   │   │   └───module
+│   │   │   │       └───lib
+│   │   │   │           └───web3
+│   │   │   ├───migrations
+│   │   │   └───src
+│   │   │       └───lib
+│   │   │           └───web3
+│   │   ├───functions-js
+│   │   │   ├───dist
+│   │   │   │   ├───main
+│   │   │   │   └───module
+│   │   │   ├───migrations
+│   │   │   └───src
+│   │   ├───phoenix
+│   │   │   ├───assets
+│   │   │   │   └───js
+│   │   │   │       └───phoenix
+│   │   │   └───priv
+│   │   │       └───static
+│   │   │           └───types
+│   │   ├───postgrest-js
+│   │   │   ├───dist
+│   │   │   ├───migrations
+│   │   │   └───src
+│   │   │       ├───select-query-parser
+│   │   │       └───types
+│   │   │           └───common
+│   │   ├───realtime-js
+│   │   │   ├───dist
+│   │   │   │   ├───main
+│   │   │   │   │   ├───lib
+│   │   │   │   │   └───phoenix
+│   │   │   │   └───module
+│   │   │   │       ├───lib
+│   │   │   │       └───phoenix
+│   │   │   ├───migrations
+│   │   │   └───src
+│   │   │       ├───lib
+│   │   │       └───phoenix
+│   │   ├───storage-js
+│   │   │   ├───dist
+│   │   │   │   └───umd
+│   │   │   ├───migrations
+│   │   │   └───src
+│   │   │       ├───lib
+│   │   │       │   └───common
+│   │   │       └───packages
+│   │   └───supabase-js
+│   │       ├───dist
+│   │       │   └───umd
+│   │       ├───migrations
+│   │       └───src
+│   │           └───lib
+│   │               └───rest
+│   │                   └───types
+│   │                       └───common
+│   ├───accepts
+│   ├───body-parser
+│   │   ├───lib
+│   │   │   └───types
+│   │   └───node_modules
+│   │       └───content-type
+│   │           └───dist
+│   ├───bytes
+│   ├───call-bind-apply-helpers
+│   │   ├───.github
+│   │   └───test
+│   ├───call-bound
+│   │   ├───.github
+│   │   └───test
+│   ├───content-disposition
+│   ├───content-type
+│   ├───cookie
+│   ├───cookie-signature
+│   ├───data-uri-to-buffer
+│   │   ├───dist
+│   │   └───src
+│   ├───debug
+│   │   └───src
+│   ├───depd
+│   │   └───lib
+│   │       └───browser
+│   ├───dotenv
+│   │   ├───lib
+│   │   └───skills
+│   │       ├───dotenv
+│   │       └───dotenvx
+│   ├───dunder-proto
+│   │   ├───.github
+│   │   └───test
+│   ├───ee-first
+│   ├───encodeurl
+│   ├───es-define-property
+│   │   ├───.github
+│   │   └───test
+│   ├───es-errors
+│   │   ├───.github
+│   │   └───test
+│   ├───es-object-atoms
+│   │   ├───.github
+│   │   └───test
+│   ├───escape-html
+│   ├───etag
+│   ├───express
+│   │   └───lib
+│   ├───fetch-blob
+│   ├───finalhandler
+│   ├───formdata-polyfill
+│   ├───forwarded
+│   ├───fresh
+│   ├───function-bind
+│   │   ├───.github
+│   │   └───test
+│   ├───get-intrinsic
+│   │   ├───.github
+│   │   └───test
+│   ├───get-proto
+│   │   ├───.github
+│   │   └───test
+│   ├───gopd
+│   │   ├───.github
+│   │   └───test
+│   ├───has-symbols
+│   │   ├───.github
+│   │   └───test
+│   │       └───shams
+│   ├───hasown
+│   │   └───.github
+│   ├───http-errors
+│   ├───iceberg-js
+│   │   └───dist
+│   ├───iconv-lite
+│   │   ├───encodings
+│   │   │   └───tables
+│   │   ├───lib
+│   │   │   └───helpers
+│   │   └───types
+│   ├───inherits
+│   ├───ipaddr.js
+│   │   └───lib
+│   ├───is-promise
+│   ├───math-intrinsics
+│   │   ├───.github
+│   │   ├───constants
+│   │   └───test
+│   ├───media-typer
+│   ├───merge-descriptors
+│   ├───mime-db
+│   ├───mime-types
+│   ├───ms
+│   ├───negotiator
+│   │   └───lib
+│   ├───node-domexception
+│   │   └───.history
+│   ├───node-fetch
+│   │   ├───@types
+│   │   └───src
+│   │       ├───errors
+│   │       └───utils
+│   ├───object-inspect
+│   │   ├───.github
+│   │   ├───example
+│   │   └───test
+│   │       └───browser
+│   ├───on-finished
+│   ├───once
+│   ├───parseurl
+│   ├───path-to-regexp
+│   │   └───dist
+│   ├───proxy-addr
+│   ├───qs
+│   │   ├───.github
+│   │   ├───dist
+│   │   ├───lib
+│   │   └───test
+│   ├───range-parser
+│   ├───raw-body
+│   ├───router
+│   │   └───lib
+│   ├───safer-buffer
+│   ├───send
+│   ├───serve-static
+│   ├───setprototypeof
+│   │   └───test
+│   ├───side-channel
+│   │   ├───.github
+│   │   └───test
+│   ├───side-channel-list
+│   │   ├───.github
+│   │   └───test
+│   ├───side-channel-map
+│   │   ├───.github
+│   │   └───test
+│   ├───side-channel-weakmap
+│   │   ├───.github
+│   │   └───test
+│   ├───statuses
+│   ├───toidentifier
+│   ├───tslib
+│   │   └───modules
+│   ├───type-is
+│   │   └───node_modules
+│   │       └───content-type
+│   │           └───dist
+│   ├───unpipe
+│   ├───uuid
+│   │   ├───dist
+│   │   └───dist-node
+│   │       └───bin
+│   ├───vary
+│   ├───web-streams-polyfill
+│   │   ├───dist
+│   │   │   └───types
+│   │   │       └───ts3.6
+│   │   ├───es2018
+│   │   ├───es6
+│   │   └───ponyfill
+│   │       ├───es2018
+│   │       └───es6
+│   └───wrappy
+├───public
+│   ├───cognates
+│   ├───frequency
+│   ├───lemmas
+│   └───master
+│       └───backups
+├───scripts
+└───src
+    ├───controllers
+    ├───lib
+    ├───routes
+    └───utils
 
 ### Why this matters  
 This structure keeps backend, frontend, and static data cleanly separated, making the project easy to navigate and maintain.
