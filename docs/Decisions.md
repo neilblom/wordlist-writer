@@ -580,4 +580,16 @@ Other future options:
 - `/api/projects/wordlist/save` receives no projectId.
 - Unified save pipeline needs ordering + ID propagation.
 
+## 2026‑07‑15 — Master List Save/Load Pipeline Fix
+
+**Decision:** Align frontend object shape with Supabase schema.
+
+- Frontend Master List items use `{ word, english, rank, language, length }`.
+- Supabase rows use `{ lemma, rank, language, is_cognate, project_id }`.
+- Save route must map `word → lemma` because frontend does not send `lemma`.
+- Load route must map `lemma → word` so UI can render correctly.
+- Added safety guard to `normalizeLemma()` to prevent `.trim()` on null.
+- Confirmed correct API routes: `/api/master/save/:id` and `/api/master/load/:id`.
+
+
 
