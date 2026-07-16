@@ -27,6 +27,8 @@ This document lists all linguistic data sources used in WordList Writer, includi
 - English-only for now; multilingual expansion planned
 
 
+
+
 ## **1.2 English Lemma Map**  
 **Source:**  
 Custom‑generated or adapted from open‑source morphological datasets.
@@ -195,6 +197,15 @@ cognates/english_greek.json
 - Backup directory: public/master/backups/
 - Backup files created on every save
 - Backup files contain full master list snapshot
+
+Master List (Internal Data Source)
+Stored in Supabase table master_wordlists.
+
+Fields: lemma, rank, language, is_cognate, project_id.
+
+Populated from frontend Master List objects.
+
+Used for comparison logic and global list generation.
 
 # ⭐ **8. Summary**
 
