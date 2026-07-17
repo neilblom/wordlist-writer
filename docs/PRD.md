@@ -21,17 +21,17 @@ WordList Writer analyzes text in real time and highlights vocabulary based on cu
 * Master list alignment
 
 3. Core User Workflow
-1. Teacher selects a language (English, Spanish, Latin, Greek).
-2. Teacher writes text in the writing window.
-3. The app highlights each word according to curriculum rules.
-4. The top panel displays four reference lists:
+Step 1: Teacher selects a language (English, Spanish, Latin, Greek).
+Step 2: Teacher writes text in the writing window.
+Step 3: The app highlights each word according to curriculum rules.
+Step 4: The top panel displays four reference lists:
 * Column A: Frequency List
 * Column B: Cognates
 * Column C: Project Word List
 * Column D: Master List
-5. The violations panel shows curriculum mismatches.
-6. Teacher saves the project and its wordlist to Supabase.
-7. Teacher loads previous projects to continue writing.
+Step 5: The violations panel shows curriculum mismatches.
+Step 6: Teacher saves the project and its wordlist to Supabase.
+Step 7: Teacher loads previous projects to continue writing.
 
 4. Non-Goals
 WordList Writer does not:
@@ -48,9 +48,9 @@ WordList Writer does not:
 5. Functional Requirements
 
 5.1 Highlighting Rules (Strict Priority)
-1. Green - Cognate
-2. Black - Known (frequency list or project list)
-3. Red - Unknown (not in master list)
+Step 1: Green - Cognate
+Step 2: Black - Known (frequency list or project list)
+Step 3: Red - Unknown (not in master list)
 
 5.2 Tokenization Requirements
 * English and Spanish use whitespace + punctuation
@@ -247,11 +247,13 @@ Phase 6 - Optional Enhancements
 13. Summary
 This PRD defines the complete product vision, scope, architecture, and constraints for WordList Writer. It is the single source of truth for all future development.
 
-Documentation Formatting Standard:
-All documentation updates must use plain GitHub-Flavored Markdown (GFM) with:
-* Asterisk bullets
-* ASCII-only characters
-* No Unicode hyphens or arrows
-* No blank lines inside lists
-* No code fences unless required
-This ensures consistent rendering across GitHub.
+Documentation Formatting Reminder
+All documentation updates must follow this formatting standard:
+* Use plain text section titles (for example: 2. Product Overview)
+* Use asterisks (*) for bullet points
+* Do not insert blank lines inside bullet lists
+* Use ASCII-only characters (no Unicode hyphens, arrows, or punctuation)
+* Avoid Markdown headings (#) unless verified safe
+* Avoid fenced code blocks unless absolutely necessary
+* Keep numbered workflows in Step format (Step 1, Step 2, Step 3) to prevent GitHub auto-renumbering
+This ensures consistent rendering across GitHub and prevents formatting breakage.
