@@ -436,3 +436,27 @@ Multi‑word cognate support (paused intentionally)
     Add validation to prevent empty or malformed Master List rows.
     Add UI indicators for successful save/load operations.
     Add error handling for missing projectId.
+
+# Next Steps
+
+## Immediate Tasks
+- Fix highlight substring bug
+- Validate tokenizer output
+- Add NAWL / BSL / TSL support
+- Add cognate editing UI
+
+## Short-Term Tasks
+- Add project list editing
+- Add Supabase save/load
+- Add export features
+- Add mobile layout
+
+## Medium-Term Tasks
+- Add teacher tools
+- Add vocabulary export
+- Add quiz generator
+
+## Long-Term Tasks
+- Add multi-language support
+- Add AI-assisted text simplification
+- Add classroom analytics
