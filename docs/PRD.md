@@ -1,505 +1,356 @@
-# 📄 **PRD.md — WordList Writer (Node.js + Express + Supabase)**
-
-PRD Introduction
-WordList Writer is a teacher‑facing authoring tool for creating controlled texts for beginner learners across multiple languages. It provides instructors with real‑time vocabulary analysis, curriculum alignment feedback, cognate scaffolding, and frequency‑based highlighting. Students never interact with the app directly; instead, teachers use WordList Writer to craft texts that are pedagogically sequenced, linguistically appropriate, and aligned with a chosen curriculum or master vocabulary list.
-
-The tool supports two major instructional goals. First, it helps determine whether a unified beginner‑level master vocabulary list can be built across English, Spanish, Koine Greek, and Latin. Second, if a unified list is not feasible, WordList Writer enables teachers to create multiple master vocabulary lists tailored to different learner profiles—such as age group, subject matter, or target language—while maintaining consistent analysis and feedback across all lists.
-
-WordList Writer is designed to be flexible, extensible, and grounded in linguistic accuracy. Its normalization pipeline ensures consistent lemma handling across languages, while its cognate and frequency systems provide teachers with actionable insights during text creation. The final output delivered to students is a clean, controlled text without any analytical overlays.
-
-PRD Requirements
-  Functional Requirements
-    1. Text Analysis
-    - The system must tokenize input text and normalize lemmas across supported languages.
-    - The system must highlight words according to curriculum status (known, unknown, out‑of‑order).
-    - The system must detect cognates using a tier‑based cognate map.
-    - The system must detect frequency tier (NGSL, NAWL, or other lists).
-    - The system must display tooltips with lemma, cognate tier, frequency rank, and curriculum status.
-    2. Master Vocabulary Lists
-    - The system must load a master vocabulary list from local or cloud storage.
-    - The system must support multiple master lists (age‑based, subject‑based, language‑based).
-    - The system must allow switching between master lists without reloading the app.
-    - The system must validate text against the active master list.
-    - The system must detect curriculum‑order violations.
-    3. Cognate System
-    - The system must load cognate lists for English‑Spanish, English‑Latin, and English‑Greek.
-    - The system must support tiered cognate classification (general, latin, greek, biblical).
-    - The system must allow expansion of cognate lists over time.
-    - The system must apply cognate detection consistently across highlight loop, tooltip, and project list.
-    4. Frequency System
-    - The system must load frequency lists (NGSL, NAWL, or custom lists).
-    - The system must detect frequency tier for each lemma.
-    - The system must display frequency information in tooltips and project list.
-    5. Project List
-    - The system must track all lemmas appearing in the current text.
-    - The system must normalize lemmas before adding them to the project list.
-    - The system must display cognate tier and frequency tier for each lemma.
-    - The system must update dynamically as the teacher edits the text.
-    6. Teacher Workflow
-    - The system must provide a clean, teacher‑facing UI.
-    - The system must allow exporting a clean version of the text (no highlights).
-    - The system must provide curriculum diagnostics (unknown words, out‑of‑order words).
-    - The system must provide a text difficulty summary (planned for later phases).
-    - The system must support multi‑language authoring.
-
-  Non‑Functional Requirements
-    1. Performance
-    - Text analysis must occur in real time as the teacher types.
-    - Highlighting must update without noticeable delay.
-    2. Reliability
-    - The system must handle large texts without crashing.
-    - The system must maintain consistent normalization across all pipelines.
-    3. Extensibility
-    - The system must allow adding new languages.
-    - The system must allow adding new cognate tiers.
-    - The system must allow adding new frequency lists.
-    4. Usability
-    - The interface must remain simple and teacher‑focused.
-    - The system must avoid student‑facing complexity.
-
-## 1. Purpose, Scope, vision and non-goals
-
-WordList Writer is a teacher‑facing authoring tool designed to help instructors create controlled texts for beginner learners. Students never interact with the app directly. Instead, teachers use WordList Writer to craft texts that follow a curriculum, respect frequency constraints, and leverage cognate scaffolding across multiple languages.
-
-The tool currently serves two core instructional functions:
-- Building a unified beginner‑level master vocabulary list  
-WordList Writer helps determine whether a single, cross‑linguistic beginner curriculum can be constructed across English, Spanish, Koine Greek, and Latin. The system highlights vocabulary usage, checks frequency alignment, identifies cognates, and surfaces curriculum‑order violations to support the creation of a coherent, multi‑language foundational lexicon.
-
-- Supporting multiple master vocabulary lists when needed  
-If a unified list is not feasible for every situation or student context, WordList Writer allows teachers to create and maintain multiple master vocabulary lists tailored to different learner profiles — such as age group, subject matter, or target language. Each list benefits from the same analysis pipeline: frequency checking, cognate detection, lemma normalization, curriculum‑order validation, and project‑level vocabulary tracking.
-
-WordList Writer’s scope is intentionally focused on teacher workflow, not student interaction. All highlighting, cognate metadata, frequency analysis, and curriculum diagnostics exist to support the teacher’s authoring process. The final output delivered to students is a clean, pedagogically controlled text without any of the analytical overlays.
-
-This PRD defines the functional requirements, constraints, and roadmap for WordList Writer as a professional tool for curriculum‑aligned text development. Future expansions may include enhanced curriculum diagnostics, multi‑list comparison tools, and deeper cross‑language vocabulary modeling, but the core mission remains: to help teachers write texts that are linguistically appropriate, pedagogically sequenced, and cross‑linguistically informed.
-
-Vision Statement
-WordList Writer aims to become a professional authoring environment for teachers who create controlled texts for beginner learners across multiple languages. The tool provides curriculum‑aligned vocabulary control, frequency awareness, cognate scaffolding, and cross‑language lemma normalization. Its long‑term vision is to support teachers in building coherent beginner‑level curricula—either unified across languages or tailored to specific learner profiles—while maintaining a clean, teacher‑focused workflow that produces pedagogically appropriate texts for students.
-
-Non‑Goals
-To maintain a clear scope, WordList Writer explicitly excludes the following:
-- Student accounts, logins, or profiles
-- Student progress tracking or analytics
-- Flashcards, quizzes, or spaced‑repetition systems
-- Gamification or reward systems
-- Student‑facing UI or interactive learning tools
-- Classroom management features
-- LMS integration (Canvas, Moodle, Google Classroom, etc.)
-- Automated grading or assessment
-- AI‑generated student exercises or homework
+📄 Product Requirements Document (PRD) — WordList Writer
+Version: 2026‑07‑17
+Status: Authoritative Source of Truth
+Owner: Neil Blom
+Scope: Teacher‑Only Vocabulary Authoring Tool
 
-WordList Writer is not a student learning platform.
-It is a teacher‑facing authoring tool for curriculum‑aligned text creation.
+1. Teacher‑Only Scope Anchor (Critical)
+WordList Writer is a teacher‑only text authoring tool for creating beginner‑level reading materials in English, Spanish, Latin, and Koine Greek.
 
----
+It is not a student‑facing app, not a learning platform, and not a general text editor.
 
-## 2. Core Features
+The app exists for one purpose:
 
-### 2.1 Writing Window (Bottom Panel)  
-- Large text input area  
-- Real‑time tokenization  
-- Lemmatization based on selected language  
-- Highlighting rules (strict priority):  
-  - **Green** = cognate  
-  - **Black/normal** = in project list or frequency list  
-  - **Red** = off‑list
- 
-Section: Save + Backup System
-- Controlled save button in UI
-- POST /api/save-master-list
-- Writes to public/master/master_list.json
-- Auto‑creates public/master/backups/
-- Timestamped backup naming: master_list_YYYY-MM-DDTHH-MM-SS.json
-- Save button shows status messages (“Saving…”, “Saved”, “Failed”)
+To help teachers write texts using a controlled beginner vocabulary list across multiple languages.
 
-### Requirement: Master List Simplicity
-The master list must remain English-only until the core pipeline is fully stable and Supabase integration is complete.
+All features, UI decisions, pipelines, and future enhancements must reinforce this scope.
 
-### 2.2 Top Panel (Three Columns)
+2. Product Overview
+WordList Writer analyzes text in real time and highlights vocabulary based on curriculum rules. It provides teachers with immediate feedback about:
 
-#### Column A — Frequency List  
-- Displays active frequency list  
-- Sorted by rank  
-- Click → highlight in writing window  
+Allowed vs. disallowed vocabulary
 
-#### Column B — Cognate Window  
-- Displays cognates relevant to selected language  
-- Supports: English ↔ Spanish/Latin/Greek  
-- Click → highlight in writing window  
+Cognates
 
-#### Column C — Project Word List  
-- Custom list per project  
-- User‑editable  
-- Stored in Supabase  
+Frequency list membership
 
-Master List (Column D)
-The Master List is a stable, curated vocabulary sequence used across all languages supported by the app. It defines the beginner‑level lemmas (initially ~400) and their equivalents in English, Spanish, Latin, and Greek.
+Curriculum violations
 
-Master List Fields
-master_rank (1–400)
+Project‑specific vocabulary usage
 
-english_lemma
+Master list alignment
 
-spanish_lemma
+The tool ensures that every text a teacher writes stays within a controlled vocabulary sequence.
 
-latin_root
+3. Core User Workflow
+Teacher selects a language (English, Spanish, Latin, Greek).
 
-greek_root
+Teacher writes text in the writing window.
 
-cognate_flags
+The app highlights each word according to curriculum rules.
 
-frequency_ranks (per language)
+The top panel displays four reference lists:
 
-Behavior
-The Master List is displayed in Column D.
+Column A: Frequency List
 
-Highlighting in the writing window uses Master List membership and rank.
+Column B: Cognates
 
-Red = not in Master List or used too early.
+Column C: Project Word List
 
-Black = allowed (in Master List or Project List).
+Column D: Master List
 
-Green = cognate (overrides other colors).
+The violations panel shows curriculum mismatches.
 
-Hovering shows Master List rank or “Not in Master List.”
+Teacher saves the project and its wordlist to Supabase.
 
----
-Tier‑Aware Highlighting (Current Version)
-The editor highlights English words based on cognate tier metadata.
+Teacher loads previous projects to continue writing.
 
-Highlight colors:
+4. Non‑Goals
+WordList Writer does not:
 
-Latin → gold
+Teach students
 
-Greek → blue
+Provide quizzes or exercises
 
-Biblical → purple
+Generate translations
 
-General → green
+Act as a dictionary
 
-Highlight rules:
+Act as a grammar checker
 
-If a word’s normalized lemma exists in COGNATE_MAP, highlight it using its tier color.
+Provide AI text generation
 
-If the lemma exists in the Master List, render normally.
+Support arbitrary languages
 
-If the lemma is unknown and not a function word, append a red asterisk.
+Support advanced NLP (POS tagging, dependency parsing)
 
-Normalization:
+Support student accounts or classroom management
 
-All cognate lookups use NFD normalization and accent‑stripping.
+These features must never be added unless explicitly approved in a future PRD revision.
 
-Tooltip:
+5. Functional Requirements
+5.1 Highlighting Rules (Strict Priority)
+Green — Cognate
 
-  Shows cognate target (Spanish) and tier metadata.
+Black — Known (frequency list or project list)
 
-Master List Ordering (Curriculum Mode)
-The Master List represents a global curriculum of English lemmas.
-It is not ordered alphabetically and not ordered by story usage.
-It is ordered according to a pedagogical sequence defined by the developer.
+Red — Unknown (not in master list)
 
-The Master List is loaded from JSON in the exact order defined by the curriculum.
+These rules are absolute and must never be reordered.
 
-New words (typed or clicked) are inserted after the last Master List word that appears in the story, using lemma matching.
+5.2 Tokenization Requirements
+English/Spanish: whitespace + punctuation
 
-Cognates added from the Cognate Window follow the same insertion rule.
+Greek/Latin: Unicode‑aware + accent stripping
 
-Manual reordering is allowed via the Edit UI.
+Tokens must preserve punctuation
 
-The Project List does not affect Master List order.
+Non‑word tokens pass through unchanged
 
-This ensures the curriculum grows naturally while preserving the intended learning sequence.
+5.3 Lemma Lookup Requirements
+All tokens normalize via normalizeLemma()
 
-Order Warning System
-When writing a story, the system checks whether the text follows the curriculum order.
+Lemma maps are flat inflected → lemma JSON files
 
-The app identifies the next expected Master List word that has not yet appeared.
+No POS tags, no metadata, no nested structures
 
-If the story uses a word whose Master List rank is greater than the next expected word, a warning is shown.
+5.4 Cognate System Requirements
+Unified COGNATE_MAP
 
-The warning appears in the floating tooltip and identifies:
+Tier metadata included (latin, greek, biblical, general)
 
-the out‑of‑order lemma
+Tier colors defined globally
 
-the expected lemma
+Cognates highlighted green
 
-the suggested correction (adjust curriculum or revise text)
+Cognate click inserts into Master List
 
-Editing
-The user may modify the Master List directly inside Column D:
+5.5 Frequency List Requirements
+NGSL for English
 
-add new lemmas
+Uniform JSON structure across languages
 
-insert lemmas at specific ranks
+Frequency list words are “known”
 
-reorder lemmas
+5.6 Master List Requirements
+English‑only until Supabase integration is complete
 
-add cross‑language equivalents
+Stored in Supabase (master_wordlists)
 
-update cognate flags
+Frontend shape: { word, english, rank, language, length }
 
-Changes update highlighting immediately.
----
+Backend shape: { lemma, rank, language, is_cognate, project_id }
 
-### Master List — Language Visibility Controls (Future)
+Column D displays the master list
 
-The Master List will include UI controls allowing users to toggle visibility of
-language columns. This supports multilingual vocabulary development while keeping
-the interface clean.
+Editing occurs inside the UI
 
-Requirements:
-- Preserve rank-based ordering
-- Dynamically hide/show columns without reload
-- Support arbitrary languages in JSON
+5.7 Project List Requirements
+Tracks lemmas used in the current project
 
-Non-Goals:
-- No sorting changes
-- No automatic language detection
+Stored in Supabase (project_wordlists)
 
----
+Displayed in Column C
 
-Curriculum Violations Panel (Updated)
-The Curriculum Violations Panel replaces the floating order‑warning popup, consolidating all curriculum‑alignment issues into a single, non‑intrusive teacher‑facing dashboard.
+5.8 Curriculum Violations Panel Requirements
+Replaces popup warnings
 
-The Curriculum Violations Panel provides teachers with real‑time diagnostic feedback about how a draft text aligns with the active master vocabulary list. It identifies places where the text breaks the intended curriculum sequence and highlights vocabulary that may require adjustment, replacement, or addition to the curriculum.
+Displays unknown words, curriculum gaps, out‑of‑order vocabulary
 
-The panel detects three types of violations:
+Updates on every input event
 
-Out‑of‑order vocabulary  
-Words that appear before their position in the master list sequence. This helps ensure that texts follow the pedagogical order defined by the teacher.
+Must never interrupt writing flow
 
-Unknown words  
-Words that do not appear in the master list at all. These may need to be added to the curriculum, replaced with simpler synonyms, or postponed to later units.
+6. UI Requirements
+6.1 Top Panel Layout
+Code
++-----------------------------------------------------------+
+| Column A | Column B | Column C | Column D                 |
+| Frequency| Cognates | Project  | Master List              |
++-----------------------------------------------------------+
+6.2 Writing Window
+Code
++-----------------------------------------------------------+
+|                 Highlighted Writing Window                |
+|                 (textarea + display layer)                |
++-----------------------------------------------------------+
+6.3 Violations Panel
+Code
++-----------------------------------------------------------+
+| Curriculum Violations (scrollable)                       |
++-----------------------------------------------------------+
+7. Architecture Overview
+7.1 System Diagram
+Code
++------------------+       fetch()        +------------------+
+|   Frontend       |  ----------------->  |    Backend       |
+|  public/app.js   |                     |  src/server.js   |
++------------------+                     +------------------+
+        ↑                                           ↓
+        |                                           |
+        |         Supabase JavaScript Client        |
+        |                                           |
+        +------------------- Supabase --------------+
+                        (projects, wordlists,
+                         master lists, cognates)
+7.2 Frontend Responsibilities
+Tokenization
 
-Curriculum gaps  
-Words that appear in the text but have not yet been assigned to any curriculum tier or unit. This helps teachers refine and expand their curriculum as needed.
+Lemma lookup
 
-The panel does not detect cognate tier violations, frequency tier violations, or missing prerequisite vocabulary. Cognate tiers are used for organizational purposes and scaffolding, not for curriculum sequencing. Frequency tiers are used for teacher awareness but do not generate warnings. Prerequisite vocabulary logic may be added in a future phase if needed.
+Highlighting
 
-The Curriculum Violations Panel is a teacher‑facing tool designed to support controlled text creation and curriculum development. It does not appear in the final text delivered to students.
+Rendering lists
 
----
+Rendering violations
 
-Curriculum Violations Panel
-A non‑intrusive, scrollable diagnostic panel appears below the Top Panel and updates live as the user types.
-It reports three violation types:
-- Out‑of‑order vocabulary
-- Unknown words
-- Curriculum gaps
+Building save payloads
 
-The panel:
-- updates automatically during text entry
-- never interrupts writing
-- never covers the editor
-- replaces the old popup warning system
+Normalizing lemmas
 
-## 3. Multilingual Capability
+7.3 Backend Responsibilities
+Serve static files
 
-### Supported Languages  
-- English  
-- Spanish  
-- Koine Greek  
-- Latin  
+Serve JSON lists
 
-### Language Modules (Static JSON)  
-- `frequency/<language>.json`  
-- `lemmas/<language>.json`  
-- `cognates/<language>.json`  
+Provide REST API endpoints
 
-### Tokenizer Rules  
-- English/Spanish: whitespace + punctuation  
-- Greek/Latin: Unicode‑aware, accent‑aware  
+Map frontend → Supabase shapes
 
----
+Validate save/load requests
 
-## 4. Highlighting Logic (Priority Order)
+7.4 Supabase Responsibilities
+Persistent storage
 
-1. **Cognate (Green)**  
-2. **Project Word List (Black)**  
-3. **Frequency List (Black)**  
-4. **Off‑List (Red)**  
+Unique constraints
 
----
+Row‑level security
 
-## 5. Word Lists
+Returning inserted rows via .select()
 
-### 5.1 Frequency Lists (Static JSON)
+8. Data Flow Overview
+8.1 Save Pipeline Diagram
+Code
+Frontend saveEverything()
+        ↓
+POST /api/projects/save
+        ↓ returns projectId
+POST /api/projects/wordlist/save (with projectId)
+        ↓
+Supabase stores rows
+8.2 Load Pipeline Diagram
+Code
+Frontend loadProject(projectId)
+        ↓
+GET /api/projects/load/:id
+GET /api/projects/wordlist/load/:id
+        ↓
+Frontend reconstructs UI
+9. Phase Overview
+Phase 1 — English‑Only Rebuild
+Tokenizer
 
-#### ⭐ English Frequency List Source (NGSL)  
-The app uses the **public‑domain NGSL** from GitHub:
+Lemma map
 
-`https://github.com/neilblom/wordlist-writer/tree/main/ngsl`
+Frequency list
 
-Stored as:
-frequency/english_ngsl.json
-```
-NGSL‑1K must contain exactly 1000 unique lemmas
-ingestion must reject corrupted or incomplete lists
-ingestion must enforce uniqueness on (language_id, lemma, source)
-ingestion must include a duplicate‑detection step before Supabase insert
-corrupted lists must be rebuilt from official sources
+Highlighting
 
-### 5.2 Lemma Maps  
-Maps inflected forms → lemma.
+Project list
 
-### 5.3 Cognate Lists  
-English ↔ Spanish/Latin/Greek.
+Violations panel
 
-### 5.4 Project Word Lists (Supabase)  
-Stored per project.
+Master list (local only)
 
-### 5.5 Master Lists (Supabase)
+Phase 2 — Supabase Integration
+Projects table
 
-#### A. Master List per Language  
-Tracks all words used across all projects.
+Project wordlists table
 
-#### B. Cross‑Language Master List  
-Stores:
+Master wordlists table
 
-- English lemma  
-- Spanish equivalent  
-- Latin root  
-- Greek root  
-- Cognate flags  
-- Frequency ranks  
+Save/load pipeline
 
----
+ID propagation
 
-UI Container Requirements (Critical for Stability)
-Required HTML elements:
+.select() after inserts
 
-#master-list-container — Column D content
+Phase 3 — Curriculum Modeling
+Out‑of‑order detection
 
-#violations-panel — Curriculum diagnostics
+Curriculum warnings
 
-#top-panel — must define 4 columns in CSS grid
+Master list editing
 
-Each column must be wrapped in .column
+Cognate insertion rules
 
-Required CSS grid:
-  #top-panel {
-  display: grid;
-  grid-template-columns: 180px 180px 180px 1fr;
-  }
-Required placement:
-  = #violations-panel must be outside #top-panel
-  = Column D must be the fourth child of the grid
-  This prevents future “Column D disappeared” bugs.
+Phase 4 — Multiple Curriculum Support
+Multiple master lists
 
+Comparison tools
 
-## 6. Architecture Overview
+Cross‑language master list
 
-### Frontend  
-- HTML/CSS/JS  
-- Three top windows + bottom writing window  
-- Supabase client for project storage  
+Phase 5 — Teacher Workflow Enhancements
+Difficulty metrics
 
-### Backend — Node.js + Express  
-- Serves static frontend  
-- Serves static JSON lists  
-- API endpoints for project/master list operations  
+Coverage metrics
 
-### Database — Supabase  
-Tables:
+Export options
 
-- `projects`  
-- `project_wordlists`  
-- `master_wordlists`  
-- `cross_language_master`  
+Phase 6 — Optional Enhancements
+Collaboration
 
-Persistence Requirements”:
-  Projects must return full inserted rows
-  UUIDs generated client-side
-  .select() required for all inserts
-  Save Project pipeline confirmed working
----
+Versioning
 
-📘 Frequency List Requirements (Updated July 2026)
-Purpose
-Frequency lists (NGSL‑1K, NGSL‑Full, NAWL, BSL, TSL, etc.) are foundational data sources for the system’s vocabulary highlighting, curriculum violation detection, cognate lookup, tooltip metadata, and frequency‑based sorting. To ensure consistent behavior across all features, frequency lists must meet strict structural and lexical requirements before ingestion.
+Mobile layout
 
-🔍 Product Requirements
-1. Official Source Integrity
-NGSL‑1K must be sourced directly from the official NGSL distribution.
+PWA
 
-The system must not rely on user‑provided or third‑party NGSL variants unless validated.
+10. Constraints
+No frameworks (React/Vue/etc.)
 
-Corrupted or incomplete lists must be rejected automatically.
+No student‑facing features
 
-2. Unique Lemma Requirement
-Each frequency list must contain unique lemmas after normalization.
+No autosave (controlled save only)
 
-Duplicate lemmas (e.g., “call” appearing twice with different ranks) must be treated as invalid input.
+API routes must be registered before static middleware
 
-The ingestion pipeline must enforce uniqueness on (language_id, lemma, source).
+Master list remains English‑only until Supabase is stable
 
-3. Rank Continuity Requirement
-NGSL‑1K must contain exactly 1000 lemmas, ranked 1 → 1000 with no gaps.
+All normalization must use NFD + diacritic stripping
 
-NGSL‑Full must contain exactly 2800 lemmas, ranked 1 → 2800.
+11. Where to Put Updates
+New vocabulary rules → PRD
 
-Any list missing ranks or containing discontinuities must be rejected.
+New architecture decisions → Architecture Overview
 
-4. Normalization Consistency
-Lemmas must be normalized using the system’s standard normalization pipeline (lowercasing, Unicode normalization, punctuation stripping).
+New phase sequencing → Roadmap
 
-If normalization causes collisions (e.g., “Call” and “call”), the list must be rejected or corrected.
+New linguistic data sources → Data Sources
 
-5. Pre‑Ingestion Validation (New Requirement)
-The system must validate frequency lists before ingestion. Validation must detect:
+New technical decisions → Decisions Log
 
-duplicate lemmas
+New feature behavior → Feature Specifications
 
-missing ranks
+New terminology → Glossary
 
-rank discontinuities
+New immediate tasks → Next Steps
 
-malformed entries
+12. How Copilot Should Interpret This PRD
+Copilot must:
 
-normalization collisions
+Treat this PRD as authoritative
 
-truncated or incomplete files
+Follow teacher‑only scope
 
-If validation fails, ingestion must not proceed.
+Follow highlighting priority rules
 
-6. Fail‑Fast Ingestion
-The ingestion process must abort immediately upon detecting invalid data.
+Follow phase ordering
 
-No partial ingestion is allowed.
+Follow architecture boundaries
 
-Errors must be logged clearly for developer review.
+Avoid redesigning features
 
-🧭 Rationale for Update
-During ingestion debugging (July 2026), NGSL‑1K ingestion repeatedly failed despite an empty database and correct service role behavior. Investigation revealed that the NGSL‑1K file was corrupted, containing:
+Avoid adding student‑facing functionality
 
-dozens of duplicate lemmas
+Avoid changing vocabulary rules
 
-missing ~80 ranks
+Avoid changing UI layout
 
-scrambled ordering
+This PRD anchors all future marathon coding sessions.
 
-truncated file ending
+13. Summary
+This PRD defines the complete product vision, scope, architecture, and constraints for WordList Writer. It is the single source of truth for all future development.
 
-rank discontinuities (e.g., jumping from 838 → 918 → end)
-
-This update ensures the product explicitly requires validated, official, structurally correct frequency lists, preventing ingestion failures and guaranteeing consistent downstream behavior.
-
-## 7. Roadmap  
-### Phase 5 — Deployment (Render)
-
-Future enhancements of the violations panel
-Violation grouping (by type or severity)
-Sorting violations
-Collapsible sections
-Severity color coding
-Toggle button
-
----
-Requirement: Master List Persistence
-  The system must:
-    Save Master List items to Supabase using canonical lemma.
-    Load Master List items and render them in the UI.
-    Maintain project isolation via project_id.
-    Support future multilingual expansion.
-    Prevent crashes caused by null or malformed lemmas.
-    Jump‑to‑word links
-    Tier‑aware out‑of‑order detection
+🎉 Done
