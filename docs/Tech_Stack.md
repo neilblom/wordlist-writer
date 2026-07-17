@@ -1,111 +1,199 @@
-Data Sources — WordList Writer
+Tech Stack — WordList Writer
 Version: 2026-07-17
 Status: Authoritative Source of Truth
 
-1. English Data Sources
-NGSL — New General Service List
-* Public domain
-* Clean, modern, beginner-appropriate
-* Primary English frequency list
-* Stored as: frequency/english_ngsl.json
+1. Frontend Stack
+HTML5
+* Three-column top panel
+* Bottom writing window
+* Language selector
+* Word list displays
 
-English Master List Source
-* Based on NGSL/NAWL/BNC/COCA principles
-* Stored as: data/master_list.json
-* English-only until multilingual expansion
+CSS3
+* Clean, minimal UI
+* Three-column responsive layout
+* Highlight colors (green, black, red)
+* Future dark-mode support
 
-English Lemma Map
-* Custom-generated or adapted from open-source datasets
-* Maps inflected → lemma
-* Stored as: lemmas/english.json
+Vanilla JavaScript (ES6+)
+* Real-time tokenization
+* Lemma lookup
+* Highlighting logic
+* Load static JSON lists
+* Update project word lists
+* Communicate with Supabase
+* No frameworks (React/Vue/etc.)
 
-2. Spanish Data Sources
-Spanish Frequency List
-* Recommended sources:
-  * SUBTLEX-ESP
-  * Wiktionary frequency dumps
-  * OpenSubtitles Spanish lists
-* Stored as: frequency/spanish.json
+Tier-Aware Cognate Architecture
+Global structures:
+* TIER_COLORS (tier → color)
+* TIER_MAP (lemma → tier)
+* COGNATE_MAP (unified lookup)
 
-Spanish Lemma Map
-* Recommended sources:
-  * Freeling morphological analyzer
-  * Wiktionary lemma mappings
-  * Open-source Spanish NLP datasets
-* Stored as: lemmas/spanish.json
+Population:
+* Build COGNATE_MAP at startup from cognate JSON files
+* COGNATE_MAP[key] = { es, tier: TIER_MAP[key] || "general" }
 
-3. Koine Greek Data Sources
-Greek Frequency List
-* Recommended sources:
-  * Open Greek and Latin Project
-  * MorphGNT (SBLGNT counts)
-  * Perseus frequency data
-* Stored as: frequency/greek.json
+Consumers:
+* renderHighlights
+* renderProjectList
+* showMasterTooltip
 
-Greek Lemma Map
-* Sources:
-  * MorphGNT lemma mappings
-  * Perseus morphological data
-* Stored as: lemmas/greek.json
+Normalization:
+* lemma.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 
-4. Latin Data Sources
-Latin Frequency List
-* Recommended sources:
-  * Dickinson College Core Vocabulary (DCC)
-  * Perseus Latin frequency data
-  * Wiktionary Latin frequency lists
-* Stored as: frequency/latin.json
+2. Backend Stack
+Node.js (LTS)
+* Same language frontend + backend
+* Easy JSON handling
+* Fast development cycle
+* Ideal for lightweight APIs
+* Works well on Render
 
-Latin Lemma Map
-* Sources:
-  * Perseus morphological data
-  * Whitaker’s Words (public domain)
-* Stored as: lemmas/latin.json
+Express.js
+* Serve static frontend
+* Serve static JSON lists (frequency, lemmas, cognates)
+* REST API endpoints:
+  * Load/save projects
+  * Update master lists
+  * Fetch language modules
 
-5. Cognate Lists
-English ↔ Spanish
-* Based on shared Latin roots
-* High-frequency cognates
-* Public domain etymology sources
-* Stored as: cognates/english_spanish.json
+Backend File Structure
+src/
+server.js
+routes/
+controllers/
+utils/
+public/
+frequency/
+lemmas/
+cognates/
 
-English ↔ Latin
-* Based on Latin root dictionaries
-* Public domain etymology data
-* Stored as: cognates/english_latin.json
+Express Server Structure
+* server.js in project root
+* Static middleware: app.use(express.static(path.join(__dirname, "public")))
+* API routes must be registered before static middleware
+* JSON body parsing: app.use(express.json())
+* File writes via Node fs
+* Relative paths based on __dirname
 
-English ↔ Greek
-* Based on Greek root dictionaries
-* Public domain etymology data
-* Stored as: cognates/english_greek.json
+3. Database Stack
+Supabase (PostgreSQL)
+Tables:
+* projects
+* project_wordlists
+* master_wordlists
+* cross_language_master
 
-6. Tokenization Rules
-English/Spanish
-* Whitespace + punctuation splitting
-* Lowercasing
-* Basic normalization
+Reasons for Supabase:
+* Generous free tier
+* Built-in REST API
+* Easy JS client
+* Real-time updates
+* Secure row-level policies
+* No server maintenance
 
-Greek/Latin
-* Unicode normalization
-* Accent stripping
-* Combining diacritic handling
+Supabase is source of truth for:
+* Project text
+* Project word lists
+* Master vocabulary tracking
+* Cross-language relationships
 
-7. Master List Storage
-Primary file:
-* public/master/master_list.json
+Supabase v2:
+* Returns minimal by default
+* .select() required to retrieve inserted rows
 
-Backup directory:
-* public/master/backups/
-* Timestamped backups created on every save
+4. Static Data Files
+Stored in repo and served by Express.
 
-Supabase Master List (Internal)
-* Stored in master_wordlists table
-* Fields: lemma, rank, language, is_cognate, project_id
-* Populated from frontend Master List objects
-* Used for comparison logic and global list generation
+Frequency Lists
+frequency/english_ngsl.json
+frequency/spanish.json
+frequency/greek.json
+frequency/latin.json
+
+Lemma Maps
+lemmas/english.json
+lemmas/spanish.json
+lemmas/greek.json
+lemmas/latin.json
+
+Cognate Lists
+cognates/english_spanish.json
+cognates/english_latin.json
+cognates/english_greek.json
+
+Static JSON rationale:
+* Instant load
+* No DB queries
+* Rarely change
+* Backend stays simple
+
+5. Hosting and Deployment
+Render (Backend Hosting)
+* Free tier
+* GitHub integration
+* Automatic redeploys
+* Environment variable support
+* Works well with Supabase
+
+Supabase (Database Hosting)
+* Persistent storage
+* Secure policies
+* Easy JS client
+
+GitHub (Source Control)
+* Source code
+* Static JSON lists
+* Documentation (/docs)
+* Project history
+
+6. Development Tools
+VS Code
+* Recommended editor
+
+Git + GitHub
+* Version control
+* Collaboration
+
+Node Version Manager (nvm)
+* Optional
+* Manage Node versions
+
+7. Backend → Supabase Integration
+Master List Save Route
+POST /api/master/save/:projectId
+* Deletes existing rows for project
+* Inserts new rows using:
+  * word → lemma
+  * rank → rank
+  * language → language
+  * projectId → project_id
+
+Master List Load Route
+GET /api/master/load/:projectId
+* Returns rows where project_id = :id
+* Frontend converts lemma → word before rendering
+
+Notes
+* Supabase rejects rows where lemma is undefined
+* Frontend must always send valid word or english
 
 8. Summary
-WordList Writer uses transparent, reproducible, public-domain or open-source linguistic data. All frequency lists, lemma maps, cognate lists, and master lists are clearly organized and easy to update. As new lists are added or refined, this document must be updated to reflect current sources.
+WordList Writer tech stack:
+* Frontend: HTML, CSS, Vanilla JS
+* Backend: Node.js + Express
+* Database: Supabase (PostgreSQL)
+* Static Data: JSON files
+* Hosting: Render + Supabase
+* Source Control: GitHub
+
+Benefits:
+* Fast development
+* Easy debugging
+* Low hosting cost
+* Long-term stability
+* No framework lock-in
 
 Documentation Formatting Reminder
 All documentation updates must follow this formatting standard:
