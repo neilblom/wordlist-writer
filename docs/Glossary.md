@@ -1,224 +1,151 @@
-# 📄 **Glossary.md — WordList Writer**
+Glossary — WordList Writer
+Version: 2026-07-17
+Status: Authoritative Source of Truth
 
-## Overview  
-This glossary defines all key terms used throughout the WordList Writer project. It ensures clarity and consistency across documentation, development, and future updates.
+A
+Accent Stripping
+* Removing diacritical marks from characters (Greek, Latin) for normalized lookup.
 
----
+API Route Shadowing
+* When static middleware intercepts API requests, causing 404 or HTML fallback.
 
-# ⭐ **A**
-
-### **Accent Stripping**  
-The process of removing diacritical marks from characters (e.g., Greek or Latin) to normalize text for comparison and lemma lookup.
-
-API Route Shadowing  
-When static middleware intercepts requests before API routes, causing 404 and HTML fallback.
-
----
-
-# ⭐ **C**
-
-### **Cognate**  
-A word in another language that shares a common historical root with an English word.  
-Examples:  
-- English *information* ↔ Spanish *información*  
-- English *manual* ↔ Latin *manus*  
-- English *biology* ↔ Greek *βίος* (bios)
-
-Cognates receive **green highlighting** (highest priority).
+C
+Cognate
+* A word in another language sharing a historical root with an English word.
+* Highlighted green (highest priority).
+* Examples:
+  * information ↔ informacion
+  * manual ↔ manus
+  * biology ↔ bios
 
 COGNATE_MAP
-Unified lookup map containing { es, tier } for each English lemma.
-Built at startup from cognate JSON files + tier table.
+* Unified lookup map containing { es, tier } for each English lemma.
+* Built at startup from cognate JSON files and tier metadata.
 
 Collector
-The logic inside renderHighlights() that pushes violation objects into curriculumViolations.
+* Logic inside renderHighlights() that pushes violation objects into curriculumViolations.
 
 Curriculum Violation
-A detected mismatch between the text and the curriculum rules.
-Types include:
-- Out‑of‑order vocabulary
-- Unknown word
-- Curriculum gap
+* A mismatch between text and curriculum rules.
+* Types:
+  * Out-of-order vocabulary
+  * Unknown word
+  * Curriculum gap
 
----
+Cognate Window
+* Column B in the top panel.
+* Displays cognates for the selected language.
+* Clicking highlights matching tokens.
 
-### **Cognate Window**  
-The middle column in the top panel that displays cognates relevant to the selected language. Clicking a cognate highlights it in the writing window.
+Cross-Language Master List
+* Supabase table storing English, Spanish, Latin, Greek equivalents.
+* Includes lemmas, cognate flags, frequency ranks, shared roots.
 
----
+F
+Frequency List
+* Ranked list of common words (e.g., NGSL).
+* Determines allowed (black) vs off-list (red) vocabulary.
+* Stored as static JSON.
 
-### **Cross‑Language Master List**  
-A Supabase table that stores relationships between English, Spanish, Latin, and Greek words, including:
+Frequency Rank
+* Numeric indicator of word frequency.
+* Lower rank = more common.
 
-- Lemmas  
-- Cognate flags  
-- Frequency ranks  
-- Shared roots  
+H
+Hard Refresh
+* Ctrl+Shift+R to bypass browser cache.
 
-Used to track vocabulary across all languages.
+Highlighting Logic
+* Strict priority:
+  * Green = cognate
+  * Black = known (frequency or project list)
+  * Red = unknown
 
----
+L
+Lemma
+* Canonical dictionary form of a word.
+* Stored in Supabase as lemma.
+* Examples:
+  * running → run
+  * went → go
+  * mejores → mejor
 
-# ⭐ **F**
+Lemma Map
+* JSON mapping inflected forms → lemma.
+* One map per language.
 
-### **Frequency List**  
-A ranked list of the most common words in a language.  
-Example: NGSL for English.
+M
+Master List
+* Curriculum sequence stored in Supabase.
+* Tracks lemmas across all projects.
+* Frontend uses array of word objects for UI rendering.
 
-Used to determine whether a word is:
+Master List Item (English-only)
+* word
+* language ("english")
+* rank
+* cognate (optional)
+* cognates object (optional)
 
-- Allowed (black)  
-- Off‑list (red)  
-
-Stored as static JSON files.
-
----
-
-### **Frequency Rank**  
-A number indicating how common a word is in a language.  
-Lower rank = more common.
-
-Example:  
-- *the* → rank 1  
-- *information* → rank ~800  
-- *astronomy* → rank ~4000  
-
----
-
-# ⭐ **H**
-
-Hard Refresh  
-Browser reload that bypasses cache (Ctrl+Shift+R), required when JS changes aren’t loading.
-
-### **Highlighting Logic**  
-The rules that determine how each word in the writing window is colored:
-
-1. **Green** — Cognate  
-2. **Black** — In project list or frequency list  
-3. **Red** — Off‑list  
-
-This priority order is strict.
-
----
-
-# ⭐ **L**
-
-### **Lemma**  
-Canonical dictionary form of a word.
-Stored in Supabase as lemma.
-Mapped from frontend word or english.
-
-Examples:  
-- running → run  
-- went → go  
-- children → child  
-- mejores → mejor  
-
-Lemmas are used to check frequency lists and cognate lists.
-
----
-
-### **Lemma Map**  
-A JSON file mapping inflected forms to their lemmas.
-
-Example entry:
-```
-"running": "run"
-```
-
-Each language has its own lemma map.
-
----
-
-# ⭐ **M**
-
-### **Master List**  
-A per‑language list stored in Supabase that tracks every lemma the user has ever used across all projects.
-Used to build long‑term vocabulary profiles.
-Frontend array of word objects used for UI rendering.
-Must be converted to/from Supabase rows.
-
----
-
-### Master List Item (English-only)
-- `word`: the lemma
-- `language`: always "english"
-- `rank`: numeric position
-- `cognate`: optional boolean
-- `cognates`: optional object mapping language → lemma
-
-# ⭐ **N**
-
+N
 Normalization
-Process of converting text to NFD form and removing diacritics for consistent lookup.
+* Convert text to NFD form and remove diacritics for consistent lookup.
 
-# ⭐ **P**
-
-### **Project**  
-A saved writing session that includes:
-
-- Project text  
-- Project word list  
-- Language  
-- Timestamp  
-
-Stored in Supabase.
-
----
+P
+Project
+* Saved writing session containing text, word list, language, timestamp.
+* Stored in Supabase.
 
 project_id
-UUID linking Master List rows to a specific project.
-Required for all save/load operations.
+* UUID linking Master List rows to a specific project.
 
-### **Project Word List**  
-A custom list of words the user wants to allow for a specific project.  
-Displayed in Column C of the top panel.
+Project Word List
+* Custom list of words allowed for a specific project.
+* Displayed in Column C.
+* Words highlighted black.
 
-Words in this list are highlighted **black**.
-
----
-# ⭐ **R**
-
+R
 Renderer
-The function renderViolationsPanel() that converts violations into a table.
+* Function (e.g., renderViolationsPanel) that converts data into UI output.
 
-# ⭐ **T**
-
+T
 Tier
-A linguistic category assigned to a cognate: Latin, Greek, Biblical, or General.
-Used for color‑coded highlighting and metadata display.
+* Linguistic category for cognates:
+  * Latin
+  * Greek
+  * Biblical
+  * General
+* Used for color-coded highlighting.
 
-### **Tokenizer**  
-The component that splits text into individual tokens (words).  
-Rules vary by language:
+Tokenizer
+* Splits text into tokens.
+* Rules:
+  * English/Spanish: whitespace + punctuation
+  * Greek/Latin: Unicode-aware, accent-aware
 
-- English/Spanish: whitespace + punctuation  
-- Greek/Latin: Unicode‑aware, accent‑aware  
+Token
+* Single unit of text produced by tokenizer.
+* Example: "running," → "running"
 
----
-
-### **Token**  
-A single unit of text produced by the tokenizer.  
-Example:  
-“running,” → token = “running”
-
----
-# ⭐ **V**
-
+V
 Violations Panel
-A scrollable diagnostic UI element that displays curriculum violations in real time.
+* Scrollable diagnostic UI showing curriculum violations in real time.
 
-# ⭐ **W**
+W
+Writing Window
+* Large bottom panel where text is typed.
+* Words highlighted based on cognates, project list, frequency list.
 
-### **Writing Window**  
-The large bottom panel where the user types text.  
-Words are highlighted in real time based on:
+Summary
+This glossary defines core terminology used throughout WordList Writer. Update it whenever new concepts, lists, or features are introduced.
 
-- Cognates  
-- Project list  
-- Frequency list  
-
----
-
-# ⭐ Summary  
-This glossary defines the core terminology used throughout the WordList Writer project. It should be updated whenever new concepts, lists, or features are introduced.
+Documentation Formatting Reminder
+All documentation updates must follow this formatting standard:
+* Use plain text section titles
+* Use asterisks (*) for bullet points
+* Do not insert blank lines inside bullet lists
+* Use ASCII-only characters
+* Avoid Markdown headings (#)
+* Avoid fenced code blocks unless necessary
+* Use Step format for workflows to prevent GitHub auto-renumbering
+This ensures consistent rendering across GitHub and prevents formatting breakage.
