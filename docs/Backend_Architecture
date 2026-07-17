@@ -1,0 +1,150 @@
+Backend Architecture
+Version: 2026-07-17
+Status: Authoritative Backend Guide
+
+Overview
+This document explains the backend architecture of WordList Writer. It describes how Express is structured, how API routes connect to controllers, how Supabase is integrated, and how the save and load pipelines operate. It is designed for future development sessions and debugging backend issues.
+
+1. High-Level Structure
+The backend is a lightweight Express server. It provides:
+* static file hosting
+* API routes for saving and loading data
+* Supabase integration for persistence
+* middleware for JSON parsing and routing
+
+The backend does not perform text analysis. All analysis occurs in the frontend.
+
+2. Server Entry Point
+The backend entry point is:
+src/server.js
+
+Responsibilities:
+* initialize Express
+* register middleware
+* register API routes
+* serve static files
+* start HTTP server
+
+3. Middleware Order
+Middleware order is critical:
+* JSON body parser
+* API routes
+* static file hosting
+
+Static hosting must come last. If placed earlier, it will shadow API routes.
+
+4. API Route Structure
+API routes live in:
+src/routes
+
+Each route file:
+* defines endpoints
+* imports controllers
+* exports router
+
+Example route types:
+* /api/project/save
+* /api/project/load
+* /api/master/save
+* /api/master/load
+
+5. Controllers
+Controllers live in:
+src/controllers
+
+Responsibilities:
+* validate request data
+* call Supabase client
+* transform results
+* return JSON responses
+
+Controllers must not contain business logic. They only coordinate operations.
+
+6. Supabase Client
+Supabase client lives in:
+src/lib/supabase.js
+
+Responsibilities:
+* create Supabase client instance
+* expose client for controllers
+
+Environment variables required:
+* SUPABASE_URL
+* SUPABASE_SERVICE_ROLE_KEY
+
+7. Database Tables
+Supabase stores:
+* projects
+* project_wordlists
+* master_wordlists
+* cross_language_master
+
+Full schema is documented in:
+docs/Supabase_Schema.md
+
+8. SaveEverything Workflow
+SaveEverything is the core backend workflow.
+
+Steps:
+* save project metadata
+* capture returned project id
+* save project wordlist
+* save master list
+* return success response
+
+This order must never change.
+
+9. Load Workflow
+Load workflow restores project state.
+
+Steps:
+* load project metadata
+* load project wordlist
+* load master list
+* return combined JSON
+
+Frontend is responsible for rebuilding UI state.
+
+10. Error Handling
+Backend error handling rules:
+* always return JSON errors
+* never crash server
+* log Supabase errors
+* validate request bodies
+* validate project id
+
+11. Static File Hosting
+Static files live in:
+public/
+
+Server uses:
+express.static(\"public\")
+
+Static hosting must be registered after API routes.
+
+12. Adding New API Routes
+When adding new routes:
+* create route file in src/routes
+* create controller in src/controllers
+* update API_Specification.md
+* update Docs_Index.md
+
+13. Safe Coding Practices
+* never mix analysis logic into backend
+* always validate inputs
+* always check Supabase errors
+* always return JSON
+* keep controllers small and focused
+* keep route files simple
+
+14. Summary
+This backend architecture document explains how Express is structured, how API routes and controllers work, how Supabase is integrated, and how save and load pipelines operate. It is essential for debugging backend issues and safely extending backend functionality.
+
+Documentation Formatting Reminder
+* Use plain text section titles
+* Use asterisks (*) for bullet points
+* No blank lines inside bullet lists
+* ASCII-only characters
+* Avoid Markdown headings
+* Avoid fenced code blocks unless necessary
+* Use Step format for workflows
