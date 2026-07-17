@@ -1,262 +1,207 @@
-# 📄 **Tech_Stack.md — WordList Writer (Node.js + Express + Supabase)**
+Tech Stack — WordList Writer
+Version: 2026-07-17
+Status: Authoritative Source of Truth
 
-## Overview  
-This document defines the complete technology stack for the WordList Writer rebuild. It ensures consistency, clarity, and long‑term maintainability across all development phases.
+1. Frontend Stack
+HTML5
+* Three-column top panel
+* Bottom writing window
+* Language selector
+* Word list displays
 
----
+CSS3
+* Clean, minimal UI
+* Three-column responsive layout
+* Highlight colors (green, black, red)
+* Future dark-mode support
 
-## **1. Frontend Stack**
+Vanilla JavaScript (ES6+)
+* Real-time tokenization
+* Lemma lookup
+* Highlighting logic
+* Load static JSON lists
+* Update project word lists
+* Communicate with Supabase
+* No frameworks (React/Vue/etc.)
 
-### **HTML5**  
-Used for the core structure of the UI, including:
+Tier-Aware Cognate Architecture
+Global structures:
+* TIER_COLORS (tier → color)
+* TIER_MAP (lemma → tier)
+* COGNATE_MAP (unified lookup)
 
-- Three‑column top panel  
-- Bottom writing window  
-- Language selector  
-- Word list displays  
+Population:
+* Build COGNATE_MAP at startup from cognate JSON files
+* COGNATE_MAP[key] = { es, tier: TIER_MAP[key] || "general" }
 
-### **CSS3**  
-Handles layout and styling:
-
-- Clean, minimal UI  
-- Responsive three‑column layout  
-- Highlighting colors (green, black, red)  
-- Future dark‑mode support  
-
-### **Vanilla JavaScript (ES6+)**  
-Used for all client‑side logic:
-
-- Real‑time tokenization  
-- Lemma lookup  
-- Highlighting logic  
-- Loading JSON lists  
-- Updating project word lists  
-- Communicating with Supabase  
-
-No frameworks (React/Vue/etc.) are used to keep the app lightweight and easy to deploy.
-
-Tier‑Aware Cognate Architecture
-Global Structures:
-
-TIER_COLORS — maps tier → highlight color
-
-TIER_MAP — maps English lemma → tier
-
-COGNATE_MAP — unified lookup map populated at startup
-
-Population:  
-After loading cognate JSON files, the system builds COGNATE_MAP using:
-  COGNATE_MAP[key] = { es, tier: TIER_MAP[key] || "general" };
 Consumers:
+* renderHighlights
+* renderProjectList
+* showMasterTooltip
 
-renderHighlights()
+Normalization:
+* lemma.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 
-renderProjectList()
+2. Backend Stack
+Node.js (LTS)
+* Same language frontend + backend
+* Easy JSON handling
+* Fast development cycle
+* Ideal for lightweight APIs
+* Works well on Render
 
-showMasterTooltip()
+Express.js
+* Serve static frontend
+* Serve static JSON lists (frequency, lemmas, cognates)
+* REST API endpoints:
+  * Load/save projects
+  * Update master lists
+  * Fetch language modules
 
-Normalization:  
-All lookups use:
-  lemma.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-
-
----
-
-## **2. Backend Stack**
-
-### **Node.js (LTS)**  
-Primary runtime for the backend.
-
-Reasons for choosing Node:
-
-- Same language (JavaScript) on frontend and backend  
-- Easy JSON handling  
-- Fast development cycle  
-- Excellent for lightweight APIs  
-- Works perfectly with Render hosting  
-
-### **Express.js**  
-Backend framework used to:
-
-- Serve static frontend files  
-- Serve static JSON lists (frequency, lemmas, cognates)  
-- Provide REST API endpoints for:
-  - Loading/saving projects  
-  - Updating master lists  
-  - Fetching language modules  
-
-### **File Structure (Backend)**  
-```
+Backend File Structure
 src/
-    server.js
-    routes/
-    controllers/
-    utils/
+server.js
+routes/
+controllers/
+utils/
 public/
 frequency/
 lemmas/
 cognates/
-```
-
----
 
 Express Server Structure
-- server.js lives in project root
-- Static middleware: app.use(express.static(path.join(__dirname, "public")))
-- API routes MUST be registered before static middleware
-- JSON body parsing: app.use(express.json())
-- File writes via Node fs module
-- Relative paths based on __dirname (root)
+* server.js in project root
+* Static middleware: app.use(express.static(path.join(__dirname, "public")))
+* API routes must be registered before static middleware
+* JSON body parsing: app.use(express.json())
+* File writes via Node fs
+* Relative paths based on __dirname
 
-## **3. Database Stack**
+3. Database Stack
+Supabase (PostgreSQL)
+Tables:
+* projects
+* project_wordlists
+* master_wordlists
+* cross_language_master
 
-### **Supabase (PostgreSQL)**  
-Used for all persistent storage:
+Reasons for Supabase:
+* Generous free tier
+* Built-in REST API
+* Easy JS client
+* Real-time updates
+* Secure row-level policies
+* No server maintenance
 
-#### **Tables**
-- `projects`  
-- `project_wordlists`  
-- `master_wordlists`  
-- `cross_language_master`  
+Supabase is source of truth for:
+* Project text
+* Project word lists
+* Master vocabulary tracking
+* Cross-language relationships
 
-#### **Why Supabase?**
-- Free tier is generous  
-- Built‑in REST API  
-- Easy JavaScript client  
-- Real‑time updates  
-- Secure row‑level policies  
-- No server maintenance  
+Supabase v2:
+* Returns minimal by default
+* .select() required to retrieve inserted rows
 
-Supabase acts as the **source of truth** for:
+4. Static Data Files
+Stored in repo and served by Express.
 
-- Project text  
-- Project word lists  
-- Master vocabulary tracking  
-- Cross‑language relationships  
-
-Supabase v2 defaults to returning: minimal
-.select() required to retrieve inserted rows
----
-
-## **4. Static Data Files**
-
-These are stored in the repo and served by Express:
-
-### **Frequency Lists**
-```
+Frequency Lists
 frequency/english_ngsl.json
 frequency/spanish.json
 frequency/greek.json
 frequency/latin.json
-```
 
-### **Lemma Maps**
-```
+Lemma Maps
 lemmas/english.json
 lemmas/spanish.json
 lemmas/greek.json
 lemmas/latin.json
-```
 
-### **Cognate Lists**
-```
+Cognate Lists
 cognates/english_spanish.json
 cognates/english_latin.json
 cognates/english_greek.json
-```
 
-Static JSON files are used because:
+Static JSON rationale:
+* Instant load
+* No DB queries
+* Rarely change
+* Backend stays simple
 
-- They load instantly  
-- They don’t require database queries  
-- They rarely change  
-- They keep the backend simple  
+5. Hosting and Deployment
+Render (Backend Hosting)
+* Free tier
+* GitHub integration
+* Automatic redeploys
+* Environment variable support
+* Works well with Supabase
 
----
+Supabase (Database Hosting)
+* Persistent storage
+* Secure policies
+* Easy JS client
 
-## **5. Hosting & Deployment**
+GitHub (Source Control)
+* Source code
+* Static JSON lists
+* Documentation (/docs)
+* Project history
 
-### **Render (Backend Hosting)**  
-Used to deploy the Node.js + Express server.
+6. Development Tools
+VS Code
+* Recommended editor
 
-Reasons:
+Git + GitHub
+* Version control
+* Collaboration
 
-- Free tier available  
-- Easy GitHub integration  
-- Automatic redeploys  
-- Environment variable support  
-- Works well with Supabase  
+Node Version Manager (nvm)
+* Optional
+* Manage Node versions
 
-### **Supabase (Database Hosting)**  
-Handles all persistent data.
-
-### **GitHub (Source Control)**  
-Stores:
-
-- Source code  
-- Static JSON lists  
-- Documentation (`/docs`)  
-- Project history  
-
----
-
-## **6. Development Tools**
-
-### **VS Code**  
-Recommended editor.
-
-### **Git + GitHub**  
-Version control and collaboration.
-
-### **Node Version Manager (nvm)**  
-Optional but recommended for managing Node versions.
-
----
-
-Backend → Supabase Integration
-Supabase Integration — Master List
-Save Route
+7. Backend → Supabase Integration
+Master List Save Route
 POST /api/master/save/:projectId
+* Deletes existing rows for project
+* Inserts new rows using:
+  * word → lemma
+  * rank → rank
+  * language → language
+  * projectId → project_id
 
-Deletes existing rows for the project.
-
-Inserts new rows using mapping:
-
-word → lemma
-
-rank → rank
-
-language → language
-
-projectId → project_id
-
-Load Route
+Master List Load Route
 GET /api/master/load/:projectId
-
-Returns all rows where project_id = :id.
-
-Frontend must convert lemma → word before rendering.
+* Returns rows where project_id = :id
+* Frontend converts lemma → word before rendering
 
 Notes
-Supabase rejects rows where lemma is undefined.
+* Supabase rejects rows where lemma is undefined
+* Frontend must always send valid word or english
 
-Frontend must always send valid word or english.
+8. Summary
+WordList Writer tech stack:
+* Frontend: HTML, CSS, Vanilla JS
+* Backend: Node.js + Express
+* Database: Supabase (PostgreSQL)
+* Static Data: JSON files
+* Hosting: Render + Supabase
+* Source Control: GitHub
 
-## **7. Summary**
+Benefits:
+* Fast development
+* Easy debugging
+* Low hosting cost
+* Long-term stability
+* No framework lock-in
 
-The WordList Writer tech stack is intentionally simple, modern, and maintainable:
-
-- **Frontend:** HTML, CSS, Vanilla JS  
-- **Backend:** Node.js + Express  
-- **Database:** Supabase (PostgreSQL)  
-- **Static Data:** JSON files  
-- **Hosting:** Render + Supabase  
-- **Source Control:** GitHub  
-
-This stack ensures:
-
-- Fast development  
-- Easy debugging  
-- Low hosting cost  
-- Long‑term stability  
-- No framework lock‑in
+Documentation Formatting Reminder
+All documentation updates must follow this formatting standard:
+* Use plain text section titles
+* Use asterisks (*) for bullet points
+* Do not insert blank lines inside bullet lists
+* Use ASCII-only characters
+* Avoid Markdown headings (#)
+* Avoid fenced code blocks unless necessary
+* Use Step format for workflows to prevent GitHub auto-renumbering
+This ensures consistent rendering across GitHub and prevents formatting breakage.
