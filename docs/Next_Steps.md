@@ -1,462 +1,185 @@
-# 📄 **Next_Steps.md — WordList Writer**
+Next Steps — WordList Writer
+Version: 2026-07-17
+Status: Authoritative Source of Truth
 
-## Overview  
-This document outlines the immediate next steps required to begin development on the WordList Writer rebuild. These steps follow directly from the PRD, Roadmap, and Tech Stack decisions.
+1. Set Up Project Structure
+Create base folder layout:
+* docs
+* public
+  * cognates
+  * frequency
+  * lemmas
+  * master
+    * backups
+* src
+  * controllers
+  * lib
+  * routes
+  * utils
+* scripts
 
----
+Purpose:
+* Clean separation of backend, frontend, and static data
+* Predictable navigation and maintainability
 
-# ⭐ **1. Set Up the Project Structure**
+2. Initialize Node.js + Express
+Step 1: npm init -y  
+Step 2: Install Express  
+Step 3: Create src/server.js  
+Step 4: Configure Express to:
+* Serve static files from /public
+* Serve JSON lists from /frequency, /lemmas, /cognates
+* Provide basic health-check route
 
-### Create the base folder layout:
-C:.
-├───docs
-├───node_modules
-│   ├───.bin
-│   ├───@supabase
-│   │   ├───auth-js
-│   │   │   ├───dist
-│   │   │   │   ├───main
-│   │   │   │   │   └───lib
-│   │   │   │   │       └───web3
-│   │   │   │   └───module
-│   │   │   │       └───lib
-│   │   │   │           └───web3
-│   │   │   ├───migrations
-│   │   │   └───src
-│   │   │       └───lib
-│   │   │           └───web3
-│   │   ├───functions-js
-│   │   │   ├───dist
-│   │   │   │   ├───main
-│   │   │   │   └───module
-│   │   │   ├───migrations
-│   │   │   └───src
-│   │   ├───phoenix
-│   │   │   ├───assets
-│   │   │   │   └───js
-│   │   │   │       └───phoenix
-│   │   │   └───priv
-│   │   │       └───static
-│   │   │           └───types
-│   │   ├───postgrest-js
-│   │   │   ├───dist
-│   │   │   ├───migrations
-│   │   │   └───src
-│   │   │       ├───select-query-parser
-│   │   │       └───types
-│   │   │           └───common
-│   │   ├───realtime-js
-│   │   │   ├───dist
-│   │   │   │   ├───main
-│   │   │   │   │   ├───lib
-│   │   │   │   │   └───phoenix
-│   │   │   │   └───module
-│   │   │   │       ├───lib
-│   │   │   │       └───phoenix
-│   │   │   ├───migrations
-│   │   │   └───src
-│   │   │       ├───lib
-│   │   │       └───phoenix
-│   │   ├───storage-js
-│   │   │   ├───dist
-│   │   │   │   └───umd
-│   │   │   ├───migrations
-│   │   │   └───src
-│   │   │       ├───lib
-│   │   │       │   └───common
-│   │   │       └───packages
-│   │   └───supabase-js
-│   │       ├───dist
-│   │       │   └───umd
-│   │       ├───migrations
-│   │       └───src
-│   │           └───lib
-│   │               └───rest
-│   │                   └───types
-│   │                       └───common
-│   ├───accepts
-│   ├───body-parser
-│   │   ├───lib
-│   │   │   └───types
-│   │   └───node_modules
-│   │       └───content-type
-│   │           └───dist
-│   ├───bytes
-│   ├───call-bind-apply-helpers
-│   │   ├───.github
-│   │   └───test
-│   ├───call-bound
-│   │   ├───.github
-│   │   └───test
-│   ├───content-disposition
-│   ├───content-type
-│   ├───cookie
-│   ├───cookie-signature
-│   ├───data-uri-to-buffer
-│   │   ├───dist
-│   │   └───src
-│   ├───debug
-│   │   └───src
-│   ├───depd
-│   │   └───lib
-│   │       └───browser
-│   ├───dotenv
-│   │   ├───lib
-│   │   └───skills
-│   │       ├───dotenv
-│   │       └───dotenvx
-│   ├───dunder-proto
-│   │   ├───.github
-│   │   └───test
-│   ├───ee-first
-│   ├───encodeurl
-│   ├───es-define-property
-│   │   ├───.github
-│   │   └───test
-│   ├───es-errors
-│   │   ├───.github
-│   │   └───test
-│   ├───es-object-atoms
-│   │   ├───.github
-│   │   └───test
-│   ├───escape-html
-│   ├───etag
-│   ├───express
-│   │   └───lib
-│   ├───fetch-blob
-│   ├───finalhandler
-│   ├───formdata-polyfill
-│   ├───forwarded
-│   ├───fresh
-│   ├───function-bind
-│   │   ├───.github
-│   │   └───test
-│   ├───get-intrinsic
-│   │   ├───.github
-│   │   └───test
-│   ├───get-proto
-│   │   ├───.github
-│   │   └───test
-│   ├───gopd
-│   │   ├───.github
-│   │   └───test
-│   ├───has-symbols
-│   │   ├───.github
-│   │   └───test
-│   │       └───shams
-│   ├───hasown
-│   │   └───.github
-│   ├───http-errors
-│   ├───iceberg-js
-│   │   └───dist
-│   ├───iconv-lite
-│   │   ├───encodings
-│   │   │   └───tables
-│   │   ├───lib
-│   │   │   └───helpers
-│   │   └───types
-│   ├───inherits
-│   ├───ipaddr.js
-│   │   └───lib
-│   ├───is-promise
-│   ├───math-intrinsics
-│   │   ├───.github
-│   │   ├───constants
-│   │   └───test
-│   ├───media-typer
-│   ├───merge-descriptors
-│   ├───mime-db
-│   ├───mime-types
-│   ├───ms
-│   ├───negotiator
-│   │   └───lib
-│   ├───node-domexception
-│   │   └───.history
-│   ├───node-fetch
-│   │   ├───@types
-│   │   └───src
-│   │       ├───errors
-│   │       └───utils
-│   ├───object-inspect
-│   │   ├───.github
-│   │   ├───example
-│   │   └───test
-│   │       └───browser
-│   ├───on-finished
-│   ├───once
-│   ├───parseurl
-│   ├───path-to-regexp
-│   │   └───dist
-│   ├───proxy-addr
-│   ├───qs
-│   │   ├───.github
-│   │   ├───dist
-│   │   ├───lib
-│   │   └───test
-│   ├───range-parser
-│   ├───raw-body
-│   ├───router
-│   │   └───lib
-│   ├───safer-buffer
-│   ├───send
-│   ├───serve-static
-│   ├───setprototypeof
-│   │   └───test
-│   ├───side-channel
-│   │   ├───.github
-│   │   └───test
-│   ├───side-channel-list
-│   │   ├───.github
-│   │   └───test
-│   ├───side-channel-map
-│   │   ├───.github
-│   │   └───test
-│   ├───side-channel-weakmap
-│   │   ├───.github
-│   │   └───test
-│   ├───statuses
-│   ├───toidentifier
-│   ├───tslib
-│   │   └───modules
-│   ├───type-is
-│   │   └───node_modules
-│   │       └───content-type
-│   │           └───dist
-│   ├───unpipe
-│   ├───uuid
-│   │   ├───dist
-│   │   └───dist-node
-│   │       └───bin
-│   ├───vary
-│   ├───web-streams-polyfill
-│   │   ├───dist
-│   │   │   └───types
-│   │   │       └───ts3.6
-│   │   ├───es2018
-│   │   ├───es6
-│   │   └───ponyfill
-│   │       ├───es2018
-│   │       └───es6
-│   └───wrappy
-├───public
-│   ├───cognates
-│   ├───frequency
-│   ├───lemmas
-│   └───master
-│       └───backups
-├───scripts
-└───src
-    ├───controllers
-    ├───lib
-    ├───routes
-    └───utils
+Goal:
+* Local server running index.html
 
-### Why this matters  
-This structure keeps backend, frontend, and static data cleanly separated, making the project easy to navigate and maintain.
+3. Add English Frequency List (NGSL)
+Step 1: Create frequency/english_ngsl.json  
+Step 2: Add NGSL data  
+Step 3: Load via fetch() in frontend
 
----
+Goal:
+* Frequency list appears in Column A
 
-# ⭐ **2. Initialize Node.js + Express**
+4. Add English Lemma Map
+Step 1: Create lemmas/english.json  
+Step 2: Add lemma mappings  
+Step 3: Load in frontend
 
-### Steps:
-- Run `npm init -y`
-- Install Express
-- Create `src/server.js`
-- Configure Express to:
-  - Serve static files from `/public`
-  - Serve JSON files from `/frequency`, `/lemmas`, `/cognates`
-  - Provide a basic health‑check route
+Goal:
+* Lemma resolution works in writing window
 
-### Goal  
-A running local server that displays `index.html`.
+5. Implement Tokenizer + Highlighting Logic
+Step 1: Build tokenizer in app.js  
+Step 2: Build lemma lookup  
+Step 3: Implement highlight priority:
+* Green = cognate
+* Black = frequency or project list
+* Red = unknown
 
----
+Goal:
+* English-only highlighting end-to-end
 
-# ⭐ **3. Add the English Frequency List (NGSL)**
+6. Build Three-Column UI (Phase 1)
+Column A: Frequency list  
+Column B: Cognates (placeholder)  
+Column C: Project word list  
 
-### Steps:
-- Create `frequency/english_ngsl.json`
-- Add the NGSL data
-- Load it in the frontend using `fetch()`
+Goal:
+* UI layout matches PRD
 
-### Goal  
-The frequency list appears in Column A.
+7. Prepare for Supabase Integration
+Step 1: Create Supabase project  
+Step 2: Create tables:
+* projects
+* project_wordlists
+* master_wordlists
+* cross_language_master
+Step 3: Add environment variables to Render (later)
 
----
+Goal:
+* Database ready for Phase 2
 
-# ⭐ **4. Add the English Lemma Map**
+8. Begin Phase 1 Development
+Deliverable:
+* Writing window
+* Frequency list
+* Lemma lookup
+* Highlighting
+* Basic UI
 
-### Steps:
-- Create `lemmas/english.json`
-- Add lemma mappings
-- Load it in the frontend
+Purpose:
+* Foundation for all future phases
 
-### Goal  
-Words in the writing window resolve to their lemmas.
+9. Multilingual Expansion (Deferred)
+* Add Spanish cognates
+* Add Latin cognates
+* Add Greek cognates
+* Extend tokenizer and lemmaMap
+* Revisit Master List structure after Supabase integration
 
----
+Update:
+* Supabase required before multilingual support
+* Multilingual expansion begins after Phase 2
 
-# ⭐ **5. Implement Tokenizer + Highlighting Logic**
+10. Next Steps After Violations Panel
+* Validate violation detection accuracy
+* Add optional enhancements (sorting, grouping, toggling)
+* Begin Phase 2 (Supabase integration)
+* Update documentation after each feature
 
-### Steps:
-- Build tokenizer in `app.js`
-- Build lemma lookup
-- Implement highlighting rules:
-  1. Green = cognate  
-  2. Black = frequency or project list  
-  3. Red = off‑list  
+11. Completed Work
+* Tier-aware highlighting
+* Tier-aware tooltip
+* Tier-aware project list
+* Unified cognate lookup map
+* Global tier metadata
 
-### Goal  
-English‑only highlighting works end‑to‑end.
+12. Upcoming Work
+* Tokenizer normalization upgrade
+* Tier filtering UI
+* Frequency tier integration
+* Multi-word cognate support (paused)
 
----
+13. Backend Save Pipeline Issues (Historical)
+Errors:
+* null value in column "id"
+* Missing projectId
 
-# ⭐ **6. Build the Three‑Column UI**
+Root Causes:
+* currentProjectId null during save
+* Wordlist save runs before project save
+* Backend not returning ID
+* Frontend not propagating ID
 
-### Steps:
-- Column A: Frequency list  
-- Column B: Cognates (placeholder for now)  
-- Column C: Project word list (placeholder for now)  
+Required Fixes:
+Step 1: new-project-btn sets currentProjectId = crypto.randomUUID()  
+Step 2: load-project-btn sets currentProjectId = projectId  
+Step 3: /api/projects/save must accept or generate ID and return it  
+Step 4: saveEverything():
+* Save project first
+* Capture returned ID
+* Pass ID to wordlist save
+Step 5: /api/projects/wordlist/save must receive { projectId, wordlist }
 
-### Goal  
-The UI layout matches the PRD.
+14. Remaining Work After Pipeline Fix (2026-07-15)
+* Verify project switching
+* Add multilingual lemma mapping
+* Add validation for Master List rows
+* Add UI indicators for save/load success
+* Add error handling for missing projectId
 
----
+15. Task Timeline
+Immediate Tasks
+* Fix highlight substring bug
+* Validate tokenizer output
+* Add NAWL / BSL / TSL support
+* Add cognate editing UI
 
-# ⭐ **7. Prepare for Supabase Integration**
+Short-Term Tasks
+* Add project list editing
+* Add Supabase save/load
+* Add export features
+* Add mobile layout
 
-### Steps:
-- Create Supabase project  
-- Create tables:
-  - `projects`
-  - `project_wordlists`
-  - `master_wordlists`
-  - `cross_language_master`
-- Add environment variables to Render (later)
+Medium-Term Tasks
+* Add teacher tools
+* Add vocabulary export
+* Add quiz generator
 
-### Goal  
-Database ready for Phase 4.
+Long-Term Tasks
+* Add multi-language support
+* Add AI-assisted text simplification
+* Add classroom analytics
 
----
-
-# ⭐ **8. Begin Phase 1 Development**
-
-Phase 1 = English‑only prototype.
-
-### Deliverable:
-A working version of WordList Writer with:
-
-- Writing window  
-- Frequency list  
-- Lemma lookup  
-- Highlighting  
-- Basic UI  
-
-This becomes the foundation for all future phases.
-
-# ⭐ **9. 
-
-### Multilingual Expansion (Future)
-- Add Spanish cognates
-- Add Latin cognates
-- Add Greek cognates
-- Extend tokenizer and lemmaMap to support additional languages
-- Revisit master list structure after Supabase integration
-Update: Supabase Required Before Multilingual Support
-Multilingual support (Spanish, Latin, Greek) will begin after Supabase integration is complete.
-Supabase provides the persistent storage required for cross‑language master list fields, cognate flags, frequency metadata, and project word lists.
-
----
-
-Next Steps After Panel Implementation
-Validate violation detection accuracy
-
-Add optional enhancements (see PRD Future Enhancements)
-
-Begin Phase 2 (Supabase integration)
-
-Update documentation after each new feature
-
-These steps move the project from documentation → implementation.  
-Once Phase 1 is complete, the app will already be usable in English and ready for cognates, multilingual support, and Supabase integration.
-
-Completed
-Tier‑aware highlighting
-
-Tier‑aware tooltip
-
-Tier‑aware project list
-
-Unified cognate lookup map
-
-Global tier metadata
-
-Upcoming
-Tokenizer normalization upgrade
-
-Tier filtering UI
-
-Frequency tier integration
-
-Multi‑word cognate support (paused intentionally)
-
-## 2026-07-14 — Backend Save Pipeline Issues
-
-### Error Messages
-- `null value in column "id" violates not-null constraint`
-- `Missing projectId`
-
-### Root Causes
-- `currentProjectId` is null when saving.
-- Backend expects non-null ID.
-- Wordlist save runs before project save.
-- Backend does not return ID in a usable way.
-- Frontend does not propagate ID to wordlist save.
-
-### Required Fixes
-1. Ensure `new-project-btn` sets `currentProjectId = crypto.randomUUID()`.
-2. Ensure `load-project-btn` sets `currentProjectId = projectId`.
-3. Update `/api/projects/save` to accept or generate an ID and return it.
-4. Update `saveEverything()` to:
-   - Save project first
-   - Capture returned ID
-   - Pass ID to wordlist save
-5. Ensure `/api/projects/wordlist/save` receives `{ projectId, wordlist }`.
-
-### Tomorrow’s Plan
-- Start by verifying how `currentProjectId` is set.
-- Inspect `/api/projects/save`.
-- Inspect `/api/projects/wordlist/save`.
-- Fix ID propagation in `saveEverything()`.
-- Test full save → reload → load project → verify restoration.
-
-2026‑07‑15 — Remaining Work After Pipeline Fix
-    Verify project switching (load by projectId).
-    Add multilingual support for lemma mapping.
-    Add validation to prevent empty or malformed Master List rows.
-    Add UI indicators for successful save/load operations.
-    Add error handling for missing projectId.
-
-# Next Steps
-
-## Immediate Tasks
-- Fix highlight substring bug
-- Validate tokenizer output
-- Add NAWL / BSL / TSL support
-- Add cognate editing UI
-
-## Short-Term Tasks
-- Add project list editing
-- Add Supabase save/load
-- Add export features
-- Add mobile layout
-
-## Medium-Term Tasks
-- Add teacher tools
-- Add vocabulary export
-- Add quiz generator
-
-## Long-Term Tasks
-- Add multi-language support
-- Add AI-assisted text simplification
-- Add classroom analytics
+Documentation Formatting Reminder
+All documentation updates must follow this formatting standard:
+* Use plain text section titles
+* Use asterisks (*) for bullet points
+* Do not insert blank lines inside bullet lists
+* Use ASCII-only characters
+* Avoid Markdown headings (#)
+* Avoid fenced code blocks unless necessary
+* Use Step format for workflows to prevent GitHub auto-renumbering
+This ensures consistent rendering across GitHub and prevents formatting breakage.
