@@ -1,0 +1,131 @@
+Docs Index — WordList Writer
+Version: 2026-07-17
+Status: Authoritative Source of Truth
+
+Overview
+This index lists every document in the /docs folder and explains its purpose, scope, and when future-you should reference it. It is the entry point for understanding the entire project.
+
+1. PRD.md — Product Requirements Document
+Purpose:
+* Defines the product vision
+* Lists functional and non-functional requirements
+* Describes core features, UI layout, and curriculum logic
+* Establishes long-term goals and constraints
+
+Use When:
+* Restarting the project after a long break
+* Clarifying what the app is supposed to do
+* Ensuring new features align with original goals
+
+2. Roadmap.md
+Purpose:
+* Defines development phases
+* Lists completed work and upcoming milestones
+* Shows dependency order (English-only → Supabase → Multilingual)
+
+Use When:
+* Planning next development steps
+* Checking what phase you are in
+* Ensuring work follows correct sequence
+
+3. Tech_Stack.md
+Purpose:
+* Defines frontend, backend, and database technologies
+* Documents architecture choices
+* Explains how static JSON, Express, and Supabase interact
+
+Use When:
+* Rebuilding environment after a long break
+* Onboarding a developer
+* Verifying architectural consistency
+
+4. Data_Sources.md
+Purpose:
+* Lists all linguistic data sources (frequency, lemma, cognates)
+* Defines where each file lives
+* Documents normalization and tokenization rules
+
+Use When:
+* Adding new languages
+* Updating frequency lists
+* Debugging lemma or cognate behavior
+
+5. Decisions.md
+Purpose:
+* Records all architectural and technical decisions
+* Includes reasoning behind each decision
+* Prevents repeated debates or regressions
+
+Use When:
+* Unsure why something was designed a certain way
+* Evaluating whether to change a system
+* Reconstructing historical context
+
+6. Detailed_Feature_Specifications.md
+Purpose:
+* Defines internal behavior of all major systems
+* Tokenizer, highlight pipeline, violations panel
+* Master list, project list, editor layers
+* Frequency ingestion rules
+
+Use When:
+* Implementing or debugging core features
+* Rebuilding highlight logic
+* Extending curriculum or cognate systems
+
+7. Supabase_Schema.md
+Purpose:
+* Defines all tables, fields, constraints, and relationships
+* Documents normalization rules and mapping logic
+* Establishes backend data model
+
+Use When:
+* Implementing backend routes
+* Debugging save/load pipeline
+* Rebuilding database after a long break
+
+8. API_Specification.md
+Purpose:
+* Defines all API routes, request bodies, responses
+* Documents ID propagation and saveEverything() contract
+* Establishes backend ↔ frontend communication rules
+
+Use When:
+* Implementing or debugging backend
+* Rebuilding save/load pipeline
+* Adding new API endpoints
+
+9. Next_Steps.md
+Purpose:
+* Lists immediate, short-term, medium-term, and long-term tasks
+* Defines Phase 1 implementation steps
+* Documents backend debugging tasks
+
+Use When:
+* Starting a new coding session
+* Planning next day’s work
+* Tracking progress across phases
+
+10. Glossary.md
+Purpose:
+* Defines all project terminology
+* Ensures consistent vocabulary across docs and code
+
+Use When:
+* Reviewing unfamiliar terms
+* Onboarding a developer
+* Clarifying linguistic or architectural concepts
+
+Summary
+This index provides a complete map of the WordList Writer documentation set. Each file is restart-proof and designed to reconstruct the entire project quickly and accurately. Future updates must keep this index aligned with the /docs folder.
+
+Documentation Formatting Reminder
+All documentation updates must follow this formatting standard:
+* Use plain text section titles
+* Use asterisks (*) for bullet points
+* Do not insert blank lines inside bullet lists
+* Use ASCII-only characters
+* Avoid Markdown headings (#)
+* Avoid fenced code blocks unless necessary
+* Use Step format for workflows to prevent GitHub auto-renumbering
+This ensures consistent rendering across GitHub and prevents formatting breakage.
