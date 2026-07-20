@@ -3,7 +3,7 @@ Version: 2026-07-20
 Status: Authoritative Source of Truth
 
 Overview
-This index lists every document in the /docs folder and explains its purpose, scope, and when future-you should reference it. It is the entry point for understanding the entire project. All documents are restart-proof and aligned with the updated July 19 architecture.
+This index lists every document in the /docs folder and explains its purpose, scope, and when future-you should reference it. It is the entry point for understanding the entire project. All documents are restart-proof and aligned with the updated July 19 architecture, including dictionary profiles, merged dictionary, hybrid cognate window, alphabetical dictionary, updated Supabase schema, updated tokenizer rules, updated highlight pipeline, and updated rendering rules.
 
 1. PRD.md — Product Requirements Document
 Purpose:
@@ -31,6 +31,7 @@ Purpose:
 * defines frontend, backend, and database technologies
 * documents architecture choices
 * explains how static JSON, Express, and Supabase interact
+* documents dictionary profile system and merged dictionary
 Use When:
 * rebuilding environment after a long break
 * onboarding a developer
@@ -122,6 +123,7 @@ Purpose:
 * tokenizer, highlight pipeline, violations panel
 * master list, project list, editor layers
 * frequency ingestion rules
+* merged dictionary and dictionary profile integration
 Use When:
 * implementing or debugging core features
 * rebuilding highlight logic
@@ -131,7 +133,7 @@ Use When:
 Purpose:
 * defines all tables, fields, constraints, and relationships
 * documents normalization rules and mapping logic
-* establishes backend data model
+* establishes backend data model including official/pending cognates and dictionary profiles
 Use When:
 * implementing backend routes
 * debugging save/load pipeline
@@ -142,6 +144,7 @@ Purpose:
 * defines all backend API routes, request bodies, and responses
 * documents ID propagation and saveEverything contract
 * establishes backend <-> frontend communication rules
+* includes cognate routes, profile routes, and merged dictionary rebuild logic
 Use When:
 * implementing or debugging backend
 * rebuilding save/load pipeline
@@ -152,6 +155,7 @@ Purpose:
 * defines cognate data structures (official, pending, merged)
 * documents dictionary profiles and hybrid cognate window
 * explains pending -> official merging workflow
+* explains alphabetical dictionary and profile-aware filtering
 Use When:
 * debugging cognate behavior
 * extending cognate system
@@ -161,7 +165,7 @@ Use When:
 Purpose:
 * defines step-by-step Supabase setup
 * documents environment variables, table creation, connection tests
-* explains save/load verification
+* explains save/load verification and merged dictionary rebuild
 Use When:
 * setting up backend for first time
 * rebuilding Supabase project
@@ -170,7 +174,7 @@ Use When:
 17. Next_Steps.md
 Purpose:
 * lists immediate, short-term, medium-term, and long-term tasks
-* defines Phase 1-5 implementation steps
+* defines Phase 1-6 implementation steps
 * documents backend debugging tasks
 Use When:
 * starting a new coding session
@@ -181,10 +185,20 @@ Use When:
 Purpose:
 * defines all project terminology
 * ensures consistent vocabulary across docs and code
+* includes dictionary profile, merged dictionary, hybrid window, alphabetical dictionary
 Use When:
 * reviewing unfamiliar terms
 * onboarding a developer
 * clarifying linguistic or architectural concepts
+
+19. Tokenizer_Specification.md
+Purpose:
+* defines tokenizer rules, normalization, IME safety
+* documents integration with highlight pipeline, merged dictionary, frequency system, and master list
+Use When:
+* debugging tokenization issues
+* extending tokenizer behavior
+* adding new languages
 
 Summary
 This index provides a complete map of the WordList Writer documentation set. Each file is restart-proof and designed to reconstruct the entire project quickly and accurately. Future updates must keep this index aligned with the /docs folder.
