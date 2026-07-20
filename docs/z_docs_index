@@ -20,7 +20,7 @@ Use When:
 Purpose:
 * defines development phases
 * lists completed work and upcoming milestones
-* shows dependency order (English-only → Supabase → Multilingual)
+* shows dependency order (English-only -> Supabase -> Multilingual)
 Use When:
 * planning next development steps
 * checking what phase you are in
@@ -46,7 +46,17 @@ Use When:
 * rebuilding editor logic
 * extending frontend functionality
 
-5. Rendering_Pipeline.md
+5. Backend_Architecture.md
+Purpose:
+* defines Express server structure
+* documents API routes, controllers, and Supabase integration
+* explains save/load pipelines and backend invariants
+Use When:
+* debugging backend issues
+* adding new API endpoints
+* rebuilding backend logic
+
+6. Rendering_Pipeline.md
 Purpose:
 * defines how tokens become HTML spans
 * documents highlight rendering rules
@@ -56,7 +66,7 @@ Use When:
 * rebuilding highlight logic
 * extending UI rendering behavior
 
-6. Master_List_Workflow.md
+7. Master_List_Workflow.md
 Purpose:
 * defines curriculum sequence logic
 * documents master list editing rules
@@ -66,7 +76,7 @@ Use When:
 * extending master list features
 * onboarding teachers or developers
 
-7. Developer_Workflow.md
+8. Developer_Workflow.md
 Purpose:
 * defines how to work on the codebase
 * documents pipelines, architecture rules, and coding conventions
@@ -76,7 +86,7 @@ Use When:
 * onboarding a developer
 * reconstructing internal architecture
 
-8. Teacher_Workflow.md
+9. Teacher_Workflow.md
 Purpose:
 * defines teacher-facing usage of the app
 * documents highlight colors, cognate workflow, violations panel
@@ -86,7 +96,7 @@ Use When:
 * designing teacher-facing features
 * validating pedagogical behavior
 
-9. Data_Sources.md
+10. Data_Sources.md
 Purpose:
 * lists all linguistic data sources (frequency, lemma, cognates)
 * defines where each file lives
@@ -96,7 +106,7 @@ Use When:
 * updating frequency lists
 * debugging lemma or cognate behavior
 
-10. Decisions.md
+11. Decisions.md
 Purpose:
 * records all architectural and technical decisions
 * includes reasoning behind each decision
@@ -106,7 +116,7 @@ Use When:
 * evaluating whether to change a system
 * reconstructing historical context
 
-11. Detailed_Feature_Specifications.md
+12. Detailed_Feature_Specifications.md
 Purpose:
 * defines internal behavior of all major systems
 * tokenizer, highlight pipeline, violations panel
@@ -117,7 +127,7 @@ Use When:
 * rebuilding highlight logic
 * extending curriculum or cognate systems
 
-12. Supabase_Schema.md
+13. Supabase_Schema.md
 Purpose:
 * defines all tables, fields, constraints, and relationships
 * documents normalization rules and mapping logic
@@ -127,17 +137,27 @@ Use When:
 * debugging save/load pipeline
 * rebuilding database after a long break
 
-13. API_Specification.md
+14. API_Specification.md
 Purpose:
-* defines all API routes, request bodies, responses
+* defines all backend API routes, request bodies, and responses
 * documents ID propagation and saveEverything contract
-* establishes backend ↔ frontend communication rules
+* establishes backend <-> frontend communication rules
 Use When:
 * implementing or debugging backend
 * rebuilding save/load pipeline
 * adding new API endpoints
 
-14. Setup_Supabase.md
+15. Cognate_Dictionary.md
+Purpose:
+* defines cognate data structures (official, pending, merged)
+* documents dictionary profiles and hybrid cognate window
+* explains pending -> official merging workflow
+Use When:
+* debugging cognate behavior
+* extending cognate system
+* adding new languages or profiles
+
+16. Setup_Supabase.md
 Purpose:
 * defines step-by-step Supabase setup
 * documents environment variables, table creation, connection tests
@@ -147,17 +167,17 @@ Use When:
 * rebuilding Supabase project
 * debugging connection issues
 
-15. Next_Steps.md
+17. Next_Steps.md
 Purpose:
 * lists immediate, short-term, medium-term, and long-term tasks
-* defines Phase 1–5 implementation steps
+* defines Phase 1-5 implementation steps
 * documents backend debugging tasks
 Use When:
 * starting a new coding session
 * planning next day’s work
 * tracking progress across phases
 
-16. Glossary.md
+18. Glossary.md
 Purpose:
 * defines all project terminology
 * ensures consistent vocabulary across docs and code
