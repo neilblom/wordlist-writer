@@ -107,3 +107,4 @@ Documentation Formatting Reminder
 * Avoid Markdown headings (#)
 * Avoid fenced code blocks unless necessary
 * Use Step format for workflows
+* output the entire updated Backend_Architecture.md inside a single code block
