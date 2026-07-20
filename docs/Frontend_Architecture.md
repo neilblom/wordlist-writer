@@ -3,7 +3,7 @@ Version: 2026-07-20
 Status: Authoritative Frontend Guide
 
 Overview
-This document explains the frontend architecture of WordList Writer. It merges the original UI structure with the updated single-layer editor, centralized highlight pipeline, tokenizer rules, rendering rules, startup sequence, and July 19 fixes. It is designed for future development sessions and for debugging UI-related issues.
+This document explains the frontend architecture of WordList Writer. It merges the original UI structure with the updated single-layer editor, centralized highlight pipeline, tokenizer rules, rendering rules, startup sequence, July 19 fixes, and new cognate dictionary architecture. WordList Writer is a teacher-facing authoring tool. Students never interact with the application. All UI components, including frequency lists, cognates, master lists, warnings, and project tools, are designed exclusively for teacher use.
 
 1. High-Level Structure
 The frontend is a single-page application built with plain HTML, CSS, and JavaScript. There is no framework. The app is divided into:
@@ -13,7 +13,7 @@ The frontend is a single-page application built with plain HTML, CSS, and JavaSc
 * control buttons such as save and load
 The frontend relies on:
 * static JSON data loaded from public folders
-* in-memory data structures for frequency, lemmas, cognates, and master list
+* in-memory data structures for frequency, lemmas, cognates, dictionary profiles, and master list
 * DOM manipulation for rendering and updates
 The frontend performs all text analysis. The backend stores and retrieves data only.
 
@@ -28,7 +28,7 @@ The main UI regions are:
 Each region has its own render function and update logic.
 
 3. Editor Architecture
-The writing window is now a single contenteditable element:
+The writing window is a single contenteditable element:
 * no textarea
 * no overlay layer
 * no dual-layer rendering
@@ -57,6 +57,7 @@ This ensures correct behavior for languages requiring IME.
 Frontend data flow:
 * load static JSON data at startup
 * initialize in-memory structures (frequencyList, lemmaMap, cognateMap, masterList, masterSet, projectListSet, frequencySet)
+* initialize dictionaryProfile for the active project
 * attach event listeners to writing window and UI controls
 * on text change, call requestHighlightUpdate
 * highlight pipeline runs once per change
@@ -98,6 +99,7 @@ On page load:
 * load frequency JSON from public/frequency
 * load lemma JSON from public/lemmas
 * load cognate JSON from public/cognates
+* load dictionary profile for the active project
 * initialize masterList and masterSet
 * initialize frequencySet with normalized lemmas
 * render initial UI for all columns
@@ -109,13 +111,14 @@ On page load:
   * click events on save and load buttons
 Startup workflow:
 Step 1: load language and cognates
-Step 2: load project text
-Step 3: load master list
-Step 4: load project wordlist
-Step 5: load violations
-Step 6: trigger highlight using requestHighlightUpdate
-Step 7: after 75ms, run updateProjectList and checkStoryOrderAgainstMaster
-Step 8: display "Load complete"
+Step 2: load dictionary profile
+Step 3: load project text
+Step 4: load master list
+Step 5: load project wordlist
+Step 6: load violations
+Step 7: trigger highlight using requestHighlightUpdate
+Step 8: after 75ms, run updateProjectList and checkStoryOrderAgainstMaster
+Step 9: display "Load complete"
 
 10. Column A: Frequency List
 Column A displays frequency data for the active language.
@@ -133,13 +136,21 @@ Frequency known-word rules:
 * frequency stats computed inside handleStableInput
 
 11. Column B: Cognates
-Column B displays cognates for the active language.
+Column B displays cognates filtered by the active dictionary profile.
+Dictionary profile options:
+* spanish
+* latin
+* greek
+* merged
 Rendering:
-* iterate over cognateMap
-* render each cognate with tier information
+* filter cognateMap according to dictionaryProfile
+* render detected cognates in the top section
+* render full alphabetical dictionary in the bottom section
 * attach click handlers to:
   * highlight matching tokens
   * insert cognate into Master List
+  * add new cognate
+  * edit existing cognate
 Interaction:
 * clicking a cognate:
   * highlights all matching tokens green
@@ -220,6 +231,9 @@ Frontend communicates with backend through API routes:
 * apiLoadProject
 * apiSaveMasterList
 * apiLoadMasterList
+* apiAddCognate
+* apiEditCognate
+* apiPublishCognates
 Project ID rules:
 * project-id-input must always be updated when a new project is created
 * project-id-input must always be updated when a project is loaded
@@ -237,6 +251,13 @@ Key event handlers:
 * click on cognate item:
   * highlights tokens
   * inserts into master list
+* click on add or edit cognate:
+  * updates pending cognates
+  * triggers highlight pipeline
+* click on publish cognates:
+  * merges pending into official
+  * rebuilds dictionary
+  * re-renders cognate window
 * click on master list controls:
   * add, edit, delete, reorder
 * click on save button:
@@ -270,13 +291,22 @@ Step 9: autosave timer starts
 
 Startup Workflow:
 Step 1: load language and cognates
-Step 2: load project text
-Step 3: load master list
-Step 4: load project wordlist
-Step 5: load violations
+Step 2: load dictionary profile
+Step 3: load project text
+Step 4: load master list
+Step 5: load project wordlist
+Step 6: load violations
+Step 7: trigger highlight using requestHighlightUpdate
+Step 8: after 75ms run updateProjectList and checkStoryOrderAgainstMaster
+Step 9: display "Load complete"
+
+Publish Cognates Workflow:
+Step 1: load pending cognates
+Step 2: load official cognates
+Step 3: merge pending into official
+Step 4: rebuild merged dictionary
+Step 5: re-render cognate window
 Step 6: trigger highlight using requestHighlightUpdate
-Step 7: after 75ms run updateProjectList and checkStoryOrderAgainstMaster
-Step 8: display "Load complete"
 
 20. Summary
-This frontend architecture document explains how the UI is structured, how the single-layer editor works, how data flows through the interface, how events and rendering work, and how the analysis pipeline connects to the visual components. It merges the original design with updated architecture rules and July 19 fixes. It is essential for debugging UI issues and for safely extending the interface in future development phases.
+This frontend architecture document explains how the UI is structured, how the single-layer editor works, how data flows through the interface, how events and rendering work, and how the analysis pipeline connects to the visual components. It merges the original design with updated architecture rules, July 19 fixes, and new cognate dictionary architecture. It is essential for debugging UI issues and for safely extending the interface in future development phases.
