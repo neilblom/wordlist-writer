@@ -1,165 +1,215 @@
 Decisions — WordList Writer
-Version: 2026-07-17
+Version: 2026-07-20
 Status: Authoritative Source of Truth
 
 1. Tech Stack Decisions
 Node.js + Express
-* Same language frontend + backend
-* Fast development
-* Easy JSON handling
-* Ideal for lightweight APIs
-* Works well on Render
+* same language frontend + backend
+* fast development
+* easy JSON handling
+* ideal for lightweight APIs
+* works well on Render
 
 Vanilla JavaScript Frontend
-* No frameworks (React/Vue/etc.)
-* Faster load times
-* Lower complexity
-* Easier debugging
-* No build tools required
+* no frameworks
+* faster load times
+* lower complexity
+* easier debugging
+* no build tools required
 
 Supabase (PostgreSQL)
-* Persistent storage for projects and master lists
-* Built-in REST API
-* Easy JS client
-* Real-time updates
-* Secure row-level policies
-* No server maintenance
+* persistent storage for projects and master lists
+* built-in REST API
+* easy JS client
+* real-time updates
+* secure row-level policies
+* no server maintenance
 
 Static JSON Files
-* Frequency lists
-* Lemma maps
-* Cognate lists
-* Fast load
-* Rarely change
-* Easy version control
+* frequency lists
+* lemma maps
+* cognate lists
+* fast load
+* rarely change
+* easy version control
 
 API Routes Before Static Middleware
-* Prevents static fallback from swallowing API requests
+* prevents static fallback from swallowing API requests
 
 Controlled Save Instead of Autosave
-* Prevents accidental curriculum overwrites
+* prevents accidental curriculum overwrites
+* autosave used only for text, not master list
 
 2. Data Architecture Decisions
 Supabase for Project + Master Lists
-* User-specific data stored in Supabase
-* Static linguistic data stored in JSON
-* Fast startup
-* Cross-device syncing
+* user-specific data stored in Supabase
+* static linguistic data stored in JSON
+* fast startup
+* cross-device syncing
 
 Master List Editing in UI
-* Add lemmas
-* Insert at specific ranks
-* Reorder
-* Add cross-language equivalents
-* Update cognate flags
-* Update frequency metadata
-* Immediate highlight + tooltip updates
-* Supabase sync in Phase 4
+* add lemmas
+* insert at specific ranks
+* reorder
+* update cognate flags
+* update frequency metadata
+* immediate highlight updates
+* Supabase sync in Phase 2
 
 Master List is a Curriculum
-* Not alphabetical
-* Not usage-ordered
-* Pedagogical sequence defined by developer
+* not alphabetical
+* not usage-ordered
+* pedagogical sequence defined by developer
 
 Cognate Insertion Rule
-* Insert after last Master List lemma appearing in story
+* insert after last master list lemma appearing in story
 
 Typed Word Insertion Rule
-* Same insertion rule as cognates
+* same insertion rule as cognates
 
 Project List Behavior
-* Tracks usage only
-* Does not modify Master List
+* tracks usage only
+* does not modify master list
 
 Warning System
-* Detects curriculum-order violations
+* detects curriculum-order violations
 
 Unified Tier-Aware Cognate Highlighting
-* Single COGNATE_MAP with tier metadata
-* Global TIER_COLORS and TIER_MAP
-* Shared across highlight loop, tooltip, project list
+* single COGNATE_MAP with tier metadata
+* global TIER_COLORS and TIER_MAP
+* shared across highlight pipeline and project list
 
 Supabase .select() Requirement
-* All inserts must use .select() to return inserted rows
+* all inserts must use .select() to return inserted rows
 
-Master List Architecture (July 2026)
-* English-only until Supabase integration is complete
-* Multilingual fields caused inconsistent shapes and crashes
-* English-only structure is stable and predictable
+Master List Architecture (Updated)
+* masterList contains plain strings only
+* multilingual fields removed until Phase 3
+* English-only structure stable and predictable
 
 Supabase Before Multilingual Expansion
 * English-only pipeline stable
-* Multilingual support requires persistent storage
+* multilingual support requires persistent storage
 * Supabase provides foundation for Phase 3
-* Updated dependency chain:
-  * English-only pipeline (complete)
-  * Supabase integration (current)
-  * Multilingual support (next)
-  * UI polish + deployment
+Updated dependency chain:
+* English-only pipeline (complete)
+* Supabase integration (current)
+* Multilingual support (next)
+* UI polish + deployment
 
 3. UI/UX Decisions
-Three-Column Top Panel (A, B, C)
-* Mirrors teacher mental model
-* Keeps reference lists visible
-* Reduces clicks
-* Supports fast writing flow
+Four-Column Top Panel (A, B, C, D)
+* mirrors teacher mental model
+* keeps reference lists visible
+* reduces clicks
+* supports fast writing flow
 
 Bottom Writing Window
-* Large, distraction-free
-* Real-time highlighting requires clarity
+* single contenteditable editor
+* large, distraction-free
+* real-time highlighting requires clarity
 
 Highlighting Priority
-* Cognate (green)
-* Known (black)
-* Unknown (red)
+* cognate (green underline)
+* known (normal)
+* unknown (red asterisk)
 
-Add Column D (Master List)
-* Displays curated beginner vocabulary sequence
-* Shows cross-language equivalents
-* Supports editing
-* Highlighting uses Master List membership
-* Red = not in list or too early
+Master List Column (D)
+* displays curated beginner vocabulary sequence
+* supports editing
+* highlighting uses master list membership
+* red = not in list or too early
 
 Cognate Click Behavior
-* Highlights matching tokens
-* Inserts cognate into Master List
+* highlights matching tokens
+* inserts cognate into master list
 
 Project List Cognate Priority
-* Cognates appear at top of Column C with green badge
+* cognates appear at top of Column C with tier badge
 
 Auto-Scroll for Master List
-* Deferred until multilingual Master List is stable
+* deferred until multilingual master list is stable
 
 Spanish as First Multilingual Target
-* Clean frequency data
-* Reliable lemma resources
-* Strong cognate overlap
-* Validates multilingual architecture
+* clean frequency data
+* reliable lemma resources
+* strong cognate overlap
 
 Frequency List Format
-* Uniform structure:
+* uniform structure:
   * rank
   * lemma
 
 Lemma Map Format
-* Flat inflected → lemma mapping
-* No POS tags
-* No metadata
-* No nested objects
+* flat inflected → lemma mapping
+* no POS tags
+* no metadata
+* no nested objects
 
 Highlight Logic Extension
-* Language-aware
-* Priority preserved:
-  * Cognate → green
-  * Known → black
-  * Unknown → red
+* language-aware
+* priority preserved:
+  * cognate → known → unknown
 
 Replace Popup with Violations Panel
-* Popups interrupt writing
-* Panel provides stable diagnostics
-* Supports sorting, grouping, toggling
+* popups interrupt writing
+* panel provides stable diagnostics
+* supports sorting, grouping, toggling
 
-4. Multilingual Decisions
+4. Frontend Architecture Decisions (July 19)
+Single-Layer Editor
+* no overlay
+* no nested spans
+* editor.innerHTML replaced on each highlight pass
+
+Centralized Highlight Pipeline
+* all highlight operations must enter through requestHighlightUpdate
+* requestHighlightUpdate uses debounce
+* no highlight during IME composition
+* handleStableInput must never be called directly
+
+Tokenizer Rules
+* tokenizeUnified must not trigger highlight or autosave
+* punctuation and whitespace preserved
+* normalized tokens not logged
+
+Startup Sequence
+Step 1: load language and cognates
+Step 2: load project text
+Step 3: load master list
+Step 4: load project wordlist
+Step 5: load violations
+Step 6: trigger highlight once
+Step 7: after 75ms run project list and order check
+Step 8: display "Load complete"
+
+Frequency Known-Word Rules
+* known words come from NGSL-1K
+* frequencySet contains normalized lemmas
+
+Autosave Rules
+* autosave must be debounced
+* autosave pauses during project resets
+
+5. Backend Architecture Decisions
+Project ID Rules
+* project-id-input must update on create, load, save, and new project
+* incorrect project ID causes empty master list loads
+
+Master List Rules
+* masterList must contain plain strings only
+* Supabase rejects rows where lemma is undefined
+
+Static Middleware Rule
+* API routes must be registered before express.static()
+
+SaveEverything Contract
+* save project first
+* capture returned ID
+* save project wordlist
+* save master list
+
+6. Multilingual Decisions
 Supported Languages
 * English
 * Spanish
@@ -167,80 +217,74 @@ Supported Languages
 * Latin
 
 Dynamic Language Modules
-* Load frequency, lemma, cognate files based on selected language
-* Reduces memory usage
-* Faster startup
-* Cleaner architecture
+* load frequency, lemma, cognate files based on selected language
+* reduces memory usage
+* faster startup
+* cleaner architecture
 
-5. Deployment Decisions
+7. Deployment Decisions
 Render Hosting
-* Free tier
+* free tier
 * GitHub auto-deploy
-* Easy environment variables
+* easy environment variables
 
 Supabase Hosting
-* Persistent data
-* Zero maintenance
+* persistent data
+* zero maintenance
 * PostgreSQL reliability
 
-6. Repository Structure Decisions
+8. Repository Structure Decisions
 Use /docs Folder
-* Organized repo
-* Permanent memory
-* Industry standard
+* organized repo
+* permanent memory
+* industry standard
 
 Clean Rebuild in New Repo
-* Avoid legacy clutter
-* Remove Ruby artifacts
-* Clean architecture
+* avoid legacy clutter
+* remove Ruby artifacts
+* clean architecture
 
-7. Future Considerations
+9. Future Considerations
 Mobile Support (Deferred)
-* Desktop UI optimized for writing
-* Mobile requires:
-  * Responsive layout
-  * Collapsible panels
-  * Touch interactions
-  * Local caching
-  * Optional PWA wrapper
-* Revisit after Phase 5
+* responsive layout
+* collapsible panels
+* touch interactions
+* local caching
+* optional PWA wrapper
 
 Language Visibility Toggles (Deferred)
-* Hide/show language columns in Master List
-* Prevent UI clutter
-* Supports multilingual workflows
+* hide/show language columns in master list
+* prevent UI clutter
 
 Additional Future Options
-* Cloud sync
+* cloud sync
 * Kindle-ready export
-* Image integration
-* Animation script export
-* Collaboration mode
-* Advanced stats (reading level, repetition heatmap)
+* image integration
+* animation script export
+* collaboration mode
+* advanced stats
 
-8. Debugging Decisions (Historical)
+10. Debugging Decisions (Historical)
 Frontend Fixes (2026-07-14)
-* Fixed missing brace in renderViolationsPanel
-* Repaired template string in renderFrequencyStats
-* Removed nested duplicate renderFrequencyStats
-* Verified global renderer functions
+* fixed missing brace in renderViolationsPanel
+* repaired template string in renderFrequencyStats
+* removed nested duplicate renderFrequencyStats
+* verified global renderer functions
 
 Backend Save/Load Fix (2026-07-15)
-* Align frontend object shape with Supabase schema
-* Map word → lemma on save
-* Map lemma → word on load
-* Added safety guard to normalizeLemma
-* Confirmed correct API routes:
+* aligned frontend object shape with Supabase schema
+* mapped word → lemma on save
+* mapped lemma → word on load
+* added safety guard to normalizeLemma
+* confirmed correct API routes:
   * /api/master/save/:id
   * /api/master/load/:id
 
 Documentation Formatting Reminder
-All documentation updates must follow this formatting standard:
-* Use plain text section titles
-* Use asterisks (*) for bullet points
-* Do not insert blank lines inside bullet lists
-* Use ASCII-only characters
-* Avoid Markdown headings (#)
-* Avoid fenced code blocks unless necessary
-* Use Step format for workflows to prevent GitHub auto-renumbering
-This ensures consistent rendering across GitHub and prevents formatting breakage.
+* use plain text section titles
+* use asterisks (*) for bullet points
+* do not insert blank lines inside bullet lists
+* use ASCII-only characters
+* avoid Markdown headings (#)
+* avoid fenced code blocks unless necessary
+* use Step format for workflows to prevent GitHub auto-renumbering
