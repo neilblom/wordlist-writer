@@ -1,131 +1,179 @@
 Docs Index — WordList Writer
-Version: 2026-07-17
+Version: 2026-07-20
 Status: Authoritative Source of Truth
 
 Overview
-This index lists every document in the /docs folder and explains its purpose, scope, and when future-you should reference it. It is the entry point for understanding the entire project.
+This index lists every document in the /docs folder and explains its purpose, scope, and when future-you should reference it. It is the entry point for understanding the entire project. All documents are restart-proof and aligned with the updated July 19 architecture.
 
 1. PRD.md — Product Requirements Document
 Purpose:
-* Defines the product vision
-* Lists functional and non-functional requirements
-* Describes core features, UI layout, and curriculum logic
-* Establishes long-term goals and constraints
-
+* defines product vision
+* lists functional and non-functional requirements
+* describes core features, UI layout, and curriculum logic
+* establishes long-term goals and constraints
 Use When:
-* Restarting the project after a long break
-* Clarifying what the app is supposed to do
-* Ensuring new features align with original goals
+* restarting the project after a long break
+* clarifying what the app is supposed to do
+* ensuring new features align with original goals
 
 2. Roadmap.md
 Purpose:
-* Defines development phases
-* Lists completed work and upcoming milestones
-* Shows dependency order (English-only → Supabase → Multilingual)
-
+* defines development phases
+* lists completed work and upcoming milestones
+* shows dependency order (English-only → Supabase → Multilingual)
 Use When:
-* Planning next development steps
-* Checking what phase you are in
-* Ensuring work follows correct sequence
+* planning next development steps
+* checking what phase you are in
+* ensuring work follows correct sequence
 
 3. Tech_Stack.md
 Purpose:
-* Defines frontend, backend, and database technologies
-* Documents architecture choices
-* Explains how static JSON, Express, and Supabase interact
-
+* defines frontend, backend, and database technologies
+* documents architecture choices
+* explains how static JSON, Express, and Supabase interact
 Use When:
-* Rebuilding environment after a long break
-* Onboarding a developer
-* Verifying architectural consistency
+* rebuilding environment after a long break
+* onboarding a developer
+* verifying architectural consistency
 
-4. Data_Sources.md
+4. Frontend_Architecture.md
 Purpose:
-* Lists all linguistic data sources (frequency, lemma, cognates)
-* Defines where each file lives
-* Documents normalization and tokenization rules
-
+* defines single-layer editor architecture
+* documents highlight pipeline, tokenizer, rendering rules
+* explains IME-safe input handling and startup sequence
 Use When:
-* Adding new languages
-* Updating frequency lists
-* Debugging lemma or cognate behavior
+* debugging highlight issues
+* rebuilding editor logic
+* extending frontend functionality
 
-5. Decisions.md
+5. Rendering_Pipeline.md
 Purpose:
-* Records all architectural and technical decisions
-* Includes reasoning behind each decision
-* Prevents repeated debates or regressions
-
+* defines how tokens become HTML spans
+* documents highlight rendering rules
+* explains project list and violations rendering
 Use When:
-* Unsure why something was designed a certain way
-* Evaluating whether to change a system
-* Reconstructing historical context
+* debugging rendering issues
+* rebuilding highlight logic
+* extending UI rendering behavior
 
-6. Detailed_Feature_Specifications.md
+6. Master_List_Workflow.md
 Purpose:
-* Defines internal behavior of all major systems
-* Tokenizer, highlight pipeline, violations panel
-* Master list, project list, editor layers
-* Frequency ingestion rules
-
+* defines curriculum sequence logic
+* documents master list editing rules
+* explains cognate insertion and typed-word workflows
 Use When:
-* Implementing or debugging core features
-* Rebuilding highlight logic
-* Extending curriculum or cognate systems
+* debugging curriculum-order issues
+* extending master list features
+* onboarding teachers or developers
 
-7. Supabase_Schema.md
+7. Developer_Workflow.md
 Purpose:
-* Defines all tables, fields, constraints, and relationships
-* Documents normalization rules and mapping logic
-* Establishes backend data model
-
+* defines how to work on the codebase
+* documents pipelines, architecture rules, and coding conventions
+* explains save/load pipeline and project ID rules
 Use When:
-* Implementing backend routes
-* Debugging save/load pipeline
-* Rebuilding database after a long break
+* starting a new development session
+* onboarding a developer
+* reconstructing internal architecture
 
-8. API_Specification.md
+8. Teacher_Workflow.md
 Purpose:
-* Defines all API routes, request bodies, responses
-* Documents ID propagation and saveEverything() contract
-* Establishes backend ↔ frontend communication rules
-
+* defines teacher-facing usage of the app
+* documents highlight colors, cognate workflow, violations panel
+* explains curriculum-aligned writing workflow
 Use When:
-* Implementing or debugging backend
-* Rebuilding save/load pipeline
-* Adding new API endpoints
+* onboarding instructors
+* designing teacher-facing features
+* validating pedagogical behavior
 
-9. Next_Steps.md
+9. Data_Sources.md
 Purpose:
-* Lists immediate, short-term, medium-term, and long-term tasks
-* Defines Phase 1 implementation steps
-* Documents backend debugging tasks
-
+* lists all linguistic data sources (frequency, lemma, cognates)
+* defines where each file lives
+* documents normalization and tokenization rules
 Use When:
-* Starting a new coding session
-* Planning next day’s work
-* Tracking progress across phases
+* adding new languages
+* updating frequency lists
+* debugging lemma or cognate behavior
 
-10. Glossary.md
+10. Decisions.md
 Purpose:
-* Defines all project terminology
-* Ensures consistent vocabulary across docs and code
-
+* records all architectural and technical decisions
+* includes reasoning behind each decision
+* prevents repeated debates or regressions
 Use When:
-* Reviewing unfamiliar terms
-* Onboarding a developer
-* Clarifying linguistic or architectural concepts
+* unsure why something was designed a certain way
+* evaluating whether to change a system
+* reconstructing historical context
+
+11. Detailed_Feature_Specifications.md
+Purpose:
+* defines internal behavior of all major systems
+* tokenizer, highlight pipeline, violations panel
+* master list, project list, editor layers
+* frequency ingestion rules
+Use When:
+* implementing or debugging core features
+* rebuilding highlight logic
+* extending curriculum or cognate systems
+
+12. Supabase_Schema.md
+Purpose:
+* defines all tables, fields, constraints, and relationships
+* documents normalization rules and mapping logic
+* establishes backend data model
+Use When:
+* implementing backend routes
+* debugging save/load pipeline
+* rebuilding database after a long break
+
+13. API_Specification.md
+Purpose:
+* defines all API routes, request bodies, responses
+* documents ID propagation and saveEverything contract
+* establishes backend ↔ frontend communication rules
+Use When:
+* implementing or debugging backend
+* rebuilding save/load pipeline
+* adding new API endpoints
+
+14. Setup_Supabase.md
+Purpose:
+* defines step-by-step Supabase setup
+* documents environment variables, table creation, connection tests
+* explains save/load verification
+Use When:
+* setting up backend for first time
+* rebuilding Supabase project
+* debugging connection issues
+
+15. Next_Steps.md
+Purpose:
+* lists immediate, short-term, medium-term, and long-term tasks
+* defines Phase 1–5 implementation steps
+* documents backend debugging tasks
+Use When:
+* starting a new coding session
+* planning next day’s work
+* tracking progress across phases
+
+16. Glossary.md
+Purpose:
+* defines all project terminology
+* ensures consistent vocabulary across docs and code
+Use When:
+* reviewing unfamiliar terms
+* onboarding a developer
+* clarifying linguistic or architectural concepts
 
 Summary
 This index provides a complete map of the WordList Writer documentation set. Each file is restart-proof and designed to reconstruct the entire project quickly and accurately. Future updates must keep this index aligned with the /docs folder.
 
 Documentation Formatting Reminder
-All documentation updates must follow this formatting standard:
-* Use plain text section titles
-* Use asterisks (*) for bullet points
-* Do not insert blank lines inside bullet lists
-* Use ASCII-only characters
-* Avoid Markdown headings (#)
-* Avoid fenced code blocks unless necessary
-* Use Step format for workflows to prevent GitHub auto-renumbering
-This ensures consistent rendering across GitHub and prevents formatting breakage.
+* use plain text section titles
+* use asterisks (*) for bullet points
+* do not insert blank lines inside bullet lists
+* use ASCII-only characters
+* avoid Markdown headings (#)
+* avoid fenced code blocks unless necessary
+* use Step format for workflows to prevent GitHub auto-renumbering
