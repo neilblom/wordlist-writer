@@ -12,6 +12,13 @@ API Route Shadowing
 * causes 404 or HTML fallback
 * fixed by registering API routes before express.static()
 
+Alphabetical Dictionary
+* bottom section of Column B
+* displays all cognates for the active dictionary profile
+* sorted alphabetically
+* includes official and pending cognates
+* rebuilt from merged dictionary
+
 C
 Cognate
 * a word in another language sharing a historical root with an English word
@@ -21,10 +28,33 @@ Cognate
   * manual ↔ manus
   * biology ↔ bios
 
-COGNATE_MAP
-* unified lookup map containing tier metadata for each lemma
-* built at startup from cognate JSON files
-* consumed by highlight pipeline and project list
+Cognate Tier
+* metadata describing cognate category
+* tiers:
+  * latin
+  * greek
+  * biblical
+  * general
+* used for color-coded highlighting
+
+Cognates (Official)
+* published cognate entries stored in Supabase
+* used for highlight pipeline
+* used for alphabetical dictionary
+
+Cognates (Pending)
+* newly added or edited cognates awaiting publication
+* override official entries in merged dictionary
+* stored in Supabase
+
+Cognate Window
+* Column B in the top panel
+* contains detected cognates and alphabetical dictionary
+* clicking highlights matching tokens and inserts cognate into master list
+
+COGNATE_MAP (Deprecated)
+* original static cognate map
+* replaced by mergedCognateMap
 
 Collector
 * logic inside highlight pipeline that pushes violation objects into curriculumViolations
@@ -36,14 +66,25 @@ Curriculum Violation
   * unknown word
   * curriculum gap
 
-Cognate Window
-* Column B in the top panel
-* displays cognates for the selected language
-* clicking highlights matching tokens and inserts cognate into master list
-
 Cross-Language Master List
 * Supabase table storing English, Spanish, Latin, and Greek equivalents
 * includes lemmas, cognate flags, frequency ranks, shared roots
+
+D
+Dictionary Profile
+* per-project setting determining which cognates appear in Column B
+* profiles:
+  * spanish
+  * latin
+  * greek
+  * merged
+* affects cognate filtering only
+* stored in Supabase
+
+Detected Cognates
+* top section of Column B
+* shows cognates present in the current text
+* filtered by dictionary profile
 
 F
 Frequency List
@@ -55,16 +96,27 @@ Frequency Rank
 * numeric indicator of word frequency
 * lower rank = more common
 
+G
+Green Highlight
+* applied to cognates
+* highest priority highlight class
+
 H
 Hard Refresh
 * Ctrl+Shift+R to bypass browser cache
 
-Highlighting Logic
+Highlight Pipeline
+* centralized system that computes highlight classes
 * strict priority:
   * green underline = cognate
   * normal = known (frequency or master list)
   * red asterisk = unknown
-* implemented in centralized highlight pipeline
+* must run only through requestHighlightUpdate
+
+Hybrid Cognate Window
+* combined UI showing detected cognates and alphabetical dictionary
+* rebuilt from merged dictionary
+* filtered by dictionary profile
 
 L
 Lemma
@@ -91,10 +143,12 @@ Master List Item
 * rank
 * isCognate flag
 
-N
-Normalization
-* convert text to NFD form and remove diacritics
-* ensures consistent lookup across languages
+Merged Dictionary
+* unified cognate map built from official + pending entries
+* pending entries override official entries
+* used for highlight pipeline
+* used for hybrid cognate window
+* used for alphabetical dictionary
 
 P
 Project
@@ -109,12 +163,27 @@ Project Word List
 * displayed in Column C
 * updated dynamically as teacher types
 
+Publish Cognates
+* action that merges pending cognates into official table
+* clears pending table
+* rebuilds merged dictionary
+
 R
 Renderer
 * function that converts data into UI output
 * examples:
   * renderProjectList
   * renderViolationsPanel
+
+Red Asterisk
+* highlight applied to unknown words
+* lowest priority highlight class
+
+S
+Supabase v2
+* backend used for persistence
+* requires .select() to retrieve inserted rows
+* inserts return minimal by default
 
 T
 Tier
@@ -135,6 +204,12 @@ Tokenizer
 Token
 * single unit of text produced by tokenizer
 * example: "running," → "running"
+
+U
+Unknown Word
+* lemma not found in frequencySet or masterSet
+* rendered with red asterisk
+* triggers curriculum violation
 
 V
 Violations Panel
