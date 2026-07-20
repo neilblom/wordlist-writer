@@ -3,7 +3,7 @@ Version: 2026-07-20
 Status: Authoritative Backend Guide
 
 Overview
-This document describes the backend architecture of WordList Writer. It merges the original backend specification with updated architecture rules and July 19 fixes. It explains how Express is structured, how API routes connect to controllers, how Supabase is integrated, and how save and load pipelines operate. It also documents rules that keep frontend and backend interaction stable.
+This document describes the backend architecture of WordList Writer. It merges the original backend specification with updated architecture rules and July 19 fixes. It explains how Express is structured, how API routes connect to controllers, how Supabase is integrated, and how save and load pipelines operate. It also documents rules that keep frontend and backend interaction stable. WordList Writer is a teacher-facing authoring tool. Students never interact with the application. All UI components, including frequency lists, cognates, master lists, warnings, and project tools, are designed exclusively for teacher use.
 
 1. High-Level Structure
 The backend is a lightweight Express server. It provides:
@@ -42,6 +42,9 @@ Example route types:
 * /api/project/load
 * /api/master/save
 * /api/master/load
+* /api/cognates/add
+* /api/cognates/edit
+* /api/cognates/publish
 
 5. Controllers
 Controllers live in:
@@ -69,6 +72,8 @@ Supabase stores:
 * project_wordlists
 * master_wordlists
 * cross_language_master
+* cognates_official
+* cognates_pending
 Full schema is documented in:
 docs/Supabase_Schema.md
 
@@ -128,6 +133,12 @@ Centralized Highlight Pipeline:
 * no highlight or tokenizer runs during IME composition
 * highlight runs only after IME commits text
 
+IME Input Rules:
+* compositionstart sets isComposing true
+* compositionend sets isComposing false and triggers requestHighlightUpdate
+* no tokenizer or highlight runs during composition
+* IME safety prevents prefix logs and double tokenization
+
 Startup Highlight Sequence:
 * startup triggers highlight once
 * project list and order check run after highlight
@@ -174,7 +185,34 @@ Frequency List Rules:
 * frequencySet must contain normalized lemmas only
 * frequency stats computed inside handleStableInput
 
-15. July 19 Fixes
+15. Cognate Dictionary Architecture
+Cognate Dictionary Structure:
+* official cognates stored in cognates_official
+* pending cognates stored in cognates_pending
+* merged dictionary created at startup
+* merged dictionary used for highlight and cognate window
+
+Dictionary Profile System:
+* dictionary profile is per-project
+* profile options: spanish, latin, greek, merged
+* profile determines which cognate sources are active
+* profile affects detected cognates and full dictionary display
+* profile stored in project metadata
+
+Hybrid Cognate Window:
+* top section shows detected cognates filtered by profile
+* bottom section shows full alphabetical dictionary filtered by profile
+* add cognate button writes to pending list
+* edit cognate button updates pending list
+* publish cognates merges pending into official and clears pending
+
+Cognate Merging Rules:
+* pending cognates merged into official on publish
+* merged dictionary rebuilt after publish
+* merged dictionary used immediately by highlight pipeline
+* no manual JSON editing required
+
+16. July 19 Fixes
 Project ID Rules:
 * project-id-input must update when a new project is created
 * project-id-input must update when a project is loaded
@@ -205,7 +243,7 @@ Frequency Known-Word Rules:
 * restores green checks
 * enables cognate highlighting
 
-16. Workflows Summary
+17. Workflows Summary
 SaveEverything Workflow:
 Step 1: save project metadata
 Step 2: capture project id
@@ -219,5 +257,14 @@ Step 2: load project wordlist
 Step 3: load master list
 Step 4: return combined JSON
 
-17. Summary
-This backend architecture document explains how Express is structured, how API routes and controllers work, how Supabase is integrated, and how save and load pipelines operate. It merges updated architecture rules and July 19 fixes to ensure stable interaction between frontend and backend.
+Publish Cognates Workflow:
+Step 1: load official cognates
+Step 2: load pending cognates
+Step 3: merge pending into official
+Step 4: write updated official cognates
+Step 5: clear pending cognates
+Step 6: rebuild merged dictionary
+Step 7: return success response
+
+18. Summary
+This backend architecture document explains how Express is structured, how API routes and controllers work, how Supabase is integrated, and how save and load pipelines operate. It merges updated architecture rules, July 19 fixes, and new cognate dictionary architecture to ensure stable interaction between frontend and backend. The system supports per-project dictionary profiles, hybrid cognate windows, alphabetical dictionaries, and automatic cognate merging for teacher-facing workflows.
