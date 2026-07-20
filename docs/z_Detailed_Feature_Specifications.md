@@ -2,6 +2,9 @@ Detailed Feature Specifications — WordList Writer
 Version: 2026-07-20
 Status: Authoritative Source of Truth
 
+Overview
+This document defines the internal behavior of all major systems in WordList Writer. It merges the original feature specifications with updated architecture rules, tokenizer rules, rendering rules, highlight pipeline rules, dictionary profile system, hybrid cognate window, alphabetical dictionary, cognate merging rules, Supabase schema updates, and July 19 fixes. It is the authoritative reference for implementing or debugging core features.
+
 1. Highlight Pipeline
 The highlight pipeline processes user text and applies visual annotations based on linguistic and curriculum rules. All highlight operations must enter through requestHighlightUpdate.
 
@@ -10,6 +13,8 @@ The highlight pipeline processes user text and applies visual annotations based 
 * whitespace and punctuation preserved as raw tokens
 * normalized tokens not logged
 * tokenizer must not trigger highlight or autosave
+* tokenizer must preserve spacing and punctuation
+* tokenizer must return objects only for word tokens
 
 1.2 Normalization (Updated)
 Step 1: lowercase  
@@ -25,7 +30,9 @@ Step 6: canonical normalization via normalizeLemma()
 * rendered unchanged
 
 1.4 Cognate Highlighting (Updated)
-* cognates stored in COGNATE_MAP
+* cognates stored in mergedCognateMap
+* mergedCognateMap built from official + pending cognates
+* dictionaryProfile filters which cognates apply
 * each entry includes tier metadata
 * tier colors applied globally
 * rendered as span elements with tooltip metadata
@@ -51,6 +58,7 @@ Step 6: canonical normalization via normalizeLemma()
 * no overlay
 * no nested spans
 * editor.innerHTML replaced on each highlight pass
+* highlight pipeline must not mutate DOM after render
 
 2. Curriculum Violations Panel
 Provides real-time diagnostic feedback on curriculum mismatches.
@@ -158,12 +166,31 @@ Tracks lemmas used in current project.
 
 6. Cognate System (Updated)
 6.1 Data Source
-* COGNATE_MAP contains normalized lemma and tier
+* mergedCognateMap contains normalized lemma, cognate, tier, profile
+* built from cognates_official + cognates_pending
 
 6.2 Rendering
 * tier-specific colors
 * tooltip metadata
 * cognate click inserts lemma into master list
+
+6.3 Dictionary Profiles
+* profiles: spanish, latin, greek, merged
+* profile stored per project
+* profile filters cognates in detected and alphabetical sections
+
+6.4 Hybrid Cognate Window
+Detected section:
+* shows cognates present in current text
+Alphabetical dictionary:
+* shows all cognates for active profile
+* sorted alphabetically
+* includes official and pending entries
+
+6.5 Cognate Merging
+* pending entries override official entries
+* merged dictionary rebuilt after publish
+* merged dictionary used for highlight pipeline
 
 7. Frequency List System (Updated)
 7.1 Data Source
@@ -174,17 +201,22 @@ Tracks lemmas used in current project.
 * NGSL-1K defines known baseline
 
 8. Supabase Integration (Updated)
-Supabase handles project and master list persistence.
+Supabase handles project, master list, cognate, and profile persistence.
 
 8.1 Save Project
 * save project metadata
+* save dictionary profile
 * return id via .select()
 * update project-id-input
 
 8.2 Load Project
 * load project metadata
+* load dictionary profile
 * load project wordlist
 * load master list
+* load cognates_official
+* load cognates_pending
+* rebuild merged dictionary
 * reconstruct UI state
 * trigger highlight
 
@@ -258,13 +290,14 @@ Logging
 
 10. Startup Sequence (Updated)
 Step 1: load language and cognates  
-Step 2: load project text  
-Step 3: load master list  
-Step 4: load project wordlist  
-Step 5: load violations  
-Step 6: trigger highlight once  
-Step 7: after 75ms run project list and order check  
-Step 8: display “Load complete”
+Step 2: load dictionary profile  
+Step 3: load project text  
+Step 4: load master list  
+Step 5: load project wordlist  
+Step 6: load violations  
+Step 7: trigger highlight once  
+Step 8: after 75ms run project list and order check  
+Step 9: display “Load complete”
 
 11. Future Enhancements (Optional)
 * violation grouping
