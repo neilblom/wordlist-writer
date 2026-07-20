@@ -3,7 +3,7 @@ Version: 2026-07-20
 Status: Authoritative Tokenizer Guide
 
 Overview
-This document defines the tokenizer architecture for WordList Writer. It explains how raw text becomes tokens, how normalization works, how IME-safe behavior is enforced, and how tokens integrate with the highlight pipeline, cognate system, frequency system, and master list. The tokenizer is a core subsystem and must remain stable across all future development phases.
+This document defines the tokenizer architecture for WordList Writer. It explains how raw text becomes tokens, how normalization works, how IME-safe behavior is enforced, and how tokens integrate with the highlight pipeline, cognate system, frequency system, master list, dictionary profiles, and merged cognate dictionary. The tokenizer is a core subsystem and must remain stable across all future development phases.
 
 1. Tokenizer Identity
 The tokenizer is responsible for:
@@ -12,6 +12,7 @@ The tokenizer is responsible for:
 * producing normalized lemmas
 * supporting IME-safe input
 * providing token objects for analysis
+* ensuring compatibility with mergedCognateMap
 The tokenizer must never trigger highlight or autosave.
 
 2. Token Types
@@ -53,11 +54,13 @@ Normalization converts original text into lemmas. Rules:
 * preserve apostrophes inside words
 * preserve hyphens inside words
 * convert accented characters to base forms
+* apply Unicode NFD normalization
 Normalization must:
 * produce stable lemmas
 * match frequencySet entries
-* match cognate dictionary entries
-* match master list entries
+* match mergedCognateMap keys
+* match masterSet entries
+* match dictionary profile filtering rules
 
 5. IME-Safe Behavior
 IME rules:
@@ -69,6 +72,7 @@ IME safety prevents:
 * prefix token logs
 * partial tokenization
 * corrupted highlight spans
+* premature dictionary lookups
 
 6. Tokenizer Workflow
 Step 1: read raw text from editor.innerText
@@ -90,17 +94,19 @@ Rules:
 * tokenizer must not call autosave
 * tokenizer must not mutate DOM
 * tokenizer must not log normalized tokens
+* tokenizer must produce stable output for merged dictionary
 
 8. Integration With Cognate System
 Cognate detection uses:
 * normalized lemma
 * dictionaryProfile
-* merged dictionary
+* mergedCognateMap
 Rules:
-* tokenizer must produce normalized lemmas that match dictionary keys
+* tokenizer must produce normalized lemmas that match merged dictionary keys
 * tokenizer must not filter cognates
 * tokenizer must not apply tiers
 * tokenizer must not apply profile logic
+* tokenizer must not merge official and pending cognates
 
 9. Integration With Frequency System
 Frequency detection uses:
@@ -120,7 +126,26 @@ Rules:
 * tokenizer must not compute curriculum ranks
 * tokenizer must not compute violations
 
-11. Token Object Specification
+11. Integration With Dictionary Profiles
+Dictionary profile system uses:
+* normalized lemma
+* profile-specific cognate filtering
+Rules:
+* tokenizer must not apply profile logic
+* tokenizer must not modify profile state
+* tokenizer must produce normalized lemmas compatible with all profiles
+
+12. Integration With Merged Dictionary
+Merged dictionary uses:
+* normalized lemma
+* official cognates
+* pending cognates
+Rules:
+* tokenizer must not merge dictionaries
+* tokenizer must not modify dictionary entries
+* tokenizer must produce normalized lemmas that match merged keys
+
+13. Token Object Specification
 Word token object:
 * type: "word"
 * original: string
@@ -131,14 +156,14 @@ Raw token:
 * type: "raw"
 * text: string
 
-12. Error Handling
+14. Error Handling
 Tokenizer must:
 * never throw exceptions during typing
 * return empty array for empty text
 * return raw tokens for malformed input
 * avoid logging errors in production
 
-13. Performance Rules
+15. Performance Rules
 Performance requirements:
 * tokenizer must run in under 5ms for typical text
 * avoid regex backtracking
@@ -146,7 +171,7 @@ Performance requirements:
 * avoid complex Unicode operations
 * avoid unnecessary allocations
 
-14. Updated Architecture Rules
+16. Updated Architecture Rules
 Tokenizer invariants:
 * tokenizeUnified must not trigger highlight or autosave
 * tokenizeUnified must not log normalized tokens
@@ -158,15 +183,17 @@ Highlight pipeline invariants:
 * tokenizer must not mutate DOM
 * tokenizer must not produce nested spans
 
-15. Adding New Tokenizer Features
+17. Adding New Tokenizer Features
 When extending tokenizer:
 * update normalization rules consistently
 * update Detailed_Feature_Specifications.md
 * update Developer_Workflow.md
 * ensure IME safety
 * ensure highlight pipeline stability
+* ensure compatibility with merged dictionary
+* ensure compatibility with dictionary profiles
 
-16. Debugging Tokenizer Issues
+18. Debugging Tokenizer Issues
 Debugging steps:
 * inspect raw text
 * inspect token array
@@ -174,6 +201,8 @@ Debugging steps:
 * check IME state
 * check highlight classes
 * check project list and master list behavior
+* check merged dictionary lookups
+* check dictionary profile filtering
 
-17. Summary
-This tokenizer specification defines how raw text becomes tokens, how normalization works, how IME-safe behavior is enforced, and how tokens integrate with the highlight pipeline, cognate system, frequency system, and master list. It is essential for maintaining stable analysis and rendering behavior across all future development phases.
+19. Summary
+This tokenizer specification defines how raw text becomes tokens, how normalization works, how IME-safe behavior is enforced, and how tokens integrate with the highlight pipeline, cognate system, frequency system, master list, dictionary profiles, and merged dictionary. It is essential for maintaining stable analysis and rendering behavior across all future development phases.
