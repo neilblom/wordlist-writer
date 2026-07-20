@@ -1,151 +1,160 @@
 Glossary — WordList Writer
-Version: 2026-07-17
+Version: 2026-07-20
 Status: Authoritative Source of Truth
 
 A
 Accent Stripping
-* Removing diacritical marks from characters (Greek, Latin) for normalized lookup.
+* removing diacritical marks from characters for normalized lookup
+* used in normalization pipeline for Spanish, Greek, and Latin
 
 API Route Shadowing
-* When static middleware intercepts API requests, causing 404 or HTML fallback.
+* when Express static middleware intercepts API requests
+* causes 404 or HTML fallback
+* fixed by registering API routes before express.static()
 
 C
 Cognate
-* A word in another language sharing a historical root with an English word.
-* Highlighted green (highest priority).
-* Examples:
+* a word in another language sharing a historical root with an English word
+* highlighted green (highest priority)
+* examples:
   * information ↔ informacion
   * manual ↔ manus
   * biology ↔ bios
 
 COGNATE_MAP
-* Unified lookup map containing { es, tier } for each English lemma.
-* Built at startup from cognate JSON files and tier metadata.
+* unified lookup map containing tier metadata for each lemma
+* built at startup from cognate JSON files
+* consumed by highlight pipeline and project list
 
 Collector
-* Logic inside renderHighlights() that pushes violation objects into curriculumViolations.
+* logic inside highlight pipeline that pushes violation objects into curriculumViolations
 
 Curriculum Violation
-* A mismatch between text and curriculum rules.
-* Types:
-  * Out-of-order vocabulary
-  * Unknown word
-  * Curriculum gap
+* mismatch between text and curriculum rules
+* types:
+  * out-of-order vocabulary
+  * unknown word
+  * curriculum gap
 
 Cognate Window
-* Column B in the top panel.
-* Displays cognates for the selected language.
-* Clicking highlights matching tokens.
+* Column B in the top panel
+* displays cognates for the selected language
+* clicking highlights matching tokens and inserts cognate into master list
 
 Cross-Language Master List
-* Supabase table storing English, Spanish, Latin, Greek equivalents.
-* Includes lemmas, cognate flags, frequency ranks, shared roots.
+* Supabase table storing English, Spanish, Latin, and Greek equivalents
+* includes lemmas, cognate flags, frequency ranks, shared roots
 
 F
 Frequency List
-* Ranked list of common words (e.g., NGSL).
-* Determines allowed (black) vs off-list (red) vocabulary.
-* Stored as static JSON.
+* ranked list of common words (e.g., NGSL)
+* determines known vs unknown vocabulary
+* stored as static JSON
 
 Frequency Rank
-* Numeric indicator of word frequency.
-* Lower rank = more common.
+* numeric indicator of word frequency
+* lower rank = more common
 
 H
 Hard Refresh
-* Ctrl+Shift+R to bypass browser cache.
+* Ctrl+Shift+R to bypass browser cache
 
 Highlighting Logic
-* Strict priority:
-  * Green = cognate
-  * Black = known (frequency or project list)
-  * Red = unknown
+* strict priority:
+  * green underline = cognate
+  * normal = known (frequency or master list)
+  * red asterisk = unknown
+* implemented in centralized highlight pipeline
 
 L
 Lemma
-* Canonical dictionary form of a word.
-* Stored in Supabase as lemma.
-* Examples:
+* canonical dictionary form of a word
+* examples:
   * running → run
   * went → go
   * mejores → mejor
 
 Lemma Map
-* JSON mapping inflected forms → lemma.
-* One map per language.
+* JSON mapping inflected forms to lemmas
+* one map per language
+* loaded at startup
 
 M
 Master List
-* Curriculum sequence stored in Supabase.
-* Tracks lemmas across all projects.
-* Frontend uses array of word objects for UI rendering.
+* curriculum sequence stored in Supabase
+* defines allowed vocabulary order
+* frontend uses plain strings for masterList
 
-Master List Item (English-only)
-* word
-* language ("english")
+Master List Item
+* lemma
+* language
 * rank
-* cognate (optional)
-* cognates object (optional)
+* isCognate flag
 
 N
 Normalization
-* Convert text to NFD form and remove diacritics for consistent lookup.
+* convert text to NFD form and remove diacritics
+* ensures consistent lookup across languages
 
 P
 Project
-* Saved writing session containing text, word list, language, timestamp.
-* Stored in Supabase.
+* saved writing session containing text, word list, language, timestamp
+* stored in Supabase
 
 project_id
-* UUID linking Master List rows to a specific project.
+* UUID linking master list rows and project wordlist rows to a specific project
 
 Project Word List
-* Custom list of words allowed for a specific project.
-* Displayed in Column C.
-* Words highlighted black.
+* custom list of lemmas appearing in the current text
+* displayed in Column C
+* updated dynamically as teacher types
 
 R
 Renderer
-* Function (e.g., renderViolationsPanel) that converts data into UI output.
+* function that converts data into UI output
+* examples:
+  * renderProjectList
+  * renderViolationsPanel
 
 T
 Tier
-* Linguistic category for cognates:
-  * Latin
-  * Greek
-  * Biblical
-  * General
-* Used for color-coded highlighting.
+* linguistic category for cognates:
+  * latin
+  * greek
+  * biblical
+  * general
+* used for color-coded highlighting
 
 Tokenizer
-* Splits text into tokens.
-* Rules:
+* splits text into tokens
+* rules:
   * English/Spanish: whitespace + punctuation
   * Greek/Latin: Unicode-aware, accent-aware
+* must not trigger highlight or autosave
 
 Token
-* Single unit of text produced by tokenizer.
-* Example: "running," → "running"
+* single unit of text produced by tokenizer
+* example: "running," → "running"
 
 V
 Violations Panel
-* Scrollable diagnostic UI showing curriculum violations in real time.
+* scrollable diagnostic UI showing curriculum violations in real time
+* updated after highlight pipeline runs
 
 W
 Writing Window
-* Large bottom panel where text is typed.
-* Words highlighted based on cognates, project list, frequency list.
+* single contenteditable editor where text is typed
+* words highlighted based on cognates, master list, and frequency list
+* rendered using HTML spans with no nested elements
 
 Summary
 This glossary defines core terminology used throughout WordList Writer. Update it whenever new concepts, lists, or features are introduced.
 
 Documentation Formatting Reminder
-All documentation updates must follow this formatting standard:
-* Use plain text section titles
-* Use asterisks (*) for bullet points
-* Do not insert blank lines inside bullet lists
-* Use ASCII-only characters
-* Avoid Markdown headings (#)
-* Avoid fenced code blocks unless necessary
-* Use Step format for workflows to prevent GitHub auto-renumbering
-This ensures consistent rendering across GitHub and prevents formatting breakage.
+* use plain text section titles
+* use asterisks (*) for bullet points
+* do not insert blank lines inside bullet lists
+* use ASCII-only characters
+* avoid Markdown headings (#)
+* avoid fenced code blocks unless necessary
+* use Step format for workflows to prevent GitHub auto-renumbering
