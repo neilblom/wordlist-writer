@@ -1,120 +1,144 @@
 Data Sources — WordList Writer
-Version: 2026-07-17
+Version: 2026-07-20
 Status: Authoritative Source of Truth
 
 1. English Data Sources
 NGSL — New General Service List
-* Public domain
-* Clean, modern, beginner-appropriate
-* Primary English frequency list
-* Stored as: frequency/english_ngsl.json
-* Future implementation: the BEL which is the Bible English List from the NGSL organization
+* public domain
+* clean, modern, beginner-appropriate
+* primary English frequency list
+* stored as: frequency/english_ngsl.json
+* future addition: BEL (Bible English List) from NGSL organization
 
 English Master List Source
-* Based on NGSL/NAWL/BNC/COCA principles
-* Stored as: data/master_list.json
+* based on NGSL, NAWL, BNC, COCA principles
+* stored as: public/master/master_list.json
 * English-only until multilingual expansion
 
 English Lemma Map
-* Custom-generated or adapted from open-source datasets
-* Maps inflected → lemma
-* Stored as: lemmas/english.json
+* custom-generated or adapted from open-source datasets
+* maps inflected → lemma
+* stored as: lemmas/english.json
 
 2. Spanish Data Sources
 Spanish Frequency List
-* Recommended sources:
+* recommended sources:
   * SUBTLEX-ESP
   * Wiktionary frequency dumps
   * OpenSubtitles Spanish lists
-* Stored as: frequency/spanish.json
+* stored as: frequency/spanish.json
 
 Spanish Lemma Map
-* Recommended sources:
+* recommended sources:
   * Freeling morphological analyzer
   * Wiktionary lemma mappings
-  * Open-source Spanish NLP datasets
-* Stored as: lemmas/spanish.json
+  * open-source Spanish NLP datasets
+* stored as: lemmas/spanish.json
 
 3. Koine Greek Data Sources
 Greek Frequency List
-* Recommended sources:
+* recommended sources:
   * Open Greek and Latin Project
   * MorphGNT (SBLGNT counts)
   * Perseus frequency data
-* Stored as: frequency/greek.json
+* stored as: frequency/greek.json
 
 Greek Lemma Map
-* Sources:
+* sources:
   * MorphGNT lemma mappings
   * Perseus morphological data
-* Stored as: lemmas/greek.json
+* stored as: lemmas/greek.json
 
 4. Latin Data Sources
 Latin Frequency List
-* Recommended sources:
+* recommended sources:
   * Dickinson College Core Vocabulary (DCC)
   * Perseus Latin frequency data
   * Wiktionary Latin frequency lists
-* Stored as: frequency/latin.json
+* stored as: frequency/latin.json
 
 Latin Lemma Map
-* Sources:
+* sources:
   * Perseus morphological data
   * Whitaker’s Words (public domain)
-* Stored as: lemmas/latin.json
+* stored as: lemmas/latin.json
 
 5. Cognate Lists
 English ↔ Spanish
-* Based on shared Latin roots
-* High-frequency cognates
-* Public domain etymology sources
-* Stored as: cognates/english_spanish.json
+* based on shared Latin roots
+* high-frequency cognates
+* public domain etymology sources
+* stored as: cognates/english_spanish.json
 
 English ↔ Latin
-* Based on Latin root dictionaries
-* Public domain etymology data
-* Stored as: cognates/english_latin.json
+* based on Latin root dictionaries
+* public domain etymology data
+* stored as: cognates/english_latin.json
 
 English ↔ Greek
-* Based on Greek root dictionaries
-* Public domain etymology data
-* Stored as: cognates/english_greek.json
+* based on Greek root dictionaries
+* public domain etymology data
+* stored as: cognates/english_greek.json
 
-6. Tokenization Rules
+6. Tokenization Rules (Updated)
 English/Spanish
-* Whitespace + punctuation splitting
-* Lowercasing
-* Basic normalization
+* whitespace + punctuation splitting
+* lowercase normalization
+* basic Unicode normalization
+* tokenizer must not trigger highlight or autosave
 
 Greek/Latin
-* Unicode normalization
-* Accent stripping
-* Combining diacritic handling
+* Unicode normalization (NFD)
+* accent stripping
+* combining diacritic handling
+* tokenizer must preserve punctuation and whitespace
 
-7. Master List Storage
+7. Normalization Rules (Updated)
+All languages
+* lowercase
+* Unicode NFD
+* remove diacritics
+* remove punctuation for lemma lookup
+Purpose:
+* ensures consistent lookup across frequency lists, lemma maps, cognate maps, and master list
+
+8. Master List Storage (Updated)
 Primary file:
 * public/master/master_list.json
-
 Backup directory:
 * public/master/backups/
-* Timestamped backups created on every save
+* timestamped backups created on every save
 
 Supabase Master List (Internal)
-* Stored in master_wordlists table
-* Fields: lemma, rank, language, is_cognate, project_id
-* Populated from frontend Master List objects
-* Used for comparison logic and global list generation
+* stored in master_wordlists table
+* fields:
+  * lemma
+  * rank
+  * language
+  * is_cognate
+  * project_id
+Rules:
+* masterList must contain plain strings only
+* Supabase rejects rows where lemma is undefined
+* frontend assigns masterList directly from returned rows
 
-8. Summary
-WordList Writer uses transparent, reproducible, public-domain or open-source linguistic data. All frequency lists, lemma maps, cognate lists, and master lists are clearly organized and easy to update. As new lists are added or refined, this document must be updated to reflect current sources.
+9. Frequency Set Rules (Updated)
+* NGSL-1K must contain exactly 1000 normalized lemmas
+* NGSL-Full must contain exactly 2800 normalized lemmas
+* rank continuity required
+* normalization collisions must be detected
+* frequencySet contains normalized lemmas only
+Purpose:
+* ensures known-word detection is accurate and consistent
+
+10. Summary
+WordList Writer uses transparent, reproducible, public-domain or open-source linguistic data. All frequency lists, lemma maps, cognate lists, and master lists are clearly organized and easy to update. This document defines the authoritative sources and normalization rules required for consistent analysis across languages.
 
 Documentation Formatting Reminder
-All documentation updates must follow this formatting standard:
-* Use plain text section titles
-* Use asterisks (*) for bullet points
-* Do not insert blank lines inside bullet lists
-* Use ASCII-only characters
-* Avoid Markdown headings (#)
-* Avoid fenced code blocks unless necessary
-* Use Step format for workflows to prevent GitHub auto-renumbering
-This ensures consistent rendering across GitHub and prevents formatting breakage.
+* use plain text section titles
+* use asterisks (*) for bullet points
+* do not insert blank lines inside bullet lists
+* use ASCII-only characters
+* avoid Markdown headings (#)
+* avoid fenced code blocks unless necessary
+* use Step format for workflows to prevent GitHub auto-renumbering
