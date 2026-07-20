@@ -1,150 +1,335 @@
 Backend Architecture
-Version: 2026-07-17
+Version: 2026-07-20
 Status: Authoritative Backend Guide
 
 Overview
-This document explains the backend architecture of WordList Writer. It describes how Express is structured, how API routes connect to controllers, how Supabase is integrated, and how the save and load pipelines operate. It is designed for future development sessions and debugging backend issues.
+This document describes the backend architecture of WordList Writer. It merges the original backend specification with updated architecture rules and July 19 fixes. It explains how Express is structured, how API routes connect to controllers, how Supabase is integrated, and how save and load pipelines operate. It also documents the updated highlight pipeline rules, project ID rules, master list rules, and frequency list rules that affect backend behavior.
 
-1. High-Level Structure
+High-Level Structure
 The backend is a lightweight Express server. It provides:
-* static file hosting
-* API routes for saving and loading data
-* Supabase integration for persistence
-* middleware for JSON parsing and routing
 
-The backend does not perform text analysis. All analysis occurs in the frontend.
+static file hosting
 
-2. Server Entry Point
+API routes for saving and loading data
+
+Supabase integration for persistence
+
+middleware for JSON parsing and routing
+
+The backend does not perform text analysis. All analysis occurs in the frontend. The backend must remain simple, predictable, and free of highlight logic.
+
+Server Entry Point
 The backend entry point is:
 src/server.js
 
 Responsibilities:
-* initialize Express
-* register middleware
-* register API routes
-* serve static files
-* start HTTP server
 
-3. Middleware Order
+initialize Express
+
+register middleware
+
+register API routes
+
+serve static files
+
+start HTTP server
+
+Middleware Order
 Middleware order is critical:
-* JSON body parser
-* API routes
-* static file hosting
+
+JSON body parser
+
+API routes
+
+static file hosting
 
 Static hosting must come last. If placed earlier, it will shadow API routes.
 
-4. API Route Structure
+API Route Structure
 API routes live in:
 src/routes
 
 Each route file:
-* defines endpoints
-* imports controllers
-* exports router
+
+defines endpoints
+
+imports controllers
+
+exports router
 
 Example route types:
-* /api/project/save
-* /api/project/load
-* /api/master/save
-* /api/master/load
 
-5. Controllers
+/api/project/save
+
+/api/project/load
+
+/api/master/save
+
+/api/master/load
+
+Controllers
 Controllers live in:
 src/controllers
 
 Responsibilities:
-* validate request data
-* call Supabase client
-* transform results
-* return JSON responses
+
+validate request data
+
+call Supabase client
+
+transform results
+
+return JSON responses
 
 Controllers must not contain business logic. They only coordinate operations.
 
-6. Supabase Client
+Supabase Client
 Supabase client lives in:
 src/lib/supabase.js
 
 Responsibilities:
-* create Supabase client instance
-* expose client for controllers
+
+create Supabase client instance
+
+expose client for controllers
 
 Environment variables required:
-* SUPABASE_URL
-* SUPABASE_SERVICE_ROLE_KEY
 
-7. Database Tables
+SUPABASE_URL
+
+SUPABASE_SERVICE_ROLE_KEY
+
+Database Tables
 Supabase stores:
-* projects
-* project_wordlists
-* master_wordlists
-* cross_language_master
+
+projects
+
+project_wordlists
+
+master_wordlists
+
+cross_language_master
 
 Full schema is documented in:
 docs/Supabase_Schema.md
 
-8. SaveEverything Workflow
+SaveEverything Workflow
 SaveEverything is the core backend workflow.
 
 Steps:
-* save project metadata
-* capture returned project id
-* save project wordlist
-* save master list
-* return success response
+Step 1: save project metadata
+Step 2: capture returned project id
+Step 3: save project wordlist
+Step 4: save master list
+Step 5: return success response
 
 This order must never change.
 
-9. Load Workflow
+Load Workflow
 Load workflow restores project state.
 
 Steps:
-* load project metadata
-* load project wordlist
-* load master list
-* return combined JSON
+Step 1: load project metadata
+Step 2: load project wordlist
+Step 3: load master list
+Step 4: return combined JSON
 
 Frontend is responsible for rebuilding UI state.
 
-10. Error Handling
+Error Handling
 Backend error handling rules:
-* always return JSON errors
-* never crash server
-* log Supabase errors
-* validate request bodies
-* validate project id
 
-11. Static File Hosting
+always return JSON errors
+
+never crash server
+
+log Supabase errors
+
+validate request bodies
+
+validate project id
+
+Static File Hosting
 Static files live in:
 public/
 
 Server uses:
-express.static(\"public\")
+express.static("public")
 
 Static hosting must be registered after API routes.
 
-12. Adding New API Routes
+Adding New API Routes
 When adding new routes:
-* create route file in src/routes
-* create controller in src/controllers
-* update API_Specification.md
-* update Docs_Index.md
 
-13. Safe Coding Practices
-* never mix analysis logic into backend
-* always validate inputs
-* always check Supabase errors
-* always return JSON
-* keep controllers small and focused
-* keep route files simple
+create route file in src/routes
 
-14. Summary
-This backend architecture document explains how Express is structured, how API routes and controllers work, how Supabase is integrated, and how save and load pipelines operate. It is essential for debugging backend issues and safely extending backend functionality.
+create controller in src/controllers
 
-Documentation Formatting Reminder
-* Use plain text section titles
-* Use asterisks (*) for bullet points
-* No blank lines inside bullet lists
-* ASCII-only characters
-* Avoid Markdown headings
-* Avoid fenced code blocks unless necessary
-* Use Step format for workflows
+update API_Specification.md
+
+update Docs_Index.md
+
+Safe Coding Practices
+
+never mix analysis logic into backend
+
+always validate inputs
+
+always check Supabase errors
+
+always return JSON
+
+keep controllers small and focused
+
+keep route files simple
+
+Updated Architecture Rules
+These rules were added during the July 19 debugging session. They govern how the frontend interacts with backend save and load operations.
+
+Centralized Highlight Pipeline
+
+all highlight operations must enter through requestHighlightUpdate
+
+handleStableInput must never be called directly from event listeners
+
+requestHighlightUpdate uses a 50ms debounce
+
+no other function may trigger highlight
+
+no highlight or tokenizer runs during IME composition
+
+highlight runs only after IME commits final text
+
+Startup Highlight Sequence
+
+startup triggers highlight exactly once
+
+project list and order check run after highlight
+
+recommended delay is 75ms
+
+prevents prefix logs, double tokenization, and startup flicker
+
+Startup Frequency Loop Removal
+
+triggerFrequencyLoop must not run on startup
+
+frequency stats computed inside handleStableInput
+
+no frequency scanning before first highlight pass
+
+Debug Logging Rules
+
+remove normalized token logs
+
+remove lemmaMap prefix logs
+
+remove sample frequency logs
+
+no tokenizer logs in production
+
+only "Load complete" allowed on startup
+
+Cognate Update Rules
+
+updateCognates must call requestHighlightUpdate
+
+updateCognates must not call handleStableInput
+
+cognate updates must re-render master list after highlight
+
+Autosave Rules
+
+autosave must be debounced
+
+autosave must not run inside input handlers
+
+autosave pauses during project resets
+
+autosave resumes after reset completes
+
+Tokenizer Rules
+
+tokenizeUnified must not trigger highlight or autosave
+
+tokenizeUnified must not log normalized tokens
+
+tokenizeUnified must return objects only for real word tokens
+
+punctuation and whitespace must remain raw strings
+
+Master List and Project List Rules
+
+updateProjectList must not trigger highlight
+
+checkStoryOrderAgainstMaster must not trigger highlight
+
+both run after highlight on startup
+
+both may run immediately during user actions
+
+Frequency List Rules
+
+frequencySet must be loaded before highlight pipeline
+
+frequencySet must contain normalized lemmas only
+
+frequency stats computed inside handleStableInput
+
+July 19 Fixes
+These fixes correct backend save and load behavior.
+
+Project ID Rules
+
+project-id-input must always be updated when a new project is created
+
+project-id-input must always be updated when a project is loaded
+
+loadEverything must write currentProjectId into project-id-input
+
+saveEverything must write currentProjectId into project-id-input
+
+New Project button must write currentProjectId into project-id-input
+
+without this, loadEverything receives null and master list loads empty
+
+Master List Save Rules
+
+masterList contains plain strings
+
+apiSaveMasterList must send raw strings
+
+mapping item.lemma or item.word is invalid
+
+Supabase insert must receive rows like { project_id, lemma }
+
+undefined values cause silent Supabase rejection
+
+correct mapping: rows = [...masterListArray]
+
+Master List Load Rules
+
+loadEverything must call apiLoadMasterList(projectId)
+
+load route returns { success: true, data: [...] }
+
+masterList must be assigned directly
+
+master list must be rendered after assignment
+
+Frequency Known-Word Rules
+
+known words come from NGSL-1K
+
+master list is not a known-word list
+
+using master list for known-word detection marks all words unknown
+
+correct known-word set: new Set(frequencyData.map(item => normalizeLemma(item.lemma)))
+
+restores green checks
+
+enables cognate highlighting
+
+Summary
+This backend architecture document merges the original backend specification with updated architecture rules and July 19 fixes. It explains how Express is structured, how API routes and controllers work, how Supabase is integrated, and how save and load pipelines operate. It also documents the updated highlight pipeline rules, project ID rules, master list rules, and frequency list rules that ensure stable frontend-backend interaction.
