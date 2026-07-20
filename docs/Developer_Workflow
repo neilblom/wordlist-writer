@@ -1,9 +1,9 @@
 Developer Workflow
-Version: 2026-07-17
+Version: 2026-07-20
 Status: Authoritative Developer Guide
 
 Overview
-This document explains how to work on the WordList Writer codebase. It is designed for future developers and future sessions that need to reconstruct the internal architecture, pipelines, and coding conventions. It follows the GitHub-safe formatting rules used across the project.
+This document explains how to work on the WordList Writer codebase. It merges the original developer workflow with updated architecture rules, tokenizer rules, rendering rules, highlight pipeline rules, startup sequence rules, and July 19 fixes. It is designed for future developers and future sessions that need to reconstruct the internal architecture, pipelines, and coding conventions. It follows the GitHub-safe formatting rules used across the project.
 
 1. Architecture Overview
 WordList Writer consists of four major layers:
@@ -11,7 +11,6 @@ WordList Writer consists of four major layers:
 * Analysis Layer (tokenizer, normalization, highlight pipeline)
 * Curriculum Layer (Master List, Project List, Cognates, Frequency)
 * Backend Layer (Express plus Supabase)
-
 The system uses static JSON files for linguistic data, a lightweight Express server, and Supabase for persistence.
 
 2. Folder Structure
@@ -27,7 +26,6 @@ The project uses the following folder layout:
 * public/master/backups
 * docs
 * scripts
-
 Folder purposes:
 * controllers: backend logic for API routes
 * lib: shared backend utilities such as Supabase client and normalization helpers
@@ -44,20 +42,23 @@ The frontend pipeline processes text in the following order:
 * lookup cognates
 * lookup frequency
 * lookup curriculum rank
-* determine highlight color
+* determine highlight class
 * update project list
 * update violations panel
 * render UI
-
-All steps must remain in this order.
+All steps must remain in this order. Rendering must occur only through requestHighlightUpdate.
 
 4. Tokenizer Workflow
 Tokenizer responsibilities:
 * split text into tokens
 * preserve punctuation
+* preserve whitespace
 * handle contractions
-* return array of token objects
-
+* return array of token objects for words
+* return raw strings for punctuation and whitespace
+Rules:
+* must not trigger highlight or autosave
+* must not log normalized tokens
 Location:
 src/utils/tokenizer.js
 
@@ -68,22 +69,24 @@ Rules:
 * Unicode NFD
 * strip diacritics
 * remove punctuation
-
 Location:
 src/utils/normalizeLemma.js
 
 6. Highlight Pipeline
 Highlighting uses priority rules:
-* cognate: green
-* known: black
-* unknown: red
-
+* cognate: green underline
+* known: normal
+* unknown: red asterisk
+Rules:
+* all highlight operations must enter through requestHighlightUpdate
+* handleStableInput must never be called directly from event listeners
+* requestHighlightUpdate uses debounce
+* no highlight during IME composition
 Location:
 src/utils/highlight.js
-
 Dependencies:
 * masterSet
-* frequencyList
+* frequencySet
 * cognateMap
 * tokenizer
 * normalizeLemma
@@ -94,7 +97,7 @@ Rules:
 * normalized lemmas only
 * no duplicates
 * update dynamically as text changes
-
+* must not trigger highlight
 Location:
 src/utils/projectList.js
 
@@ -104,8 +107,8 @@ Rules:
 * unique lemmas
 * unique ranks
 * normalized lemmas
+* plain strings only
 * cross-language equivalents allowed
-
 Location:
 src/utils/masterList.js
 
@@ -115,7 +118,8 @@ Types:
 * unknown word
 * out-of-order word
 * curriculum gap
-
+Rules:
+* must run after highlight on startup
 Location:
 src/utils/violations.js
 
@@ -126,19 +130,16 @@ Responsibilities:
 * expose API routes
 * connect to Supabase
 * handle save and load pipeline
-
 Location:
 src/server.js
 
 11. API Routes
 API routes are defined in:
 src/routes
-
 Controllers live in:
 src/controllers
-
 Full specification:
-See docs/API_Specification.md
+docs/API_Specification.md
 
 12. Supabase Integration
 Supabase stores:
@@ -146,21 +147,22 @@ Supabase stores:
 * project_wordlists
 * master_wordlists
 * cross_language_master
-
 Supabase client lives in:
 src/lib/supabase.js
-
 Full schema:
-See docs/Supabase_Schema.md
+docs/Supabase_Schema.md
 
 13. SaveEverything Workflow
 SaveEverything must:
-* save project
+* save project metadata
 * capture returned id
 * save project wordlist
 * save master list
 * update UI
-
+Rules:
+* project-id-input must always be updated
+* masterList must be saved as plain strings
+* Supabase rows must be { project_id, lemma }
 This order must never change.
 
 14. Load Workflow
@@ -168,21 +170,47 @@ Load workflow must:
 * load project metadata
 * load project wordlist
 * load master list
+* assign masterList directly from returned data
 * rebuild UI state
-* re-run highlight pipeline
+* trigger highlight via requestHighlightUpdate
+Rules:
+* project-id-input must be updated
+* master list must render after assignment
 
-15. Debugging Workflow
+15. Updated Architecture Rules
+Centralized Highlight Pipeline:
+* all highlight operations must enter through requestHighlightUpdate
+* requestHighlightUpdate uses debounce
+* no other function may trigger highlight
+IME Rules:
+* no highlight during composition
+Startup Rules:
+* startup triggers highlight once
+* project list and order check run after highlight
+* recommended delay is 75ms
+Frequency Rules:
+* frequencySet must contain normalized lemmas
+* known words come from NGSL-1K
+Debug Logging Rules:
+* no normalized token logs
+* no lemmaMap prefix logs
+* no sample frequency logs
+* only "Load complete" allowed on startup
+
+16. Debugging Workflow
 Common debugging steps:
 * check normalizeLemma
 * check tokenizer output
 * check masterSet
-* check frequencyList
+* check frequencySet
 * check cognateMap
 * check highlight pipeline
 * check violations panel
 * check save and load pipeline
+* check for nested spans in editor.innerHTML
+* check project-id-input for correct value
 
-16. Adding New Features
+17. Adding New Features
 When adding new features:
 * update Decisions.md
 * update Detailed_Feature_Specifications.md
@@ -190,23 +218,13 @@ When adding new features:
 * update Supabase_Schema.md if schema changes
 * update README.md if user-facing changes
 * update Docs_Index.md
-
-17. Safe Coding Practices
+Rules:
 * never modify masterList directly; use helper functions
 * always normalize lemmas before insertion
 * always update masterSet after changes
-* always re-run highlight pipeline after edits
+* always trigger highlight via requestHighlightUpdate
 * always validate ranks
 * always guard against null values
 
 18. Summary
-This developer workflow explains how to work on the WordList Writer codebase, how pipelines interact, how the backend integrates with Supabase, and how to safely add new features. It is designed for future developers and future sessions.
-
-Documentation Formatting Reminder
-* Use plain text section titles
-* Use asterisks (*) for bullet points
-* No blank lines inside bullet lists
-* ASCII-only characters
-* Avoid Markdown headings
-* Avoid fenced code blocks unless necessary
-* Use Step format for workflows
+This developer workflow explains how to work on the WordList Writer codebase, how pipelines interact, how the backend integrates with Supabase, and how to safely add new features. It merges the original workflow with updated architecture rules and July 19 fixes to ensure stable development across all layers.
