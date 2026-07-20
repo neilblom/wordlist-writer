@@ -3,7 +3,7 @@ Version: 2026-07-20
 Status: Authoritative Rendering Guide
 
 Overview
-This document explains how the rendering pipeline works in WordList Writer. It merges the original rendering design with the updated single-layer editor, centralized highlight pipeline, tokenizer rules, rendering rules, startup sequence rules, and July 19 fixes. It describes how tokens become DOM nodes, how highlight classes are applied, how UI components re-render, and how rendering integrates with the analysis pipeline.
+This document explains how the rendering pipeline works in WordList Writer. It merges the original rendering design with the updated single-layer editor, centralized highlight pipeline, tokenizer rules, rendering rules, startup sequence rules, dictionary profile system, hybrid cognate window, alphabetical dictionary, and July 19 fixes. It describes how tokens become DOM nodes, how highlight classes are applied, how UI components re-render, and how rendering integrates with the analysis pipeline. WordList Writer is a teacher-facing authoring tool. All rendering behavior is designed for teacher workflows only.
 
 1. Rendering Philosophy
 The rendering pipeline is designed to be:
@@ -19,7 +19,7 @@ The rendering pipeline updates:
 * project word list
 * master list
 * frequency list
-* cognate list
+* cognate window (detected + alphabetical)
 * violations panel
 Most updates occur in the writing window and project list.
 
@@ -33,6 +33,8 @@ Rendering follows this order:
 * replace editor.innerHTML
 * update project list
 * update violations panel
+* update cognate detected section
+* update cognate alphabetical dictionary
 * update master list if needed
 This order must remain stable.
 
@@ -94,7 +96,33 @@ Master list changes trigger:
 * requestHighlightUpdate
 * violations panel update
 
-8. Violations Panel Rendering
+8. Cognate Window Rendering
+The cognate window has two sections:
+* detected cognates (top)
+* alphabetical dictionary (bottom)
+Both sections are filtered by dictionaryProfile.
+
+Detected cognates rendering:
+* clear detected section
+* iterate over lemmas present in current text
+* filter by dictionaryProfile
+* render lemma, cognate, tier
+* attach click handlers for highlight and master list insertion
+
+Alphabetical dictionary rendering:
+* clear dictionary section
+* iterate over merged dictionary entries
+* filter by dictionaryProfile
+* sort alphabetically by lemma
+* render lemma, cognate, tier, source (official or pending)
+* attach click handlers for add, edit, delete
+
+Rules:
+* cognate rendering must not trigger highlight directly
+* cognate updates must call requestHighlightUpdate
+* alphabetical dictionary must reflect merged dictionary
+
+9. Violations Panel Rendering
 Violations panel rendering steps:
 * clear panel
 * iterate over violations array
@@ -105,11 +133,15 @@ Violation types:
 * out-of-order word
 * curriculum gap
 
-9. Event-Driven Rendering
+10. Event-Driven Rendering
 Rendering is triggered by:
 * requestHighlightUpdate
 * click event in frequency list
-* click event in cognate list
+* click event in cognate detected section
+* click event in alphabetical dictionary
+* add cognate event
+* edit cognate event
+* publish cognates event
 * edit event in master list
 * save and load events
 Rules:
@@ -117,7 +149,7 @@ Rules:
 * requestHighlightUpdate must debounce highlight
 * no highlight during IME composition
 
-10. Performance Considerations
+11. Performance Considerations
 Performance rules:
 * avoid full re-renders
 * avoid deep DOM trees
@@ -126,17 +158,39 @@ Performance rules:
 * avoid DOM mutation after render
 The pipeline must remain fast enough for real-time typing.
 
-11. Rendering and Analysis Integration
+12. Rendering and Analysis Integration
 Rendering depends on analysis results. Analysis pipeline provides:
 * tokens
 * normalized lemmas
-* cognate flags
+* cognate flags filtered by dictionaryProfile
 * frequency tiers
 * curriculum ranks
 * violation list
 Rendering pipeline consumes these results and produces HTML.
 
-12. Updated Architecture Rules
+13. Dictionary Profile Integration
+Dictionary profile rules:
+* dictionaryProfile is per-project
+* profile determines which cognates are visible
+* profile affects detected cognates
+* profile affects alphabetical dictionary
+* profile does not affect project language
+Rendering must:
+* filter cognates by profile
+* rebuild cognate window after profile change
+* trigger requestHighlightUpdate after profile change
+
+14. Pending and Official Cognate Integration
+Rendering must reflect merged dictionary:
+* pending entries override official entries
+* merged dictionary rebuilt after publish
+* alphabetical dictionary shows source (official or pending)
+* detected section uses merged dictionary only
+Rules:
+* no direct rendering from pending or official tables
+* merged dictionary is the single source of truth
+
+15. Updated Architecture Rules
 Centralized Highlight Pipeline:
 * all highlight operations must enter through requestHighlightUpdate
 * requestHighlightUpdate uses debounce
@@ -155,7 +209,7 @@ Debug Logging Rules:
 * no sample frequency logs
 * only "Load complete" allowed on startup
 
-13. Adding New Rendering Features
+16. Adding New Rendering Features
 When adding new rendering features:
 * keep DOM structure simple
 * avoid nested spans
@@ -163,7 +217,7 @@ When adding new rendering features:
 * update Detailed_Feature_Specifications.md
 * update Developer_Workflow.md
 
-14. Debugging Rendering Issues
+17. Debugging Rendering Issues
 Debugging steps:
 * check tokenizer output
 * check normalized lemmas
@@ -171,7 +225,8 @@ Debugging steps:
 * check editor.innerHTML for nested spans
 * check project list rendering
 * check master list rendering
+* check cognate window rendering
 * check violations panel rendering
 
-15. Summary
-This rendering pipeline document explains how tokens become DOM nodes, how highlight classes are applied, how UI components re-render, and how rendering integrates with the analysis pipeline. It merges the original design with updated architecture rules and July 19 fixes. It is essential for debugging UI update issues and safely extending the rendering system.
+18. Summary
+This rendering pipeline document explains how tokens become DOM nodes, how highlight classes are applied, how UI components re-render, and how rendering integrates with the analysis pipeline. It merges the original design with updated architecture rules, dictionary profile system, hybrid cognate window, alphabetical dictionary, and July 19 fixes. It is essential for debugging UI update issues and safely extending the rendering system.
