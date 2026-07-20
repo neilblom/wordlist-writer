@@ -3,7 +3,7 @@ Version: 2026-07-20
 Status: Authoritative Workflow Guide
 
 Overview
-This document explains how to use the Master List (Column D) inside WordList Writer. It merges the original curriculum workflow with updated architecture rules, tokenizer rules, rendering rules, highlight pipeline rules, and July 19 fixes. The Master List defines curriculum order, controls highlighting, and supports multilingual expansion. This workflow guide is designed for teachers and for future development sessions.
+This document explains how to use the Master List (Column D) inside WordList Writer. It merges the original curriculum workflow with updated architecture rules, tokenizer rules, rendering rules, highlight pipeline rules, dictionary profile system, hybrid cognate window, alphabetical dictionary, and July 19 fixes. The Master List defines curriculum order, controls highlighting, and supports multilingual expansion. This workflow guide is designed for teachers and for future development sessions. WordList Writer is a teacher-facing authoring tool.
 
 1. Purpose of the Master List
 The Master List is a pedagogical sequence of lemmas. It defines the order in which vocabulary should appear in beginner-level texts. It is not alphabetical and not frequency-ordered. It is a curriculum.
@@ -58,7 +58,7 @@ Step 2: the cognate is inserted into the Master List
 Step 3: the correct language is assigned
 Step 4: Column D re-renders
 Step 5: requestHighlightUpdate runs the highlight pipeline
-This workflow supports discovery → selection → curriculum building.
+This workflow supports discovery -> selection -> curriculum building.
 
 6. Typed Word Insertion Workflow
 When a teacher types a new lemma in the writing window:
@@ -107,20 +107,43 @@ Step 3: masterList assigned directly from returned data
 Step 4: Column D re-renders
 Step 5: requestHighlightUpdate runs the highlight pipeline
 
-10. Updated Architecture Rules
+10. Dictionary Profile Integration
+Dictionary profile rules:
+* dictionaryProfile is per-project
+* profile determines which cognates appear in Column B
+* profile affects detected cognates
+* profile affects alphabetical dictionary
+Master list behavior:
+* master list does not change with profile
+* master list remains curriculum-only
+* cognate flags may reflect profile-specific cognates
+Profile changes:
+* re-render cognate window
+* requestHighlightUpdate refreshes highlight classes
+
+11. Hybrid Cognate Window Integration
+Master list interacts with both cognate sections:
+Detected cognates:
+* clicking detected cognates inserts lemma into master list
+Alphabetical dictionary:
+* clicking dictionary entries may insert lemma into master list
+Pending and official cognates:
+* master list uses merged dictionary for cognate flags
+Rules:
+* master list must re-render after cognate updates
+* highlight pipeline must run after cognate updates
+
+12. Updated Architecture Rules
 Master List rules:
 * masterList contains plain strings only
 * master list rendering occurs after highlight
 * master list updates must not call handleStableInput directly
+Project list rules:
 * updateProjectList must not trigger highlight
-* checkStoryOrderAgainstMaster must not trigger highlight
-Project ID rules:
-* project-id-input must update on create, load, save, and new project
-* incorrect project ID causes empty master list loads
+* updateProjectList runs after highlight on startup
 Frequency known-word rules:
 * known words come from NGSL-1K
 * master list is not a known-word list
-* correct known-word set uses normalized frequency lemmas
 Highlight pipeline rules:
 * all highlight operations must enter through requestHighlightUpdate
 * no highlight during IME composition
@@ -129,8 +152,12 @@ Startup rules:
 * startup triggers highlight once
 * project list and order check run after highlight
 * recommended delay is 75ms
+Cognate system rules:
+* cognate updates must call requestHighlightUpdate
+* merged dictionary must be used for cognate flags
+* alphabetical dictionary must reflect merged dictionary
 
-11. Best Practices for Teachers
+13. Best Practices for Teachers
 * keep the Master List small and focused
 * add lemmas only when pedagogically necessary
 * use cognates to scaffold new vocabulary
@@ -139,7 +166,7 @@ Startup rules:
 * use frequency metadata to guide difficulty
 * build cross-language equivalents gradually
 
-12. Best Practices for Developers
+14. Best Practices for Developers
 * always normalize lemmas before insertion
 * ensure masterSet stays in sync with masterList
 * update highlight pipeline using requestHighlightUpdate
@@ -147,6 +174,7 @@ Startup rules:
 * guard against null values in normalizeLemma
 * ensure saveEverything sends correct shape
 * ensure load pipeline assigns plain strings correctly
+* ensure cognate updates refresh master list flags
 
-13. Summary
-The Master List is the backbone of WordList Writer. It defines curriculum order, controls highlighting, supports multilingual expansion, and enables teachers to build pedagogically sequenced texts. This updated workflow merges the original design with new architecture rules and July 19 fixes to ensure stable behavior across the entire system.
+15. Summary
+The Master List is the backbone of WordList Writer. It defines curriculum order, controls highlighting, supports multilingual expansion, and enables teachers to build pedagogically sequenced texts. This updated workflow merges the original design with new architecture rules, dictionary profile system, hybrid cognate window, alphabetical dictionary, and July 19 fixes to ensure stable behavior across the entire system.
