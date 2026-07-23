@@ -1,20 +1,20 @@
 Product Requirements Document (PRD) — WordList Writer
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Source of Truth
 Owner: Neil Blom
 Scope: Teacher-Only Vocabulary Authoring Tool
 
 Overview
-WordList Writer is a teacher-facing authoring tool for creating controlled beginner-level texts across English, Spanish, Koine Greek, and Latin. Teachers use the tool to craft texts aligned with curriculum order, frequency constraints, cognate scaffolding, and cross-language lemma normalization. Students never interact with the app. The final output delivered to students is a clean text without highlights or diagnostics.
+WordList Writer is a teacher-facing authoring tool for creating controlled beginner-level English texts. Teachers use the tool to craft texts aligned with curriculum order, frequency constraints, simple cognate scaffolding, and lemma normalization. Students never interact with the app. The final output delivered to students is a clean text without highlights or diagnostics.
 
 The tool supports two instructional goals:
-* building a unified beginner-level master vocabulary list across languages
-* supporting multiple master lists when a unified list is not feasible
+* building a beginner-level master vocabulary list
+* supporting curriculum-aligned text creation
 
-WordList Writer provides real-time vocabulary analysis, curriculum diagnostics, cognate scaffolding, frequency awareness, and project-level vocabulary tracking. All analysis exists to support teacher workflow.
+WordList Writer provides real-time vocabulary analysis, curriculum diagnostics, simple cognate scaffolding, frequency awareness, and project-level vocabulary tracking. All analysis exists to support teacher workflow.
 
 1. Purpose and Scope
-WordList Writer helps instructors write linguistically appropriate, pedagogically sequenced texts. It highlights vocabulary usage, checks frequency alignment, identifies cognates, and surfaces curriculum-order violations. It supports unified or multiple master lists depending on learner profile.
+WordList Writer helps instructors write linguistically appropriate, pedagogically sequenced texts. It highlights vocabulary usage, checks frequency alignment, identifies simple Spanish → English cognates, and surfaces curriculum-order violations. It supports a single English master list during Phase 2.
 
 Non-Goals:
 * no student accounts
@@ -22,13 +22,15 @@ Non-Goals:
 * no LMS integration
 * no student-facing UI
 * no automated grading
+* no multilingual pipelines (deferred to Phase 3)
+* no dictionary profiles or tier metadata
 
 2. Core Features
 
 2.1 Writing Window
 * single contenteditable editor
 * real-time tokenization
-* lemma normalization per language
+* lemma normalization
 * strict highlight priority:
   * green underline = cognate
   * normal = known (frequency or master list)
@@ -38,19 +40,18 @@ Non-Goals:
 
 2.2 Top Panel (Four Columns)
 Column A: Frequency List
-* displays active frequency list
+* displays NGSL frequency list
 * sorted by rank
 * click to highlight in writing window
 
-Column B: Cognates
-* English ↔ Spanish/Latin/Greek
-* tiered cognate classification
+Column B: Cognates (Simple Window)
+* Spanish → English cognates only
 * click to highlight and insert into Master List
 
 Column C: Project Word List
 * tracks lemmas appearing in current text
 * normalized before insertion
-* shows cognate tier and frequency tier
+* shows frequency tier
 * stored in Supabase
 
 Column D: Master List
@@ -58,11 +59,9 @@ Column D: Master List
 * fields:
   * rank
   * lemma
-  * language
-  * cognate flags
-  * frequency ranks
+  * language (English only)
 * red = not in Master List or used too early
-* editable: add, insert, reorder, update flags
+* editable: add, insert, reorder
 * updates highlighting immediately
 
 2.3 Violations Panel
@@ -74,36 +73,34 @@ Behavior:
 * updates automatically
 * never interrupts writing
 
-3. Multilingual Capability
-Supported languages:
-* English
-* Spanish
-* Koine Greek
-* Latin
+3. Language Capability (Phase 2)
+Supported language:
+* English only
+
 Static JSON modules:
-* frequency/<language>.json
-* lemmas/<language>.json
-* cognates/<language>.json
+* frequency/english_ngsl.json
+* lemmas/english.json
+* cognates/english_spanish.json
+
+Multilingual support is deferred to Phase 3.
 
 4. Highlighting Logic
 Step 1: cognate
 Step 2: master list
 Step 3: frequency list
 Step 4: unknown
-Tier colors:
-* latin = gold
-* greek = blue
-* biblical = purple
-* general = green
+
 Normalization:
-* NFD + accent stripping
+* lowercase
+* NFD Unicode normalization
+* accent stripping
+* punctuation removal
 
 5. Word Lists
 
 5.1 Frequency Lists
 Requirements:
 * NGSL-1K must contain exactly 1000 unique lemmas
-* NGSL-Full must contain exactly 2800 lemmas
 * unique lemma requirement after normalization
 * rank continuity required
 * fail-fast ingestion
@@ -119,22 +116,22 @@ Validation detects:
 * inflected → lemma
 * normalized consistently
 
-5.3 Cognate Lists
-* English ↔ Spanish/Latin/Greek
-* tier metadata
-* consistent across highlight pipeline and project list
+5.3 Cognate Lists (Phase 2)
+* Spanish → English only
+* no tier metadata
+* no dictionary profiles
+* no alphabetical dictionary
 
 5.4 Project Word Lists (Supabase)
 * stored per project
 * normalized lemmas
-* cognate tier + frequency tier displayed
+* frequency tier displayed
 
 5.5 Master Lists (Supabase)
 Tracks:
 * lemma
-* language equivalents
-* cognate flags
-* frequency ranks
+* rank
+* language (English only)
 Curriculum ordering:
 * master list defines pedagogical sequence
 * insert new words after last used master list word
@@ -162,7 +159,6 @@ Tables:
 * projects
 * project_wordlists
 * master_wordlists
-* cross_language_master
 Persistence:
 * UUIDs generated client-side
 * .select() required for all inserts
@@ -229,12 +225,12 @@ Step 5: trigger highlight
 
 9. Roadmap (Concise)
 
-Phase 1: English-only rebuild
-Phase 2: Supabase integration
-Phase 3: curriculum modeling
-Phase 4: multiple curriculum support
-Phase 5: teacher workflow enhancements
-Phase 6: optional enhancements
+Phase 1: English-only rebuild  
+Phase 2: Supabase integration  
+Phase 3: curriculum modeling (future)  
+Phase 4: multiple curriculum support (future)  
+Phase 5: teacher workflow enhancements (future)  
+Phase 6: optional enhancements (future)
 
 10. Summary
-WordList Writer is a teacher-facing authoring tool that provides curriculum-aligned vocabulary control, frequency awareness, cognate scaffolding, and cross-language lemma normalization. This concise hybrid PRD merges the original pedagogical intent with updated architecture rules, pipelines, workflows, and July 19 fixes. It defines the functional requirements, constraints, and roadmap for WordList Writer as a professional tool for curriculum-aligned text development.
+WordList Writer is a teacher-facing authoring tool that provides curriculum-aligned vocabulary control, frequency awareness, simple cognate scaffolding, and lemma normalization. This Phase 2 PRD merges the original pedagogical intent with updated architecture rules, pipelines, workflows, and July 19 fixes. It defines the functional requirements, constraints, and roadmap for WordList Writer as a professional tool for curriculum-aligned text development.
