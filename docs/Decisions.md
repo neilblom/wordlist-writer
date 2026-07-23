@@ -1,8 +1,8 @@
 Decisions — WordList Writer
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Source of Truth
 
-1. Tech Stack Decisions
+Tech Stack Decisions
 Node.js + Express
 * same language frontend + backend
 * fast development
@@ -21,7 +21,6 @@ Supabase (PostgreSQL)
 * persistent storage for projects and master lists
 * built-in REST API
 * easy JS client
-* real-time updates
 * secure row-level policies
 * no server maintenance
 
@@ -40,7 +39,7 @@ Controlled Save Instead of Autosave
 * prevents accidental curriculum overwrites
 * autosave used only for text, not master list
 
-2. Data Architecture Decisions
+Data Architecture Decisions
 Supabase for Project + Master Lists
 * user-specific data stored in Supabase
 * static linguistic data stored in JSON
@@ -51,8 +50,6 @@ Master List Editing in UI
 * add lemmas
 * insert at specific ranks
 * reorder
-* update cognate flags
-* update frequency metadata
 * immediate highlight updates
 * Supabase sync in Phase 2
 
@@ -61,8 +58,12 @@ Master List is a Curriculum
 * not usage-ordered
 * pedagogical sequence defined by developer
 
-Cognate Insertion Rule
-* insert after last master list lemma appearing in story
+Cognate Insertion Rule (Phase 2)
+* insert English lemma after last master list lemma appearing in story
+* Spanish lemma used only for detection
+* no dictionary profiles
+* no alphabetical dictionary
+* no pending or official cognates
 
 Typed Word Insertion Rule
 * same insertion rule as cognates
@@ -74,13 +75,10 @@ Project List Behavior
 Warning System
 * detects curriculum-order violations
 
-Unified Tier-Aware Cognate Highlighting
-* single COGNATE_MAP with tier metadata
-* global TIER_COLORS and TIER_MAP
-* shared across highlight pipeline and project list
-
-Supabase .select() Requirement
-* all inserts must use .select() to return inserted rows
+Unified Highlighting Priority
+* cognate (green underline)
+* known (normal)
+* unknown (red asterisk)
 
 Master List Architecture (Updated)
 * masterList contains plain strings only
@@ -97,7 +95,7 @@ Updated dependency chain:
 * Multilingual support (next)
 * UI polish + deployment
 
-3. UI/UX Decisions
+UI/UX Decisions
 Four-Column Top Panel (A, B, C, D)
 * mirrors teacher mental model
 * keeps reference lists visible
@@ -110,9 +108,7 @@ Bottom Writing Window
 * real-time highlighting requires clarity
 
 Highlighting Priority
-* cognate (green underline)
-* known (normal)
-* unknown (red asterisk)
+* cognate → known → unknown
 
 Master List Column (D)
 * displays curated beginner vocabulary sequence
@@ -120,17 +116,19 @@ Master List Column (D)
 * highlighting uses master list membership
 * red = not in list or too early
 
-Cognate Click Behavior
+Cognate Click Behavior (Phase 2)
 * highlights matching tokens
-* inserts cognate into master list
+* inserts English lemma into master list
+* no alphabetical dictionary
+* no dictionary profiles
 
 Project List Cognate Priority
-* cognates appear at top of Column C with tier badge
+* cognates appear at top of Column C with tier badge (Phase 2 simplified)
 
 Auto-Scroll for Master List
 * deferred until multilingual master list is stable
 
-Spanish as First Multilingual Target
+Spanish as First Multilingual Target (Phase 3)
 * clean frequency data
 * reliable lemma resources
 * strong cognate overlap
@@ -156,7 +154,7 @@ Replace Popup with Violations Panel
 * panel provides stable diagnostics
 * supports sorting, grouping, toggling
 
-4. Frontend Architecture Decisions (July 19)
+Frontend Architecture Decisions (July 19)
 Single-Layer Editor
 * no overlay
 * no nested spans
@@ -191,7 +189,7 @@ Autosave Rules
 * autosave must be debounced
 * autosave pauses during project resets
 
-5. Backend Architecture Decisions
+Backend Architecture Decisions
 Project ID Rules
 * project-id-input must update on create, load, save, and new project
 * incorrect project ID causes empty master list loads
@@ -209,7 +207,7 @@ SaveEverything Contract
 * save project wordlist
 * save master list
 
-6. Multilingual Decisions
+Multilingual Decisions (Phase 3)
 Supported Languages
 * English
 * Spanish
@@ -222,7 +220,7 @@ Dynamic Language Modules
 * faster startup
 * cleaner architecture
 
-7. Deployment Decisions
+Deployment Decisions
 Render Hosting
 * free tier
 * GitHub auto-deploy
@@ -233,7 +231,7 @@ Supabase Hosting
 * zero maintenance
 * PostgreSQL reliability
 
-8. Repository Structure Decisions
+Repository Structure Decisions
 Use /docs Folder
 * organized repo
 * permanent memory
@@ -244,7 +242,7 @@ Clean Rebuild in New Repo
 * remove Ruby artifacts
 * clean architecture
 
-9. Future Considerations
+Future Considerations
 Mobile Support (Deferred)
 * responsive layout
 * collapsible panels
@@ -264,7 +262,7 @@ Additional Future Options
 * collaboration mode
 * advanced stats
 
-10. Debugging Decisions (Historical)
+Debugging Decisions (Historical)
 Frontend Fixes (2026-07-14)
 * fixed missing brace in renderViolationsPanel
 * repaired template string in renderFrequencyStats
