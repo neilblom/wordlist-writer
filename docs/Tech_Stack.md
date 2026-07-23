@@ -1,21 +1,19 @@
 Tech Stack — WordList Writer
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Source of Truth
 
 1. Frontend Stack
 HTML5
 * single contenteditable writing window
 * four-column top panel
-* hybrid cognate window (detected + alphabetical)
+* simple cognate window (detected only)
 * violations panel
-* dictionary profile selector
 * project and master list displays
 
 CSS3
 * clean, minimal UI
 * responsive four-column layout
 * highlight colors (green underline, red asterisk, normal known)
-* tier-aware cognate colors
 * future dark-mode support
 
 Vanilla JavaScript (ES6+)
@@ -23,24 +21,19 @@ Vanilla JavaScript (ES6+)
 * IME-safe input handling
 * real-time tokenization
 * lemma normalization
-* cognate detection via merged dictionary
+* cognate detection via simple Spanish → English map
 * frequency detection
 * curriculum-order detection
 * project list and master list rendering
-* alphabetical dictionary rendering
-* dictionary profile filtering
 * autosave debounce logic
 * Supabase communication
 * no frameworks (React/Vue/etc.)
 
-Tier-Aware Cognate Architecture
+Cognate Architecture (Phase 2)
 Global structures:
-* TIER_COLORS (tier → color)
-* TIER_MAP (lemma → tier)
-* mergedCognateMap (official + pending)
+* cognateMap (Spanish → English)
 Population:
-* build mergedCognateMap at startup from Supabase tables
-* pending entries override official entries
+* loaded from static JSON at startup
 Consumers:
 * renderHighlightsFast
 * renderProjectList
@@ -48,17 +41,12 @@ Consumers:
 Normalization:
 * lemma.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 
-Dictionary Profiles
-* profile determines which cognates appear in Column B
-* profiles: spanish, latin, greek, merged
-* stored per project in Supabase
-* affects cognate filtering only
-
-Hybrid Cognate Window
-* detected cognates (top)
-* alphabetical dictionary (bottom)
-* rebuilt from mergedCognateMap
-* filtered by dictionary profile
+Simple Cognate Window
+* detected cognates only
+* no alphabetical dictionary
+* no dictionary profiles
+* no tier metadata
+* no pending or official cognates
 
 2. Backend Stack
 Node.js (LTS)
@@ -76,10 +64,6 @@ Express.js
   * load project
   * save master list
   * load master list
-  * save cognates (official and pending)
-  * load cognates (official and pending)
-  * save dictionary profile
-  * load dictionary profile
 Backend File Structure
 src/
 server.js
@@ -104,25 +88,16 @@ Tables:
 * projects
 * project_wordlists
 * master_wordlists
-* cognates_official
-* cognates_pending
-* dictionary_profiles
-* cross_language_master
 Reasons for Supabase:
 * generous free tier
 * built-in REST API
 * easy JS client
-* real-time updates
 * secure row-level policies
 * no server maintenance
 Supabase is source of truth for:
 * project text
-* dictionary profile
 * project word lists
 * master vocabulary tracking
-* official and pending cognates
-* merged dictionary reconstruction
-* cross-language relationships
 Supabase v2:
 * returns minimal by default
 * .select() required to retrieve inserted rows
@@ -132,25 +107,16 @@ Stored in repo and served by Express.
 Frequency Lists
 * frequency/english_ngsl.json
 * frequency/spanish.json
-* frequency/greek.json
-* frequency/latin.json
 Lemma Maps
 * lemmas/english.json
 * lemmas/spanish.json
-* lemmas/greek.json
-* lemmas/latin.json
-Cognate Lists (Legacy)
+Cognate Lists (Phase 2)
 * cognates/english_spanish.json
-* cognates/english_latin.json
-* cognates/english_greek.json
 Static JSON rationale:
 * instant load
 * no DB queries
 * rarely change
 * backend stays simple
-Note:
-* official and pending cognates now stored in Supabase
-* static cognate JSON used only for initial population
 
 5. Hosting and Deployment
 Render (Backend Hosting)
@@ -191,23 +157,9 @@ GET /api/master/load/:projectId
 * returns rows where project_id = :id
 * frontend assigns masterList directly from returned data
 
-Cognate Save Routes
-POST /api/cognates/pending/save/:projectId
-* inserts or updates pending cognates
-POST /api/cognates/publish/:projectId
-* moves pending → official
-* clears pending table
-* rebuilds merged dictionary
-
-Dictionary Profile Routes
-POST /api/profile/save/:projectId
-GET /api/profile/load/:projectId
-
 Notes
 * Supabase rejects rows where lemma is undefined
 * masterList must contain plain strings only
-* dictionary profile must load before cognates
-* merged dictionary must rebuild after load
 
 8. Updated Architecture Rules
 Highlight Pipeline
@@ -230,14 +182,13 @@ Autosave Rules
 * autosave pauses during project resets
 Startup Sequence
 Step 1: load language and cognates
-Step 2: load dictionary profile
-Step 3: load project text
-Step 4: load master list
-Step 5: load project wordlist
-Step 6: load violations
-Step 7: trigger highlight once
-Step 8: after 75ms run project list and order check
-Step 9: display "Load complete"
+Step 2: load project text
+Step 3: load master list
+Step 4: load project wordlist
+Step 5: load violations
+Step 6: trigger highlight once
+Step 7: after 75ms run project list and order check
+Step 8: display "Load complete"
 
 9. Summary
 WordList Writer tech stack:
