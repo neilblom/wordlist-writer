@@ -1,5 +1,5 @@
 Glossary — WordList Writer
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Source of Truth
 
 A
@@ -12,13 +12,6 @@ API Route Shadowing
 * causes 404 or HTML fallback
 * fixed by registering API routes before express.static()
 
-Alphabetical Dictionary
-* bottom section of Column B
-* displays all cognates for the active dictionary profile
-* sorted alphabetically
-* includes official and pending cognates
-* rebuilt from merged dictionary
-
 C
 Cognate
 * a word in another language sharing a historical root with an English word
@@ -28,33 +21,13 @@ Cognate
   * manual ↔ manus
   * biology ↔ bios
 
-Cognate Tier
-* metadata describing cognate category
-* tiers:
-  * latin
-  * greek
-  * biblical
-  * general
-* used for color-coded highlighting
-
-Cognates (Official)
-* published cognate entries stored in Supabase
-* used for highlight pipeline
-* used for alphabetical dictionary
-
-Cognates (Pending)
-* newly added or edited cognates awaiting publication
-* override official entries in merged dictionary
-* stored in Supabase
-
-Cognate Window
+Cognate Window (Phase 2)
 * Column B in the top panel
-* contains detected cognates and alphabetical dictionary
-* clicking highlights matching tokens and inserts cognate into master list
-
-COGNATE_MAP (Deprecated)
-* original static cognate map
-* replaced by mergedCognateMap
+* displays detected cognates only
+* clicking highlights matching tokens and inserts English lemma into master list
+* no alphabetical dictionary
+* no dictionary profiles
+* no pending or official cognates
 
 Collector
 * logic inside highlight pipeline that pushes violation objects into curriculumViolations
@@ -66,25 +39,12 @@ Curriculum Violation
   * unknown word
   * curriculum gap
 
-Cross-Language Master List
-* Supabase table storing English, Spanish, Latin, and Greek equivalents
-* includes lemmas, cognate flags, frequency ranks, shared roots
-
 D
-Dictionary Profile
-* per-project setting determining which cognates appear in Column B
-* profiles:
-  * spanish
-  * latin
-  * greek
-  * merged
-* affects cognate filtering only
-* stored in Supabase
-
-Detected Cognates
+Detected Cognates (Phase 2)
 * top section of Column B
 * shows cognates present in the current text
-* filtered by dictionary profile
+* detected using normalized lemmas only
+* no profile filtering
 
 F
 Frequency List
@@ -113,10 +73,16 @@ Highlight Pipeline
   * red asterisk = unknown
 * must run only through requestHighlightUpdate
 
-Hybrid Cognate Window
-* combined UI showing detected cognates and alphabetical dictionary
-* rebuilt from merged dictionary
-* filtered by dictionary profile
+Hybrid Master List Model
+* global master list defines universal curriculum backbone
+* language master lists provide frequency ranking
+* context master lists provide optional curriculum modes
+* project master lists track vocabulary progression inside a single story
+
+I
+IME Composition
+* input method editor events for languages requiring composition
+* tokenizer and highlight pipeline must not run during composition
 
 L
 Lemma
@@ -136,19 +102,12 @@ Master List
 * curriculum sequence stored in Supabase
 * defines allowed vocabulary order
 * frontend uses plain strings for masterList
+* English-only in Phase 2
 
-Master List Item
+Master List Item (Phase 2)
 * lemma
-* language
+* language (English only)
 * rank
-* isCognate flag
-
-Merged Dictionary
-* unified cognate map built from official + pending entries
-* pending entries override official entries
-* used for highlight pipeline
-* used for hybrid cognate window
-* used for alphabetical dictionary
 
 P
 Project
@@ -162,11 +121,6 @@ Project Word List
 * custom list of lemmas appearing in the current text
 * displayed in Column C
 * updated dynamically as teacher types
-
-Publish Cognates
-* action that merges pending cognates into official table
-* clears pending table
-* rebuilds merged dictionary
 
 R
 Renderer
@@ -186,14 +140,6 @@ Supabase v2
 * inserts return minimal by default
 
 T
-Tier
-* linguistic category for cognates:
-  * latin
-  * greek
-  * biblical
-  * general
-* used for color-coded highlighting
-
 Tokenizer
 * splits text into tokens
 * rules:
@@ -223,7 +169,7 @@ Writing Window
 * rendered using HTML spans with no nested elements
 
 Summary
-This glossary defines core terminology used throughout WordList Writer. Update it whenever new concepts, lists, or features are introduced.
+This glossary defines core terminology used throughout WordList Writer. All Phase 3 dictionary profile, alphabetical dictionary, merged dictionary, and cognate publishing features have been removed. Update this glossary whenever new concepts or features are introduced.
 
 Documentation Formatting Reminder
 * use plain text section titles
