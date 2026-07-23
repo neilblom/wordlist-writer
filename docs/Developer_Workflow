@@ -1,19 +1,19 @@
 Developer Workflow
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Developer Guide
 
 Overview
-This document explains how to work on the WordList Writer codebase. It merges the original developer workflow with updated architecture rules, tokenizer rules, rendering rules, highlight pipeline rules, startup sequence rules, dictionary profile system, hybrid cognate window, alphabetical dictionary, cognate merging rules, and July 19 fixes. It is designed for future developers and future sessions that need to reconstruct the internal architecture, pipelines, and coding conventions. It follows the GitHub-safe formatting rules used across the project.
+This document explains how to work on the WordList Writer codebase. It merges the original developer workflow with updated Phase 2 architecture rules, tokenizer rules, rendering rules, highlight pipeline rules, startup sequence rules, hybrid master list model, and July 19 fixes. All Phase 3 dictionary profile, alphabetical dictionary, merged dictionary, and cognate publishing features have been removed. It is designed for future developers and future sessions that need to reconstruct the internal architecture, pipelines, and coding conventions. It follows the GitHub-safe formatting rules used across the project.
 
-1. Architecture Overview
+Architecture Overview
 WordList Writer consists of four major layers:
 * UI Layer (HTML, CSS, JS)
 * Analysis Layer (tokenizer, normalization, highlight pipeline)
-* Curriculum Layer (Master List, Project List, Cognates, Frequency, Dictionary Profiles)
+* Curriculum Layer (Master List, Project List, Cognates, Frequency)
 * Backend Layer (Express plus Supabase)
 The system uses static JSON files for linguistic data, a lightweight Express server, and Supabase for persistence. WordList Writer is a teacher-facing authoring tool.
 
-2. Folder Structure
+Folder Structure
 The project uses the following folder layout:
 * src/controllers
 * src/lib
@@ -30,16 +30,16 @@ Folder purposes:
 * controllers: backend logic for API routes
 * lib: shared backend utilities such as Supabase client and normalization helpers
 * routes: Express route definitions
-* utils: frontend utilities such as tokenizer, highlight logic, project list, master list, cognate window
+* utils: frontend utilities such as tokenizer, highlight logic, project list, master list, cognate detection
 * public: static JSON data and client-side assets
 * docs: full documentation suite
 * scripts: maintenance scripts
 
-3. Frontend Pipeline Overview
+Frontend Pipeline Overview
 The frontend pipeline processes text in the following order:
 * tokenize text
 * normalize lemmas
-* lookup cognates (filtered by dictionaryProfile)
+* lookup cognates (simple detection)
 * lookup frequency
 * lookup curriculum rank
 * determine highlight class
@@ -48,7 +48,7 @@ The frontend pipeline processes text in the following order:
 * render UI
 All steps must remain in this order. Rendering must occur only through requestHighlightUpdate.
 
-4. Tokenizer Workflow
+Tokenizer Workflow
 Tokenizer responsibilities:
 * split text into tokens
 * preserve punctuation
@@ -62,7 +62,7 @@ Rules:
 Location:
 src/utils/tokenizer.js
 
-5. Normalization Workflow
+Normalization Workflow
 Normalization ensures consistent lemma handling.
 Rules:
 * lowercase
@@ -72,7 +72,7 @@ Rules:
 Location:
 src/utils/normalizeLemma.js
 
-6. Highlight Pipeline
+Highlight Pipeline
 Highlighting uses priority rules:
 * cognate: green underline
 * known: normal
@@ -87,11 +87,10 @@ src/utils/highlight.js
 Dependencies:
 * masterSet
 * frequencySet
-* mergedCognateMap
 * tokenizer
 * normalizeLemma
 
-7. Project List Workflow
+Project List Workflow
 Project List tracks all lemmas in the current text.
 Rules:
 * normalized lemmas only
@@ -101,35 +100,29 @@ Rules:
 Location:
 src/utils/projectList.js
 
-8. Master List Workflow
+Master List Workflow
 Master List defines curriculum order.
 Rules:
 * unique lemmas
 * unique ranks
 * normalized lemmas
 * plain strings only
-* cross-language equivalents allowed
 Location:
 src/utils/masterList.js
 
-9. Cognate Dictionary Workflow
+Cognate Detection Workflow (Phase 2)
 Cognate system includes:
-* official cognates
-* pending cognates
-* merged dictionary
-* dictionary profiles
-* hybrid cognate window
+* simple cognate window
+* Spanish → English detection only
 Rules:
-* dictionaryProfile is per-project
-* merged dictionary rebuilt after publish
-* pending entries override official entries
+* detectCognates uses normalized lemmas
+* English lemma inserted into master list
 * cognate updates must call requestHighlightUpdate
 Locations:
 * src/utils/cognates.js
 * public/cognates
-* Supabase tables cognates_official and cognates_pending
 
-10. Violations Workflow
+Violations Workflow
 Violations detect curriculum issues.
 Types:
 * unknown word
@@ -140,7 +133,7 @@ Rules:
 Location:
 src/utils/violations.js
 
-11. Backend Architecture
+Backend Architecture
 Backend uses Express.
 Responsibilities:
 * serve static files
@@ -150,7 +143,7 @@ Responsibilities:
 Location:
 src/server.js
 
-12. API Routes
+API Routes
 API routes are defined in:
 * src/routes
 Controllers live in:
@@ -160,53 +153,42 @@ Full specification:
 Includes:
 * project save/load
 * master list save/load
-* cognate add/edit/publish
-* dictionary profile save/load
 
-13. Supabase Integration
+Supabase Integration
 Supabase stores:
 * projects
 * project_wordlists
 * master_wordlists
-* cognates_official
-* cognates_pending
-* dictionary_profiles
-* cross_language_master
 Supabase client lives in:
 * src/lib/supabase.js
 Full schema:
 * docs/Supabase_Schema.md
 
-14. SaveEverything Workflow
+SaveEverything Workflow
 SaveEverything must:
 Step 1: save project metadata
 Step 2: capture returned id
-Step 3: save dictionary profile
-Step 4: save project wordlist
-Step 5: save master list
-Step 6: update UI
+Step 3: save project wordlist
+Step 4: save master list
+Step 5: update UI
 Rules:
 * project-id-input must always be updated
 * masterList must be saved as plain strings
 * Supabase rows must be { project_id, lemma }
 This order must never change.
 
-15. Load Workflow
+Load Workflow
 Load workflow must:
 Step 1: load project metadata
-Step 2: load dictionary profile
-Step 3: load project wordlist
-Step 4: load master list
-Step 5: load cognates_official
-Step 6: load cognates_pending
-Step 7: rebuild merged dictionary
-Step 8: rebuild UI state
-Step 9: trigger highlight via requestHighlightUpdate
+Step 2: load project wordlist
+Step 3: load master list
+Step 4: rebuild UI state
+Step 5: trigger highlight via requestHighlightUpdate
 Rules:
 * project-id-input must be updated
 * master list must render after assignment
 
-16. Updated Architecture Rules
+Updated Architecture Rules
 Centralized Highlight Pipeline:
 * all highlight operations must enter through requestHighlightUpdate
 * requestHighlightUpdate uses debounce
@@ -225,26 +207,21 @@ Debug Logging Rules:
 * no lemmaMap prefix logs
 * no sample frequency logs
 * only "Load complete" allowed on startup
-Cognate Rules:
-* merged dictionary must be used for highlight
-* alphabetical dictionary must reflect merged dictionary
-* pending entries override official entries
 
-17. Debugging Workflow
+Debugging Workflow
 Common debugging steps:
 * check normalizeLemma
 * check tokenizer output
 * check masterSet
 * check frequencySet
-* check mergedCognateMap
-* check dictionaryProfile
+* check detectCognates
 * check highlight pipeline
 * check violations panel
 * check save and load pipeline
 * check for nested spans in editor.innerHTML
 * check project-id-input for correct value
 
-18. Adding New Features
+Adding New Features
 When adding new features:
 * update Decisions.md
 * update Detailed_Feature_Specifications.md
@@ -259,7 +236,7 @@ Rules:
 * always trigger highlight via requestHighlightUpdate
 * always validate ranks
 * always guard against null values
-* always rebuild merged dictionary after cognate updates
 
-19. Summary
-This developer workflow explains how to work on the WordList Writer codebase, how pipelines interact, how the backend integrates with Supabase, and how to safely add new features. It merges the original workflow with updated architecture rules, dictionary profile system, hybrid cognate window, alphabetical dictionary, cognate merging rules, and July 19 fixes to ensure stable development across all layers.
+Summary
+This developer workflow explains how to work on the WordList Writer codebase, how pipelines interact, how the backend integrates with Supabase, and how to safely add new features. It reflects correct Phase 2 behavior: English-only master list, simple cognate window, stable tokenizer behavior, and predictable highlight operations. All Phase 3 cognate dictionary architecture has been removed to maintain stability.
+
