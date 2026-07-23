@@ -1,11 +1,11 @@
 Backend Architecture
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Backend Guide
 
 Overview
-This document describes the backend architecture of WordList Writer. It merges the original backend specification with updated architecture rules and July 19 fixes. It explains how Express is structured, how API routes connect to controllers, how Supabase is integrated, and how save and load pipelines operate. It also documents rules that keep frontend and backend interaction stable. WordList Writer is a teacher-facing authoring tool. Students never interact with the application. All UI components, including frequency lists, cognates, master lists, warnings, and project tools, are designed exclusively for teacher use.
+This document describes the backend architecture of WordList Writer. It merges the original backend specification with updated Phase 2 architecture rules, July 19 fixes, and the hybrid master list model. It explains how Express is structured, how API routes connect to controllers, how Supabase is integrated, and how save and load pipelines operate. It also documents rules that keep frontend and backend interaction stable. WordList Writer is a teacher-facing authoring tool. Students never interact with the application. All UI components, including frequency lists, cognates, master lists, warnings, and project tools, are designed exclusively for teacher use.
 
-1. High-Level Structure
+High-Level Structure
 The backend is a lightweight Express server. It provides:
 * static file hosting
 * API routes for saving and loading data
@@ -13,7 +13,7 @@ The backend is a lightweight Express server. It provides:
 * middleware for JSON parsing and routing
 The backend does not perform text analysis. All analysis occurs in the frontend.
 
-2. Server Entry Point
+Server Entry Point
 The backend entry point is:
 src/server.js
 Responsibilities:
@@ -23,14 +23,14 @@ Responsibilities:
 * serve static files
 * start HTTP server
 
-3. Middleware Order
+Middleware Order
 Middleware order is critical:
 * JSON body parser
 * API routes
 * static file hosting
 Static hosting must come last. If placed earlier, it will shadow API routes.
 
-4. API Route Structure
+API Route Structure
 API routes live in:
 src/routes
 Each route file:
@@ -42,11 +42,8 @@ Example route types:
 * /api/project/load
 * /api/master/save
 * /api/master/load
-* /api/cognates/add
-* /api/cognates/edit
-* /api/cognates/publish
 
-5. Controllers
+Controllers
 Controllers live in:
 src/controllers
 Responsibilities:
@@ -56,7 +53,7 @@ Responsibilities:
 * return JSON responses
 Controllers must not contain business logic.
 
-6. Supabase Client
+Supabase Client
 Supabase client lives in:
 src/lib/supabase.js
 Responsibilities:
@@ -66,18 +63,15 @@ Environment variables required:
 * SUPABASE_URL
 * SUPABASE_SERVICE_ROLE_KEY
 
-7. Database Tables
+Database Tables
 Supabase stores:
 * projects
 * project_wordlists
 * master_wordlists
-* cross_language_master
-* cognates_official
-* cognates_pending
 Full schema is documented in:
 docs/Supabase_Schema.md
 
-8. SaveEverything Workflow
+SaveEverything Workflow
 Steps:
 Step 1: save project metadata
 Step 2: capture returned project id
@@ -86,7 +80,7 @@ Step 4: save master list
 Step 5: return success response
 This order must never change.
 
-9. Load Workflow
+Load Workflow
 Steps:
 Step 1: load project metadata
 Step 2: load project wordlist
@@ -94,7 +88,7 @@ Step 3: load master list
 Step 4: return combined JSON
 Frontend rebuilds UI state.
 
-10. Error Handling
+Error Handling
 Backend error handling rules:
 * always return JSON errors
 * never crash server
@@ -102,21 +96,21 @@ Backend error handling rules:
 * validate request bodies
 * validate project id
 
-11. Static File Hosting
+Static File Hosting
 Static files live in:
 public/
 Server uses:
 express.static("public")
 Static hosting must be registered after API routes.
 
-12. Adding New API Routes
+Adding New API Routes
 When adding new routes:
 * create route file in src/routes
 * create controller in src/controllers
 * update API_Specification.md
 * update Docs_Index.md
 
-13. Safe Coding Practices
+Safe Coding Practices
 * never mix analysis logic into backend
 * always validate inputs
 * always check Supabase errors
@@ -124,7 +118,71 @@ When adding new routes:
 * keep controllers small
 * keep route files simple
 
-14. Updated Architecture Rules
+Hybrid Master List Model
+The curriculum system uses four coordinated vocabulary layers:
+* global master list defines universal curriculum backbone
+* language master lists provide frequency ranking and multilingual support
+* context master lists provide optional curriculum modes
+* project master lists track vocabulary progression inside a single story
+The system compares vocabulary across layers to enforce curriculum rules.
+
+Project List Architecture
+* project list is auto-generated from story text
+* always reflects normalized lemmas in story order
+* never saved to Supabase
+* regenerated on every tokenization
+* used for story-order insertion logic
+
+Master List Architecture
+* master list stores English lemmas only in Phase 2
+* stored values are normalized strings
+* UI displays "Capitalized English" but underlying value is the lemma
+* master list is saved to Supabase
+* master list is loaded only when user loads a project
+* master list is not auto-populated from story text
+
+Master List Insertion Logic
+Steps:
+Step 1: normalize the English lemma
+Step 2: find last master list lemma appearing in the story
+Step 3: insert new lemma immediately after that position
+Step 4: prevent duplicates by comparing normalized lemmas
+Step 5: render updated master list
+
+Tokenizer Pipeline
+* tokenizeUnified normalizes tokens into stable lemmas
+* tokenizeUnified returns objects only for real word tokens
+* punctuation and whitespace remain raw strings
+* tokenizeUnified must not trigger highlight or autosave
+* tokenizeUnified must not log normalized tokens
+
+Cognate System (Phase 2)
+* simple cognate window remains active
+* cognates detected directly from normalized tokens
+* no object storage for cognates
+* no tier-based highlighting in Spanish mode
+* no structural changes to master list
+* click-to-insert adds English lemma only
+* Spanish lemma ignored for insertion
+* no multilingual canonical switching
+* no curriculum impact beyond English lemma insertion
+
+Cognate Detection Rules
+* detectCognates must set english = normalized lemma
+* detectCognates must not produce empty english fields
+* cognate window displays Spanish -> English pairs
+* updateCognates must call requestHighlightUpdate
+* updateCognates must not call handleStableInput
+
+Phase 2 Constraints
+* English-only master list
+* Spanish cognates used only for detection
+* no multilingual insertion
+* no multilingual canonical switching
+* no curriculum-level cognate objects
+* no structural changes to master list format
+
+Highlight Pipeline Rules
 Centralized Highlight Pipeline:
 * all highlight operations must enter through requestHighlightUpdate
 * handleStableInput must never be called directly from event listeners
@@ -157,62 +215,18 @@ Debug Logging Rules:
 * no tokenizer logs in production
 * only "Load complete" allowed on startup
 
-Cognate Update Rules:
-* updateCognates must call requestHighlightUpdate
-* updateCognates must not call handleStableInput
-* cognate updates must re-render master list after highlight
-
-Autosave Rules:
+Autosave Rules
 * autosave must be debounced
 * autosave must not run inside input handlers
 * autosave pauses during project resets
 * autosave resumes after reset completes
 
-Tokenizer Rules:
-* tokenizeUnified must not trigger highlight or autosave
-* tokenizeUnified must not log normalized tokens
-* tokenizeUnified returns objects only for real word tokens
-* punctuation and whitespace remain raw strings
-
-Master List and Project List Rules:
-* updateProjectList must not trigger highlight
-* checkStoryOrderAgainstMaster must not trigger highlight
-* both run after highlight on startup
-* both may run immediately during user actions
-
-Frequency List Rules:
+Frequency List Rules
 * frequencySet must be loaded before highlight pipeline
 * frequencySet must contain normalized lemmas only
 * frequency stats computed inside handleStableInput
 
-15. Cognate Dictionary Architecture
-Cognate Dictionary Structure:
-* official cognates stored in cognates_official
-* pending cognates stored in cognates_pending
-* merged dictionary created at startup
-* merged dictionary used for highlight and cognate window
-
-Dictionary Profile System:
-* dictionary profile is per-project
-* profile options: spanish, latin, greek, merged
-* profile determines which cognate sources are active
-* profile affects detected cognates and full dictionary display
-* profile stored in project metadata
-
-Hybrid Cognate Window:
-* top section shows detected cognates filtered by profile
-* bottom section shows full alphabetical dictionary filtered by profile
-* add cognate button writes to pending list
-* edit cognate button updates pending list
-* publish cognates merges pending into official and clears pending
-
-Cognate Merging Rules:
-* pending cognates merged into official on publish
-* merged dictionary rebuilt after publish
-* merged dictionary used immediately by highlight pipeline
-* no manual JSON editing required
-
-16. July 19 Fixes
+July 19 Fixes
 Project ID Rules:
 * project-id-input must update when a new project is created
 * project-id-input must update when a project is loaded
@@ -243,7 +257,7 @@ Frequency Known-Word Rules:
 * restores green checks
 * enables cognate highlighting
 
-17. Workflows Summary
+Workflows Summary
 SaveEverything Workflow:
 Step 1: save project metadata
 Step 2: capture project id
@@ -257,14 +271,5 @@ Step 2: load project wordlist
 Step 3: load master list
 Step 4: return combined JSON
 
-Publish Cognates Workflow:
-Step 1: load official cognates
-Step 2: load pending cognates
-Step 3: merge pending into official
-Step 4: write updated official cognates
-Step 5: clear pending cognates
-Step 6: rebuild merged dictionary
-Step 7: return success response
-
-18. Summary
-This backend architecture document explains how Express is structured, how API routes and controllers work, how Supabase is integrated, and how save and load pipelines operate. It merges updated architecture rules, July 19 fixes, and new cognate dictionary architecture to ensure stable interaction between frontend and backend. The system supports per-project dictionary profiles, hybrid cognate windows, alphabetical dictionaries, and automatic cognate merging for teacher-facing workflows.
+Summary
+This backend architecture document explains how Express is structured, how API routes and controllers work, how Supabase is integrated, and how save and load pipelines operate. It merges updated Phase 2 architecture rules, July 19 fixes, and the hybrid master list model to ensure stable interaction between frontend and backend. The system supports English-only master lists, lightweight cognate detection, stable tokenizer behavior, and predictable highlight operations for teacher-facing workflows.
