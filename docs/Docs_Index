@@ -1,9 +1,9 @@
 Docs Index — WordList Writer
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Source of Truth
 
 Overview
-This index lists every document in the /docs folder and explains its purpose, scope, and when future-you should reference it. It is the entry point for understanding the entire project. All documents are restart-proof and aligned with the updated July 19 architecture, including dictionary profiles, merged dictionary, hybrid cognate window, alphabetical dictionary, updated Supabase schema, updated tokenizer rules, updated highlight pipeline, and updated rendering rules.
+This index lists every document in the /docs folder and explains its purpose, scope, and when future-you should reference it. It is the entry point for understanding the entire project. All documents are restart-proof and aligned with the updated Phase 2 architecture, including the single-layer editor, centralized highlight pipeline, tokenizer rules, rendering rules, English-only master list, simple cognate window, updated Supabase schema, and July 19 fixes.
 
 1. PRD.md — Product Requirements Document
 Purpose:
@@ -31,7 +31,6 @@ Purpose:
 * defines frontend, backend, and database technologies
 * documents architecture choices
 * explains how static JSON, Express, and Supabase interact
-* documents dictionary profile system and merged dictionary
 Use When:
 * rebuilding environment after a long break
 * onboarding a developer
@@ -123,17 +122,16 @@ Purpose:
 * tokenizer, highlight pipeline, violations panel
 * master list, project list, editor layers
 * frequency ingestion rules
-* merged dictionary and dictionary profile integration
 Use When:
 * implementing or debugging core features
 * rebuilding highlight logic
-* extending curriculum or cognate systems
+* extending curriculum systems
 
 13. Supabase_Schema.md
 Purpose:
 * defines all tables, fields, constraints, and relationships
 * documents normalization rules and mapping logic
-* establishes backend data model including official/pending cognates and dictionary profiles
+* establishes backend data model for projects, wordlists, and master lists
 Use When:
 * implementing backend routes
 * debugging save/load pipeline
@@ -144,34 +142,22 @@ Purpose:
 * defines all backend API routes, request bodies, and responses
 * documents ID propagation and saveEverything contract
 * establishes backend <-> frontend communication rules
-* includes cognate routes, profile routes, and merged dictionary rebuild logic
 Use When:
 * implementing or debugging backend
 * rebuilding save/load pipeline
 * adding new API endpoints
 
-15. Cognate_Dictionary.md
-Purpose:
-* defines cognate data structures (official, pending, merged)
-* documents dictionary profiles and hybrid cognate window
-* explains pending -> official merging workflow
-* explains alphabetical dictionary and profile-aware filtering
-Use When:
-* debugging cognate behavior
-* extending cognate system
-* adding new languages or profiles
-
-16. Setup_Supabase.md
+15. Setup_Supabase.md
 Purpose:
 * defines step-by-step Supabase setup
 * documents environment variables, table creation, connection tests
-* explains save/load verification and merged dictionary rebuild
+* explains save/load verification
 Use When:
 * setting up backend for first time
 * rebuilding Supabase project
 * debugging connection issues
 
-17. Next_Steps.md
+16. Next_Steps.md
 Purpose:
 * lists immediate, short-term, medium-term, and long-term tasks
 * defines Phase 1-6 implementation steps
@@ -181,20 +167,19 @@ Use When:
 * planning next day’s work
 * tracking progress across phases
 
-18. Glossary.md
+17. Glossary.md
 Purpose:
 * defines all project terminology
 * ensures consistent vocabulary across docs and code
-* includes dictionary profile, merged dictionary, hybrid window, alphabetical dictionary
 Use When:
 * reviewing unfamiliar terms
 * onboarding a developer
 * clarifying linguistic or architectural concepts
 
-19. Tokenizer_Specification.md
+18. Tokenizer_Specification.md
 Purpose:
 * defines tokenizer rules, normalization, IME safety
-* documents integration with highlight pipeline, merged dictionary, frequency system, and master list
+* documents integration with highlight pipeline, frequency system, and master list
 Use When:
 * debugging tokenization issues
 * extending tokenizer behavior
