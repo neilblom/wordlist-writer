@@ -1,9 +1,9 @@
 Detailed Feature Specifications — WordList Writer
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Source of Truth
 
 Overview
-This document defines the internal behavior of all major systems in WordList Writer. It merges the original feature specifications with updated architecture rules, tokenizer rules, rendering rules, highlight pipeline rules, dictionary profile system, hybrid cognate window, alphabetical dictionary, cognate merging rules, Supabase schema updates, and July 19 fixes. It is the authoritative reference for implementing or debugging core features.
+This document defines the internal behavior of all major systems in WordList Writer. It merges the original feature specifications with updated Phase 2 architecture rules, tokenizer rules, rendering rules, highlight pipeline rules, hybrid master list model, Supabase schema updates, and July 19 fixes. All Phase 3 dictionary profile, alphabetical dictionary, merged dictionary, and cognate publishing features have been removed. This is the authoritative reference for implementing or debugging core features.
 
 1. Highlight Pipeline
 The highlight pipeline processes user text and applies visual annotations based on linguistic and curriculum rules. All highlight operations must enter through requestHighlightUpdate.
@@ -29,13 +29,13 @@ Step 6: canonical normalization via normalizeLemma()
 * bypass curriculum checks
 * rendered unchanged
 
-1.4 Cognate Highlighting (Updated)
-* cognates stored in mergedCognateMap
-* mergedCognateMap built from official + pending cognates
-* dictionaryProfile filters which cognates apply
-* each entry includes tier metadata
-* tier colors applied globally
-* rendered as span elements with tooltip metadata
+1.4 Cognate Highlighting (Phase 2)
+* cognates detected directly from normalized lemmas
+* no dictionary profiles
+* no tier metadata
+* no alphabetical dictionary
+* no merged dictionary
+* rendered as green underline
 * cognate highlighting overrides all other highlight types
 
 1.5 Frequency List Integration (Updated)
@@ -87,7 +87,7 @@ Provides real-time diagnostic feedback on curriculum mismatches.
 
 2.6 Rendering
 * renderViolationsPanel()
-* shows “No curriculum violations” when empty
+* shows "No curriculum violations" when empty
 * otherwise displays table of violations
 
 2.7 Popup Removal
@@ -101,7 +101,6 @@ Master List defines the curriculum sequence and appears in Column D.
 * rank
 * lemma
 * language
-* isCognate flag
 * edit button
 * delete button
 * rendered into #master-list-container
@@ -131,7 +130,6 @@ Backend shape (Supabase):
 * lemma
 * rank
 * language
-* is_cognate
 * project_id
 
 4. Project List System (Updated)
@@ -164,33 +162,29 @@ Tracks lemmas used in current project.
 * input event triggers requestHighlightUpdate
 * IME composition events suppress highlight
 
-6. Cognate System (Updated)
+6. Cognate System (Phase 2)
 6.1 Data Source
-* mergedCognateMap contains normalized lemma, cognate, tier, profile
-* built from cognates_official + cognates_pending
+* detectCognates uses normalized lemmas only
+* Spanish cognates used for detection only
+* English lemma inserted into master list
 
 6.2 Rendering
-* tier-specific colors
-* tooltip metadata
-* cognate click inserts lemma into master list
+* green underline applied to cognates
+* no tier metadata
+* no tooltip metadata
+* no alphabetical dictionary
 
-6.3 Dictionary Profiles
-* profiles: spanish, latin, greek, merged
-* profile stored per project
-* profile filters cognates in detected and alphabetical sections
-
-6.4 Hybrid Cognate Window
+6.3 Simple Cognate Window
 Detected section:
 * shows cognates present in current text
-Alphabetical dictionary:
-* shows all cognates for active profile
-* sorted alphabetically
-* includes official and pending entries
+* clicking inserts English lemma into master list
 
-6.5 Cognate Merging
-* pending entries override official entries
-* merged dictionary rebuilt after publish
-* merged dictionary used for highlight pipeline
+6.4 Phase 2 Constraints
+* no dictionary profiles
+* no alphabetical dictionary
+* no pending or official cognates
+* no merged dictionary
+* no publish workflow
 
 7. Frequency List System (Updated)
 7.1 Data Source
@@ -201,22 +195,17 @@ Alphabetical dictionary:
 * NGSL-1K defines known baseline
 
 8. Supabase Integration (Updated)
-Supabase handles project, master list, cognate, and profile persistence.
+Supabase handles project and master list persistence.
 
 8.1 Save Project
 * save project metadata
-* save dictionary profile
 * return id via .select()
 * update project-id-input
 
 8.2 Load Project
 * load project metadata
-* load dictionary profile
 * load project wordlist
 * load master list
-* load cognates_official
-* load cognates_pending
-* rebuild merged dictionary
 * reconstruct UI state
 * trigger highlight
 
@@ -290,14 +279,13 @@ Logging
 
 10. Startup Sequence (Updated)
 Step 1: load language and cognates  
-Step 2: load dictionary profile  
-Step 3: load project text  
-Step 4: load master list  
-Step 5: load project wordlist  
-Step 6: load violations  
-Step 7: trigger highlight once  
-Step 8: after 75ms run project list and order check  
-Step 9: display “Load complete”
+Step 2: load project text  
+Step 3: load master list  
+Step 4: load project wordlist  
+Step 5: load violations  
+Step 6: trigger highlight once  
+Step 7: after 75ms run project list and order check  
+Step 8: display "Load complete"
 
 11. Future Enhancements (Optional)
 * violation grouping
@@ -306,7 +294,6 @@ Step 9: display “Load complete”
 * severity color coding
 * toggle button
 * jump-to-word links
-* tier-aware out-of-order detection
 
 Documentation Formatting Reminder
 * use plain text section titles
