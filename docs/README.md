@@ -1,18 +1,18 @@
 WordList Writer — README
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Overview
 
 Overview
-WordList Writer is a teacher-facing authoring tool for creating controlled beginner-level texts across English, Spanish, Koine Greek, and Latin. It provides real-time vocabulary analysis, curriculum alignment feedback, cognate scaffolding, dictionary profiles, and frequency-based highlighting. Students never interact with the app. Teachers use WordList Writer to craft texts that are pedagogically sequenced, linguistically appropriate, and aligned with a chosen curriculum or master vocabulary list.
+WordList Writer is a teacher-facing authoring tool for creating controlled beginner-level texts in English. It provides real-time vocabulary analysis, curriculum alignment feedback, simple cognate scaffolding, frequency-based highlighting, and Supabase-backed persistence. Students never interact with the app. Teachers use WordList Writer to craft texts that are pedagogically sequenced, linguistically appropriate, and aligned with a curriculum or master vocabulary list.
 
 The tool supports two instructional goals:
-* building a unified beginner-level master vocabulary list across languages
-* supporting multiple master lists when a unified list is not feasible
+* building a beginner-level master vocabulary list
+* supporting curriculum-aligned text creation
 
-WordList Writer uses a single contenteditable editor, centralized highlight pipeline, IME-safe input handling, hybrid cognate window, alphabetical dictionary, and Supabase-backed persistence. The final output delivered to students is a clean text without analytical overlays.
+WordList Writer uses a single contenteditable editor, centralized highlight pipeline, IME-safe input handling, simple cognate window, and stable Supabase persistence. The final output delivered to students is a clean text without analytical overlays.
 
 Vision Statement
-WordList Writer aims to become a professional authoring environment for teachers who create controlled texts for beginner learners across multiple languages. The tool provides curriculum-aligned vocabulary control, frequency awareness, cognate scaffolding, dictionary profiles, and cross-language lemma normalization. Its long-term vision is to support teachers in building coherent beginner-level curricula while maintaining a clean, teacher-focused workflow.
+WordList Writer aims to become a professional authoring environment for teachers who create controlled texts for beginner learners. The tool provides curriculum-aligned vocabulary control, frequency awareness, simple cognate scaffolding, and lemma normalization. Its long-term vision is to support teachers in building coherent beginner-level curricula while maintaining a clean, teacher-focused workflow.
 
 Quickstart Guide
 
@@ -39,7 +39,7 @@ How to Use the App
 Writing Window
 The writing window is a single contenteditable element. As you type:
 * words are tokenized and normalized
-* cognates highlight green
+* simple cognates highlight green
 * known words display normally
 * unknown words show a red asterisk
 * violations update in real time
@@ -53,33 +53,22 @@ Use it to:
 * check word frequency
 * click a word to highlight it in the text
 
-Column B — Cognates (Hybrid Window)
-Shows cognates filtered by dictionary profile.
+Column B — Cognates (Simple Window)
+Shows detected Spanish → English cognates.
 Contains:
-* detected cognates (top)
-* alphabetical dictionary (bottom)
+* detected cognates only
 Clicking a cognate:
 * highlights matching tokens
-* inserts cognate into the Master List
-You may also:
-* add new cognates
-* edit pending cognates
-* publish pending cognates into official dictionary
-
-Dictionary Profile Dropdown
-Profiles:
-* spanish
-* latin
-* greek
-* merged
-Profile determines which cognates appear in Column B.
+* inserts the English lemma into the Master List
 
 Column C — Project Word List
 Tracks all lemmas used in the current text.
 Shows:
-* cognate tier
-* frequency tier
 * normalized lemma
+* frequency tier
+Use it to:
+* review vocabulary used in the text
+* identify unknown or advanced words
 
 Column D — Master List
 Your curriculum sequence.
@@ -87,7 +76,6 @@ You can:
 * add lemmas
 * insert lemmas at specific ranks
 * reorder lemmas
-* add cross-language equivalents
 Highlighting depends on this list.
 
 Violations Panel
@@ -101,10 +89,9 @@ Saving Your Work
 Click Save Project.
 Behind the scenes:
 Step 1: project metadata saved  
-Step 2: dictionary profile saved  
-Step 3: project id propagated  
-Step 4: project wordlist saved  
-Step 5: master list saved  
+Step 2: project id propagated  
+Step 3: project wordlist saved  
+Step 4: master list saved  
 Rules:
 * masterList must contain plain strings
 * project-id-input must always be updated
@@ -113,11 +100,8 @@ Loading Your Work
 Click Load Project.
 The app restores:
 * text
-* dictionary profile
 * project wordlist
 * master list
-* cognates (official and pending)
-* merged dictionary
 * UI state
 Highlight pipeline runs automatically.
 
@@ -126,10 +110,6 @@ Supabase stores:
 * projects
 * project_wordlists
 * master_wordlists
-* cognates_official
-* cognates_pending
-* dictionary_profiles
-* cross_language_master
 Supabase v2 requires .select() to retrieve inserted rows.
 See docs/Supabase_Schema.md for details.
 
@@ -172,7 +152,7 @@ All documentation lives in /docs:
 Development Status
 Phase 1: English-only prototype — complete  
 Phase 2: Supabase integration — complete  
-Phase 3: curriculum modeling — in progress  
+Phase 3: curriculum modeling — upcoming  
 Phase 4: multiple curriculum support — upcoming  
 Phase 5: teacher workflow enhancements — upcoming
 
