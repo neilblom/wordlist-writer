@@ -1,9 +1,9 @@
 Next Steps — WordList Writer
-Version: 2026-07-20
+Version: 2026-07-23
 Status: Authoritative Source of Truth
 
 Overview
-This document defines the immediate, short-term, medium-term, and long-term development steps for WordList Writer. It merges the original plan with updated July 19 architecture rules, tokenizer rules, highlight pipeline rules, rendering rules, Supabase integration rules, dictionary profile system, hybrid cognate window, alphabetical dictionary, cognate merging rules, and project ID fixes. It is restart-proof and reconstructs the entire development sequence.
+This document defines the immediate, short-term, medium-term, and long-term development steps for WordList Writer. It reflects the simplified Phase 2 architecture: English-only analysis, simple cognate window, stable tokenizer, stable highlight pipeline, and Supabase-backed persistence. All Phase 3 features (dictionary profiles, alphabetical dictionary, merged dictionary, tier metadata, pending/official cognates, cross-language master) have been removed. This document is restart-proof and reconstructs the entire development sequence.
 
 1. Set Up Project Structure
 Create base folder layout:
@@ -49,46 +49,42 @@ Step 3: load in frontend
 Goal:
 * lemma resolution works in writing window
 
-5. Implement Tokenizer + Highlighting Logic (Updated)
+5. Implement Tokenizer + Highlighting Logic (Phase 2)
 Step 1: build tokenizeUnified  
 Step 2: build normalizeLemma  
 Step 3: implement highlight priority:
 * green underline = cognate
 * normal = known (frequency or master list)
 * red asterisk = unknown
-Updated Rules:
+Rules:
 * tokenizer must not trigger highlight or autosave
 * tokenizer must preserve whitespace and punctuation
 * highlight must run only through requestHighlightUpdate
 Goal:
 * English-only highlighting end-to-end
 
-6. Build Four-Column UI (Updated)
+6. Build Four-Column UI (Phase 2)
 Column A: frequency list  
-Column B: cognates (hybrid window)  
+Column B: simple cognate window  
 Column C: project word list  
 Column D: master list  
 Goal:
 * UI layout matches PRD and updated architecture
 
-7. Prepare for Supabase Integration (Updated)
+7. Prepare for Supabase Integration (Phase 2)
 Step 1: create Supabase project  
 Step 2: create tables:
 * projects
 * project_wordlists
 * master_wordlists
-* cognates_official
-* cognates_pending
-* dictionary_profiles
-* cross_language_master
 Step 3: add environment variables to Render  
-Updated Rules:
+Rules:
 * Supabase v2 requires .select() after inserts
 * masterList must contain plain strings only
 Goal:
 * database ready for Phase 2
 
-8. Begin Phase 1 Development (Updated)
+8. Begin Phase 1 Development (Completed)
 Deliverable:
 * single-layer writing window
 * frequency list
@@ -100,42 +96,37 @@ Purpose:
 * foundation for all future phases
 
 9. Multilingual Expansion (Deferred)
-* add Spanish cognates
-* add Latin cognates
-* add Greek cognates
-* extend tokenizer and lemmaMap
-* revisit master list structure after Supabase integration
+* add Spanish frequency list
+* add Spanish lemma map
+* add Spanish cognates beyond simple list
+* add Latin and Greek frequency lists
+* add Latin and Greek lemma maps
 Update:
 * multilingual expansion begins after Phase 2
 
-10. Next Steps After Violations Panel (Updated)
+10. Next Steps After Violations Panel (Phase 2)
 * validate violation detection accuracy
 * add optional enhancements (sorting, grouping, toggling)
-* begin Phase 2 (Supabase integration)
+* complete Supabase integration
 * update documentation after each feature
-Updated Rules:
+Rules:
 * violations must run after highlight
 * violations must not trigger highlight
 
-11. Completed Work (Updated)
+11. Completed Work (Phase 2)
 * centralized highlight pipeline
 * IME-safe input handling
 * single-layer editor
-* tier-aware highlighting
-* tier-aware project list
-* unified cognate lookup map
-* merged cognate dictionary
-* dictionary profile system
-* alphabetical cognate dictionary
-* pending → official cognate merging
+* English-only cognate detection
+* English-only project list
+* English-only master list
 * updated startup sequence
 * updated save/load pipeline
+* stable Supabase integration
 
-12. Upcoming Work (Updated)
+12. Upcoming Work (Phase 2)
 * tokenizer normalization upgrade
-* tier filtering UI
 * frequency tier integration
-* multi-word cognate support (paused)
 * project list editing
 * Supabase save/load UI indicators
 * export clean text
@@ -153,32 +144,29 @@ Root Causes:
 Required Fixes:
 Step 1: new-project-btn sets currentProjectId = crypto.randomUUID()  
 Step 2: load-project-btn sets currentProjectId = projectId  
-Step 3: /api/projects/save must accept or generate ID and return it  
+Step 3: /api/project/save must accept or generate ID and return it  
 Step 4: saveEverything:
 * save project first
 * capture returned ID
 * pass ID to wordlist save
-Step 5: /api/projects/wordlist/save must receive { projectId, wordlist }
+Step 5: /api/project/wordlist/save must receive { projectId, wordlist }
 
-14. Remaining Work After Pipeline Fix (Updated)
+14. Remaining Work After Pipeline Fix (Phase 2)
 * verify project switching
-* add multilingual lemma mapping
 * add validation for master list rows
 * add UI indicators for save/load success
 * add error handling for missing projectId
-* add dictionary profile save/load UI
-* add cognate editing UI
-* add publish cognates UI
+* add export clean text
+* add mobile layout
 
-15. Task Timeline (Updated)
+15. Task Timeline (Phase 2)
 Immediate Tasks
 * fix highlight substring bug
 * validate tokenizer output
-* add NAWL / BSL / TSL support
-* add cognate editing UI
+* add NAWL support
+* add project list editing
 
 Short-Term Tasks
-* add project list editing
 * add Supabase save/load UI indicators
 * add export features
 * add mobile layout
@@ -194,13 +182,4 @@ Long-Term Tasks
 * add classroom analytics
 
 Summary
-This Next Steps document merges the original development plan with updated architecture rules, pipelines, dictionary profile system, hybrid cognate window, alphabetical dictionary, cognate merging rules, and July 19 fixes. It defines the complete sequence for continuing development and ensures the project remains restart-proof and aligned with the PRD.
-
-Documentation Formatting Reminder
-* use plain text section titles
-* use asterisks (*) for bullet points
-* do not insert blank lines inside bullet lists
-* use ASCII-only characters
-* avoid Markdown headings (#)
-* avoid fenced code blocks unless necessary
-* use Step format for workflows to prevent GitHub auto-renumbering
+This Next Steps document merges the original development plan with updated Phase 2 architecture rules, pipelines, and July 19 fixes. It defines the complete sequence for continuing development and ensures the project remains restart-proof and aligned with the PRD.
