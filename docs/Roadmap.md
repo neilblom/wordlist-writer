@@ -117,6 +117,53 @@ Step 4: AI-assisted text simplification
 Output:
 * advanced linguistic tooling for expert instructors
 
+Other features:
+Assignment Mode
+* Assignment Mode is used when the teacher wants students to learn and use a small, controlled set of vocabulary items.
+* The master list contains a short set of lemmas, typically 10 to 30 words.
+* The story is expected to use these lemmas in the intended sequence.
+* The system checks for missing lemmas, extra lemmas, and out-of-order lemmas.
+* The highlight pipeline marks known lemmas according to the assignment list.
+* Unknown lemmas are flagged for teacher review.
+* Order checking is strict in this mode and is used to ensure controlled text production.
+
+Curriculum Mode
+* Curriculum Mode is used when the teacher wants to evaluate a text against a larger vocabulary set, typically 50 to 200+ words.
+* The master list contains the full curriculum vocabulary for a unit, semester, or course.
+* The story is evaluated for coverage, unknown words, and general alignment with the curriculum.
+* Order checking is optional or disabled because sequence is less important for large lists.
+* The highlight pipeline marks all known lemmas from the curriculum list.
+* Unknown lemmas indicate areas where the text exceeds the learner's studied vocabulary.
+* This mode is used for level checking, text selection, and curriculum alignment.
+
+Order Checking Summary
+* Order checking ensures that the story uses vocabulary in the same sequence as the ranked master list.
+* Each lemma in the master list has a rank based on its position in the list.
+* The story is converted into a sequence of normalized lemmas.
+* Each lemma in the story is mapped to its rank if it exists in the master list.
+* If the rank sequence ever decreases, the story is out of order.
+* Missing lemmas are flagged for teacher review.
+* Lemmas that appear too early or too late can be flagged depending on mode.
+* Order checking is most useful in Assignment Mode and optional in Curriculum Mode.
+* Order checking is language-agnostic and can be added after multilingual support because it depends only on normalized lemma ranks.
+
+Workflow for Assignment Mode
+Step 1: Create a new project containing the assignment vocabulary list.
+Step 2: Add the target lemmas to the master list in the intended teaching order.
+Step 3: Paste or write the story in the editor.
+Step 4: Review highlights, missing lemmas, and unknown lemmas.
+Step 5: Review order checking results to ensure the story follows the intended sequence.
+Step 6: Save the project for future reuse or modification.
+
+Workflow for Curriculum Mode
+Step 1: Create a new project containing the curriculum vocabulary list.
+Step 2: Add all lemmas from the curriculum into the master list.
+Step 3: Paste or load the story in the editor.
+Step 4: Review highlights and unknown lemmas to determine text suitability.
+Step 5: Review coverage statistics to evaluate alignment with the curriculum.
+Step 6: Save the project for future level checking or text evaluation.
+
+
 Documentation Formatting Reminder
 All documentation updates must follow this formatting standard:
 * use plain text section titles
