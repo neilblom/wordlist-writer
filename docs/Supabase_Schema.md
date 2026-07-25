@@ -5,6 +5,13 @@ Status: Authoritative Source of Truth
 Overview
 This document defines the complete Supabase schema for WordList Writer. It is the authoritative reference for all tables, fields, relationships, constraints, and frontend ↔ backend mappings. This schema supports project storage, project wordlists, and master lists. All tables must remain normalized, restart-proof, and aligned with the July 19 architecture and Phase 2 constraints.
 
+Schema Lock Rule  
+The projects table schema is fixed.
+Do NOT add, rename, or remove columns unless explicitly instructed.
+All backend and frontend fields MUST match the Supabase schema exactly.
+Copilot must NOT introduce new fields, rename fields, or “improve” the schema.
+Copilot must treat the schema as locked and immutable.
+
 1. Table: projects
 Purpose:
 * stores metadata for each writing project
