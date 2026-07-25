@@ -12,6 +12,11 @@ All backend and frontend fields MUST match the Supabase schema exactly.
 Copilot must NOT introduce new fields, rename fields, or “improve” the schema.
 Copilot must treat the schema as locked and immutable.
 
+Schema Stability Rule  
+The projects table schema is locked and must not change.
+Copilot must NOT add, rename, or remove columns unless Neil explicitly instructs it.
+All frontend → backend → Supabase fields must match this schema exactly.
+
 1. Table: projects
 Purpose:
 * stores metadata for each writing project
