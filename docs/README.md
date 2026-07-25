@@ -113,6 +113,13 @@ Supabase stores:
 Supabase v2 requires .select() to retrieve inserted rows.
 See docs/Supabase_Schema.md for details.
 
+Schema Lock Rule  
+The projects table schema is fixed.
+Do NOT add, rename, or remove columns unless explicitly instructed.
+All backend and frontend fields MUST match the Supabase schema exactly.
+Copilot must NOT introduce new fields, rename fields, or “improve” the schema.
+Copilot must treat the schema as locked and immutable.
+
 Project Structure
 docs/
 public/
