@@ -17,6 +17,11 @@ The projects table schema is locked and must not change.
 Copilot must NOT add, rename, or remove columns unless Neil explicitly instructs it.
 All frontend → backend → Supabase fields must match this schema exactly.
 
+Sync Rule  
+Every field sent by the frontend must exist in the backend route.
+Every field used in the backend route must exist in the Supabase table.
+No extra fields. No missing fields. No renamed fields.
+
 1. Table: projects
 Purpose:
 * stores metadata for each writing project
