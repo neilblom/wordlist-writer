@@ -17,17 +17,19 @@ Purpose:
 * stores metadata for each writing project
 
 Fields:
-* id (uuid, primary key)
-* name (text)
-* language (text)
-* content (text)
-* notes (text)
-* created_at (timestamptz default now())
-* updated_at (timestamptz default now())
+projects table schema (locked):
+
+id          uuid (PK)
+title       text
+language    text
+content     text
+created_at  timestamptz
+updated_at  timestamptz
+user_id     uuid
 
 Constraints:
 * id must be non-null
-* name required
+* title required
 * language required
 
 Frontend Mapping:
